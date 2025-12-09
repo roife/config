@@ -102,3 +102,10 @@ eval "$(fnm env)"
 # brew
 alias brewdump='brew bundle dump --file="~/.config/Brewfile"'
 alias brewrestore='brew bundle --file="~/.config/Brewfile"'
+
+# Backup
+recover() {
+    ln .gitconfig ~
+    ln .gitignore_global ~
+    brew bundle --file="~/.config/Brewfile"
+}
