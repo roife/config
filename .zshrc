@@ -105,7 +105,12 @@ alias brewrestore='brew bundle --file="~/.config/Brewfile"'
 
 # Backup
 recover() {
-    ln .gitconfig ~
-    ln .gitignore_global ~
+    ln -s .gitconfig ~
+    ln -s .gitignore_global ~
     brew bundle --file="~/.config/Brewfile"
+
+    rustup install nightly
+    fnm i --lts
+    tldr -u
 }
+
