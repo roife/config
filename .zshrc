@@ -99,6 +99,9 @@ alias vim='nvim'
 # nodejs
 eval "$(fnm env)"
 
+# rust
+PATH=$(brew --prefix rustup)/bin:$PATH
+
 # brew
 alias brewdump='brew bundle dump --file="~/.config/Brewfile"'
 alias brewrestore='brew bundle --file="~/.config/Brewfile"'
