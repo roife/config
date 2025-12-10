@@ -1,12 +1,11 @@
 ---@type LazyPluginSpec
-local utils = require("utils")
-
 local custom_path = {
   get_symbols = function(buff, win, cursor)
     local symbols = require("dropbar.sources").path.get_symbols(buff, win, cursor)
-    vim.api.nvim_set_hl(0, "DropBarFileName", { italic = true })
+    vim.api.nvim_set_hl(0, "DropBarFileName", { reverse = true, italic = vim.bo[buff].modified })
     symbols[#symbols].name_hl = "DropBarFileName"
-    if vim.bo[buff].modified then symbols[#symbols].name = symbols[#symbols].name .. " *" end
+    symbols[#symbols].name = " " .. symbols[#symbols].name .. " "
+    -- if vim.bo[buff].modified then symbols[#symbols].name = symbols[#symbols].name .. " *" end
     return symbols
   end,
 }
@@ -21,12 +20,13 @@ return {
   opts = {
     icons = {
       kinds = {
-        dir_icon = utils.empty_str(),
-        file_icon = utils.empty_str(),
-        symbols = utils.empty_str(),
+        dir_icon = "",
+        file_icon = "",
+        symbols = "",
       },
       ui = {
         bar = { separator = " ❯ ", extends = "…" },
+        menu = { separator = " ", indicator = "❯" }
       },
     },
     bar = {
@@ -50,6 +50,7 @@ return {
           },
         }
       end,
+      update_debounce = 150,
     },
   },
 }

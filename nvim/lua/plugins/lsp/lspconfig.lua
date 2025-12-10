@@ -20,8 +20,8 @@ return {
     },
   },
   config = function(_, opts)
-      vim.lsp.config('lua_ls', {
-          cmd = { '/Users/roife/code/lua-language-server/bin/lua-language-server' }
-      })
+    vim.lsp.config("lua_ls", {
+      cmd = { "/Users/roife/code/lua-language-server/bin/lua-language-server" },
+    })
   end,
 }

@@ -1,5 +1,5 @@
 return {
-  "sundbp/strict-paredit.nvim",  -- or local path, see below
+  "sundbp/strict-paredit.nvim", -- or local path, see below
   dependencies = {
     "nvim-treesitter/nvim-treesitter",
   },

@@ -39,6 +39,12 @@ local function dap_or_lsp()
   end
 end
 
+local function dap_or_lsp_and_filetype()
+  local dap_or_lsp = dap_or_lsp()
+  if dap_or_lsp and dap_or_lsp ~= "" then dap_or_lsp = " (" .. dap_or_lsp .. ")" end
+  return vim.bo.filetype .. dap_or_lsp
+end
+
 local function mode()
   -- Map of modes to their respective shorthand indicators
   local mode_map = {
@@ -77,18 +83,30 @@ return {
         mode,
       },
       lualine_b = {
-        "branch",
-        "diagnostics",
+        {
+          "tabs",
+          mode = 2,
+          use_mode_colors = true,
+          show_modified_status = true, -- Shows a symbol next to the tab name if the file has been modified.
+          symbols = {
+            modified = "*", -- Text to show when the file is modified.
+          },
+        },
       },
       lualine_c = {
-        dap_or_lsp,
+        "branch",
+        {
+          "diagnostics",
+          symbols = { error = "✘ ", warn = "! ", info = "⚑ ", hint = "ℹ " },
+        },
+        --          { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" } },
       },
       lualine_x = {
         {
           name = "overseer-placeholder",
           function() return "" end,
         },
-        "copilot",
+        dap_or_lsp_and_filetype,
         {
           "encoding",
           show_bomb = true,
@@ -103,11 +121,10 @@ return {
             mac = "CR",
           },
         },
-        "filetype",
       },
       lualine_y = {
         "filesize",
-        { "progress", separator = "·" },
+        -- { "progress", separator = "·" },
       },
       lualine_z = {
         "location",
@@ -122,7 +139,7 @@ return {
         },
       },
       always_divide_middle = true,
-      globalstatus = false,
+      globalstatus = true,
       section_separators = { left = "", right = "" },
       component_separators = { left = "", right = "│" },
     },
@@ -140,4 +157,8 @@ return {
       "lazy",
     },
   },
+  config = function(_, opts)
+    require("lualine").setup(opts)
+    vim.o.showtabline = 0
+  end,
 }
