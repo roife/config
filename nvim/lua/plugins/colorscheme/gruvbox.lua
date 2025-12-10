@@ -28,6 +28,8 @@ return {
   config = function(_, opts)
     require("gruvbox").setup(opts)
     vim.cmd.colorscheme("gruvbox")
+    update_colorscheme()
+
     vim.api.nvim_create_autocmd("ColorScheme", {
       callback = function(_) update_colorscheme() end,
     })
