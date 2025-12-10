@@ -20,7 +20,7 @@ return {
       "conflicts",
       "cursor",
       "diagnostics",
-      "folds",
+      -- "folds",
       "loclist",
       "marks",
       "quickfix",
