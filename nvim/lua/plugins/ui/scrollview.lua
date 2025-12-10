@@ -21,6 +21,7 @@ return {
       "cursor",
       "diagnostics",
       -- "folds",
+      "keywords",
       "loclist",
       "marks",
       "quickfix",
@@ -29,6 +30,8 @@ return {
       -- "textwidth",
       -- "trail",
     },
+    signs_scrollbar_overlap = "over",
+    visibility = "info",
   },
   config = function(_, opts)
     local scrollview = require("scrollview")
