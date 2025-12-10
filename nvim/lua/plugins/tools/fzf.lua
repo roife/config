@@ -36,6 +36,11 @@ return {
     files = {
       formatter = "path.filename_first",
     },
+    lsp = {
+        symbols = {
+            symbol_style = 3,
+        },
+    },
   },
   keys = {
     {
