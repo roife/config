@@ -30,6 +30,8 @@ return {
       },
     },
     bar = {
+      padding = { left = 0, right = 0 },
+      enable = false,
       sources = function(buf, _)
         local sources = require("dropbar.sources")
         local utils = require("dropbar.utils")

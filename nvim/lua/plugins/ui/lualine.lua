@@ -1,20 +1,3 @@
-local function lsp()
-  local clients = vim.lsp.get_clients()
-  local buf = vim.api.nvim_get_current_buf()
-  clients = vim
-    .iter(clients)
-    :filter(function(client) return client.attached_buffers[buf] end)
-    :filter(function(client) return client.name ~= "GitHub Copilot" end)
-    :map(function(client) return client.name end)
-    :totable()
-  local info = table.concat(clients, " ")
-  if info == "" then
-    return ""
-  else
-    return info
-  end
-end
-
 local function dap()
   ---@diagnostic disable-next-line: redefined-local
   local dap = package.loaded["dap"]
@@ -29,20 +12,20 @@ local function osv()
   return ""
 end
 
-local function dap_or_lsp()
+local function osv_or_dap()
   if osv() ~= "" then
     return osv()
   elseif dap() ~= "" then
     return dap()
   else
-    return lsp()
+    return ""
   end
 end
 
-local function dap_or_lsp_and_filetype()
-  local dap_or_lsp = dap_or_lsp()
-  if dap_or_lsp and dap_or_lsp ~= "" then dap_or_lsp = " (" .. dap_or_lsp .. ")" end
-  return vim.bo.filetype .. dap_or_lsp
+local function osv_or_dap_and_filetype()
+  local osv_or_dap = osv_or_dap()
+  if osv_or_dap and osv_or_dap ~= "" then osv_or_dap = " (" .. osv_or_dap .. ")" end
+  return vim.bo.filetype .. osv_or_dap
 end
 
 local function mode()
@@ -80,9 +63,6 @@ return {
   opts = {
     tabline = {
       lualine_a = {
-        mode,
-      },
-      lualine_b = {
         {
           "tabs",
           mode = 2,
@@ -93,24 +73,24 @@ return {
           },
         },
       },
-      lualine_c = {
+      lualine_b = {
         "branch",
-        {
-          "diagnostics",
-          symbols = { error = "✘ ", warn = "! ", info = "⚑ ", hint = "ℹ " },
-        },
-        --          { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" } },
+      },
+      lualine_c = {
+        { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" } },
       },
       lualine_x = {
         {
           name = "overseer-placeholder",
           function() return "" end,
         },
-        dap_or_lsp_and_filetype,
         {
           "encoding",
           show_bomb = true,
           separator = "",
+          cond = function()
+            return vim.bo.fileencoding:lower() ~= "utf-8" or vim.bo.bomb
+          end
         },
         {
           "fileformat",
@@ -120,11 +100,13 @@ return {
             dos = "CRLF",
             mac = "CR",
           },
+          cond = function()
+            return vim.bo.fileformat ~= "unix"
+          end
         },
       },
       lualine_y = {
-        "filesize",
-        -- { "progress", separator = "·" },
+        osv_or_dap_and_filetype,
       },
       lualine_z = {
         "location",
@@ -142,7 +124,7 @@ return {
       always_divide_middle = true,
       globalstatus = true,
       section_separators = { left = "", right = "" },
-      component_separators = { left = "", right = "│" },
+      component_separators = { left = "", right = "|" },
     },
     extensions = {
       "man",
