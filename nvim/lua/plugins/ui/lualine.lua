@@ -28,33 +28,6 @@ local function osv_or_dap_and_filetype()
   return vim.bo.filetype .. osv_or_dap
 end
 
-local function mode()
-  -- Map of modes to their respective shorthand indicators
-  local mode_map = {
-    n = "N", -- Normal mode
-    i = "I", -- Insert mode
-    v = "V", -- Visual mode
-    [""] = "V", -- Visual block mode
-    V = "V", -- Visual line mode
-    c = "C", -- Command-line mode
-    no = "N", -- NInsert mode
-    s = "S", -- Select mode
-    S = "S", -- Select line mode
-    ic = "I", -- Insert mode (completion)
-    R = "R", -- Replace mode
-    Rv = "R", -- Virtual Replace mode
-    cv = "C", -- Command-line mode
-    ce = "C", -- Ex mode
-    r = "R", -- Prompt mode
-    rm = "M", -- More mode
-    ["r?"] = "?", -- Confirm mode
-    ["!"] = "!", -- Shell mode
-    t = "T", -- Terminal mode
-  }
-  -- Return the mode shorthand or [UNKNOWN] if no match
-  return mode_map[vim.fn.mode()] or "[UNKNOWN]"
-end
-
 ---@type LazyPluginSpec
 return {
   "nvim-lualine/lualine.nvim",
@@ -129,5 +102,8 @@ return {
       "lazy",
     },
   },
-  config = function(_, opts) require("lualine").setup(opts) end,
+  config = function(_, opts)
+    require("lualine").setup(opts)
+    vim.api.nvim_set_hl(0, 'DropBarKindFile', { bold = true })
+  end,
 }
