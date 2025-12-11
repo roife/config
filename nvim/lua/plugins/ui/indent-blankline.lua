@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 ---@type LazyPluginSpec
 return {
   "lukas-reineke/indent-blankline.nvim",
