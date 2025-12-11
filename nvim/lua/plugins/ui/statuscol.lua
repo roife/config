@@ -1,9 +1,8 @@
 ---@type LazyPluginSpec
 return {
   "luukvbaal/statuscol.nvim",
+  enabled = false,
   opts = function()
-    local builtin = require("statuscol.builtin")
-
     return {
       bt_ignore = { "nofile", "terminal" },
       ft_ignore = { "NeogitStatus" },
