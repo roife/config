@@ -61,3 +61,7 @@ vim.o.timeoutlen = 300
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
+
+-- Line Numbers
+--vim.opt.relativenumber = true
+--vim.opt.numberwidth = 2
