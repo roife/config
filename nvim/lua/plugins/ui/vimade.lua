@@ -4,6 +4,7 @@ return {
   event = "VeryLazy",
   opts = {
     recipe = { "default", { animate = false } },
-    fadelevel = 0.4,
+    fadelevel = 0.5,
+    ncmode = "windows",
   },
 }
