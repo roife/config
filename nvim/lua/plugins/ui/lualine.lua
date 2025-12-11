@@ -78,7 +78,7 @@ return {
   init = function() vim.o.laststatus = 0 end,
   event = "VeryLazy",
   opts = {
-    sections = {
+    tabline = {
       lualine_a = {
         mode,
       },
@@ -130,6 +130,7 @@ return {
         "location",
       },
     },
+    sections = nil,
     options = {
       icons_enabled = false,
       theme = "auto",
@@ -159,6 +160,6 @@ return {
   },
   config = function(_, opts)
     require("lualine").setup(opts)
-    vim.o.showtabline = 0
+    vim.o.laststatus = 0
   end,
 }
