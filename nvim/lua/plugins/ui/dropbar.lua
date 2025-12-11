@@ -1,22 +1,7 @@
 ---@type LazyPluginSpec
-local custom_path = {
-  get_symbols = function(buff, win, cursor)
-    local symbols = require("dropbar.sources").path.get_symbols(buff, win, cursor)
-    vim.api.nvim_set_hl(0, "DropBarFileName", { reverse = true, italic = vim.bo[buff].modified })
-    symbols[#symbols].name_hl = "DropBarFileName"
-    symbols[#symbols].name = " " .. symbols[#symbols].name .. " "
-    -- if vim.bo[buff].modified then symbols[#symbols].name = symbols[#symbols].name .. " *" end
-    return symbols
-  end,
-}
-
----@type LazyPluginSpec
 return {
   "Bekaboo/dropbar.nvim",
-  event = {
-    "BufRead",
-    "BufNewFile",
-  },
+  event = "VeryLazy",
   opts = {
     icons = {
       kinds = {
@@ -26,7 +11,7 @@ return {
       },
       ui = {
         bar = { separator = " ❯ ", extends = "…" },
-        menu = { separator = " ", indicator = "❯" }
+        menu = { separator = " ", indicator = "❯" },
       },
     },
     bar = {
@@ -37,7 +22,7 @@ return {
         local utils = require("dropbar.utils")
         if vim.bo[buf].ft == "markdown" then
           return {
-            custom_path,
+            sources.path,
             sources.markdown,
           }
         end
@@ -45,7 +30,7 @@ return {
           sources.terminal,
         } end
         return {
-          custom_path,
+          sources.path,
           utils.source.fallback {
             sources.lsp,
             sources.treesitter,

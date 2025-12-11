@@ -61,7 +61,7 @@ return {
   init = function() vim.o.laststatus = 0 end,
   event = "VeryLazy",
   opts = {
-    tabline = {
+    sections = {
       lualine_a = {
         {
           "tabs",
@@ -74,11 +74,9 @@ return {
         },
       },
       lualine_b = {
-        "branch",
+        { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" }, color = "nil" },
       },
-      lualine_c = {
-        { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" } },
-      },
+      lualine_c = {},
       lualine_x = {
         {
           name = "overseer-placeholder",
@@ -88,10 +86,9 @@ return {
           "encoding",
           show_bomb = true,
           separator = "",
-          cond = function()
-            return vim.bo.fileencoding:lower() ~= "utf-8" or vim.bo.bomb
-          end
+          cond = function() return vim.bo.fileencoding:lower() ~= "utf-8" or vim.bo.bomb end,
         },
+        "branch",
         {
           "fileformat",
           icons_enabled = true,
@@ -100,9 +97,7 @@ return {
             dos = "CRLF",
             mac = "CR",
           },
-          cond = function()
-            return vim.bo.fileformat ~= "unix"
-          end
+          cond = function() return vim.bo.fileformat ~= "unix" end,
         },
       },
       lualine_y = {
@@ -112,15 +107,9 @@ return {
         "location",
       },
     },
-    sections = nil,
     options = {
       icons_enabled = false,
       theme = "auto",
-      disabled_filetypes = {
-        statusline = {
-          "alpha",
-        },
-      },
       always_divide_middle = true,
       globalstatus = true,
       section_separators = { left = "", right = "" },
@@ -140,8 +129,5 @@ return {
       "lazy",
     },
   },
-  config = function(_, opts)
-    require("lualine").setup(opts)
-    vim.o.laststatus = 0
-  end,
+  config = function(_, opts) require("lualine").setup(opts) end,
 }
