@@ -1,9 +1,19 @@
 ---@type LazyPluginSpec
 return {
-  "ahmedkhalf/project.nvim",
-  event = "VeryLazy",
-  opts = {
-    ignore_lsp = { "jsonls", "yamlls", "taplo" },
+  'DrKJeff16/project.nvim',
+  cmd = { -- Lazy-load by commands
+    'Project',
+    'ProjectAdd',
+    'ProjectConfig',
+    'ProjectDelete',
+    'ProjectHistory',
+    'ProjectRecents',
+    'ProjectRoot',
+    'ProjectSession',
   },
-  config = function() require("project_nvim").setup {} end,
+  dependencies = { -- OPTIONAL
+    'nvim-lua/plenary.nvim',
+    'ibhagwan/fzf-lua',
+  },
+  opts = {},
 }
