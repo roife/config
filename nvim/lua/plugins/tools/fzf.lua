@@ -37,9 +37,9 @@ return {
       formatter = "path.filename_first",
     },
     lsp = {
-        symbols = {
-            symbol_style = 3,
-        },
+      symbols = {
+        symbol_style = 3,
+      },
     },
   },
   keys = {

@@ -35,4 +35,3 @@ vim.api.nvim_create_autocmd("FileType", {
   desc = "Disallow change buf for quickfix",
   callback = function() vim.wo.winfixbuf = true end,
 })
-

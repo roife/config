@@ -21,11 +21,7 @@ local function update_colorscheme()
   )
 
   local bg3 = vim.api.nvim_get_hl(0, { name = "GruvboxBg3" })
-  vim.api.nvim_set_hl(
-    0,
-    "LspInlayHint",
-    { fg = bg3.fg }
-  )
+  vim.api.nvim_set_hl(0, "LspInlayHint", { fg = bg3.fg })
 end
 
 ---@type LazyPluginSpec
