@@ -35,7 +35,7 @@ vim.keymap.set({ "n", "x", "o" }, "gk", "k")
 
 -- Simulating Emacs keybindings
 -- Cursor movement
-vim.keymap.set({ "c", "i" }, "<C-a>", "<Home>", { desc = "BOL" })
+vim.keymap.set({ "c", "i" }, "<C-a>", "<C-o>^", { desc = "BOL" })
 vim.keymap.set({ "c", "i" }, "<C-e>", "<End>", { desc = "EOL" })
 vim.keymap.set({ "n", "i" }, "<C-n>", "<Down>", { desc = "Next line" })
 vim.keymap.set({ "n", "i" }, "<C-p>", "<Up>", { desc = "Prev line" })
@@ -62,7 +62,7 @@ vim.keymap.set(
 )
 
 -- Quickfix keymaps
-function toggle_quickfix()
+local function toggle_quickfix()
   for _, win in ipairs(vim.fn.getwininfo()) do
     if win.quickfix == 1 then return vim.cmd.cclose() end
   end
