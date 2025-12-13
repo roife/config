@@ -2,5 +2,7 @@
 return {
   "folke/todo-comments.nvim",
   event = "VeryLazy",
-  opts = {},
+  opts = {
+    signs = false,
+  },
 }
