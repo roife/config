@@ -94,8 +94,6 @@ alias gcp='git cherry-pick'
 alias gcpa='git cherry-pick --abort'
 alias gcpc='git cherry-pick --continue'
 
-alias vim='nvim'
-
 # nodejs
 eval "$(fnm env)"
 
@@ -116,4 +114,3 @@ recover() {
     fnm i --lts
     tldr -u
 }
-
