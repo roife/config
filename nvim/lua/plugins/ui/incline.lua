@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 ---@type LazyPluginSpec
 return {
   "b0o/incline.nvim",
@@ -12,11 +14,12 @@ return {
       only_win = true,
     },
     render = function(props)
-      local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
-      if filename == "" then filename = "[No Name]" end
+      local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":.")
+      if path == "" then path = "[No Name]" end
+      path = utils.shorten_path(path, "/", 25)
       local modified = vim.bo[props.buf].modified
       return {
-        { filename, gui = modified and "bold,italic" or "bold" },
+        { path, gui = modified and "bold,italic" or "bold" },
       }
     end,
   },

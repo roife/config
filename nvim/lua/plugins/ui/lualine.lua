@@ -22,6 +22,14 @@ local function osv_or_dap()
   end
 end
 
+local function macro_indicator()
+  local rec = vim.fn.reg_recording()
+  if rec ~= "" then
+    return "Recording @" .. rec
+  end
+  return ""
+end
+
 local function osv_or_dap_and_filetype()
   local osv_or_dap = osv_or_dap()
   if osv_or_dap and osv_or_dap ~= "" then osv_or_dap = " (" .. osv_or_dap .. ")" end
@@ -44,9 +52,20 @@ return {
           symbols = {
             modified = "*", -- Text to show when the file is modified.
           },
+
+          -- HACK: show custom tabname
+          padding = { left = 1, right = 0 },
+          fmt = function(_, ctx)
+            local ok, custom_tabname = pcall(vim.api.nvim_tabpage_get_var, ctx.tabId, 'tabname')
+            if not ok or not custom_tabname or custom_tabname == "" then
+              return ""
+            end
+            return custom_tabname .. " "
+          end
         },
       },
       lualine_b = {
+        macro_indicator,
         { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" }, color = "nil" },
       },
       lualine_c = {},
@@ -104,6 +123,5 @@ return {
   },
   config = function(_, opts)
     require("lualine").setup(opts)
-    vim.api.nvim_set_hl(0, 'DropBarKindFile', { bold = true })
   end,
 }
