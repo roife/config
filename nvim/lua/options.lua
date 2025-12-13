@@ -23,7 +23,7 @@ vim.o.mousemoveevent = true -- fire CursorMoved-style events on mouse move
 -- UI
 -- vim.o.background = "light"
 vim.o.cursorline = true -- highlight cursor line
-vim.o.showtabline = 0   -- disable tabline
+vim.o.showtabline = 0 -- disable tabline
 vim.o.signcolumn = "yes" -- Keep signcolumn on by default
 vim.o.showmode = false -- remove "-- INSERT --" mode hint
 vim.o.smoothscroll = true

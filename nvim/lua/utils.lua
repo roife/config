@@ -27,15 +27,6 @@ function M.noop() end
 
 function M.empty_str(...) return "" end
 
-function M.center_cursor()
-  local win = 0
-  local view = vim.fn.winsaveview()
-
-  local height = vim.api.nvim_win_get_height(win)
-  view.topline = math.max(1, view.lnum - math.floor(height / 2))
-  vim.fn.winrestview(view)
-end
-
 ---shortens path by turning apple/orange -> a/orange
 ---@param path string
 ---@param sep string path separator
@@ -43,18 +34,14 @@ end
 ---@return string
 function M.shorten_path(path, sep, max_len)
   local len = #path
-  if len <= max_len then
-    return path
-  end
+  if len <= max_len then return path end
 
   local segments = vim.split(path, sep)
   for idx = 1, #segments - 1 do
-    if len <= max_len then
-      break
-    end
+    if len <= max_len then break end
 
     local segment = segments[idx]
-    local shortened = segment:sub(1, vim.startswith(segment, '.') and 2 or 1)
+    local shortened = segment:sub(1, vim.startswith(segment, ".") and 2 or 1)
     segments[idx] = shortened
     len = len - (#segment - #shortened)
   end

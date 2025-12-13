@@ -24,9 +24,7 @@ end
 
 local function macro_indicator()
   local rec = vim.fn.reg_recording()
-  if rec ~= "" then
-    return "Recording @" .. rec
-  end
+  if rec ~= "" then return "Recording @" .. rec end
   return ""
 end
 
@@ -56,12 +54,10 @@ return {
           -- HACK: show custom tabname
           padding = { left = 1, right = 0 },
           fmt = function(_, ctx)
-            local ok, custom_tabname = pcall(vim.api.nvim_tabpage_get_var, ctx.tabId, 'tabname')
-            if not ok or not custom_tabname or custom_tabname == "" then
-              return ""
-            end
+            local ok, custom_tabname = pcall(vim.api.nvim_tabpage_get_var, ctx.tabId, "tabname")
+            if not ok or not custom_tabname or custom_tabname == "" then return "" end
             return custom_tabname .. " "
-          end
+          end,
         },
       },
       lualine_b = {
@@ -121,7 +117,5 @@ return {
       "lazy",
     },
   },
-  config = function(_, opts)
-    require("lualine").setup(opts)
-  end,
+  config = function(_, opts) require("lualine").setup(opts) end,
 }
