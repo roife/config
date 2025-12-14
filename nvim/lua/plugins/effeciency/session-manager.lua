@@ -25,12 +25,12 @@ return {
   end,
   keys = {
     {
-      "<leader>ss",
+      "<leader>sls",
       "<cmd>SessionManager load_session<CR>",
       desc = "Load selected",
     },
     {
-      "<leader>sl",
+      "<leader>sll",
       "<cmd>SessionManager load_last_session<CR>",
       desc = "Load last",
     },

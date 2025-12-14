@@ -23,6 +23,7 @@ return {
   end,
   opts = {
     default_source = "last",
+    enable_cursor_hijack = true,
     sources = { "filesystem", "buffers", "git_status", "document_symbols" },
     event_handlers = {
       {
@@ -41,7 +42,6 @@ return {
       icon = {
         folder_closed = "+",
         folder_open = "-",
-        folder_empty = "+",
         folder_empty = "-",
         default = " ",
       },
@@ -72,20 +72,20 @@ return {
         Package = { icon = "Pk" },
         Class = { icon = "Cl" },
         Method = { icon = "Mt" },
-        Property = { icon = "Pr", h },
-        Field = { icon = "Fd", h },
-        Constructor = { icon = "Cr", h },
-        Enum = { icon = "En", h },
+        Property = { icon = "Pr" },
+        Field = { icon = "Fd" },
+        Constructor = { icon = "Cr" },
+        Enum = { icon = "En" },
         Interface = { icon = "If" },
         Function = { icon = "Fn" },
-        Variable = { icon = "Vr", h },
+        Variable = { icon = "Vr" },
         Constant = { icon = "Cn" },
         String = { icon = "St" },
         Number = { icon = "Nr" },
         Boolean = { icon = "Bl" },
         Array = { icon = "Ar" },
         Object = { icon = "Ob" },
-        Key = { icon = "Ke", h },
+        Key = { icon = "Ke" },
         Null = { icon = "Nu" },
         EnumMember = { icon = "Em" },
         Struct = { icon = "St" },
@@ -182,14 +182,6 @@ return {
       group_empty_dirs = true,
       follow_current_file = {
         enabled = true,
-      },
-      window = {
-        mappings = {
-          ["[g"] = "none",
-          ["]g"] = "none",
-          ["[h"] = "prev_git_modified",
-          ["]h"] = "next_git_modified",
-        },
       },
     },
   },

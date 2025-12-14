@@ -10,31 +10,9 @@ return {
   end,
   cmd = { "FzfLua" },
   opts = {
-    hls = {
-      normal = "NormalFloat",
-      border = "FloatBorder",
-      title = "FloatTitle",
-      preview_normal = "NormalFloat",
-      preview_border = "FloatBorder",
-      preview_title = "FloatTitle",
-    },
-    fzf_colors = {
-      ["fg"] = { "fg", "NormalFloat" },
-      ["bg"] = { "bg", "NormalFloat" },
-      ["hl"] = { "fg", "Statement" },
-      ["fg+"] = { "fg", "NormalFloat" },
-      ["bg+"] = { "bg", "CursorLine" },
-      ["hl+"] = { "fg", "Statement" },
-      ["info"] = { "fg", "PreProc" },
-      ["prompt"] = { "fg", "Conditional" },
-      ["pointer"] = { "fg", "Exception" },
-      ["marker"] = { "fg", "Keyword" },
-      ["spinner"] = { "fg", "Label" },
-      ["header"] = { "fg", "Comment" },
-      ["gutter"] = { "bg", "NormalFloat" },
-    },
     files = {
       formatter = "path.filename_first",
+      no_ignore = true,
     },
     lsp = {
       symbols = {
@@ -102,6 +80,11 @@ return {
       "<leader>fr",
       function() require("fzf-lua").registers() end,
       desc = "Registers",
+    },
+    {
+      "<leader>fR",
+      function() require("fzf-lua").resume() end,
+      desc = "Resume,"
     },
     {
       "<leader>fk",

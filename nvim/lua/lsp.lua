@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 -- Set diagnostic options
 vim.diagnostic.config {
   virtual_text = {
@@ -53,32 +51,36 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set("n", lhs, rhs, opts)
     end
 
-    vim.keymap.set({ "i", "s" }, "<C-S>", function()
-      ---@type vim.lsp.buf.signature_help.Opts
-      local config = {}
-      vim.lsp.buf.signature_help(vim.tbl_deep_extend("keep", config, {}))
-    end, { buffer = bufnr, desc = "References" })
+    vim.keymap.set(
+      { "i", "s" },
+      "<C-S>",
+      function() vim.lsp.buf.signature_help(vim.tbl_deep_extend("keep", {}, {})) end,
+      { buffer = bufnr, desc = "References" }
+    )
 
     -- LSP navigation
     nmap_local("gd", vim.lsp.buf.definition, "Definition")
-    nmap_local("gD", vim.lsp.buf.type_definition, "Type definition")
+    nmap_local("gD", vim.lsp.buf.declaration, "Declaration")
+    nmap_local("gt", vim.lsp.buf.type_definition, "Type definition")
     nmap_local("gI", vim.lsp.buf.implementation, "Implementation")
 
     -- CodeLens
-    nmap_local("<leader>lr", vim.lsp.codelens.run, "Run lens")
+    nmap_local("<leader>rl", vim.lsp.codelens.run, "Run lens")
 
     -- Call hierarchy
-    nmap_local("<leader>li", vim.lsp.buf.incoming_calls, "Incoming calls")
-    nmap_local("<leader>lo", vim.lsp.buf.outgoing_calls, "Outgoing calls")
+    nmap_local("<leader>lci", vim.lsp.buf.incoming_calls, "Incoming calls")
+    nmap_local("<leader>lco", vim.lsp.buf.outgoing_calls, "Outgoing calls")
 
     -- Toggle inlay hints
-    function toggle_lsp_inlay_hint()
+    local function toggle_lsp_inlay_hint()
       vim.lsp.inlay_hint.enable(
         not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr },
         { bufnr = bufnr }
       )
     end
-    nmap_local("<leader>lh", toggle_lsp_inlay_hint, "Toggle inlay hints")
+    nmap_local("<leader>lih", toggle_lsp_inlay_hint, "Toggle inlay hints")
+
+    nmap_local("<leader>lca", vim.lsp.buf.code_action, "Code Action")
 
     vim.keymap.set("i", "<C-J>", function()
       if not vim.lsp.inline_completion.get() then return "<C-J>" end
@@ -96,11 +98,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end,
       "List workspace folders"
     )
-
-    -- Use conform instead
-    -- vim.keymap.set("n", "<leader>F", function()
-    --   vim.lsp.buf.format { async = true }
-    -- end, { buffer = bufnr, desc = "Format document" })
   end,
 })
 

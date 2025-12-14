@@ -20,7 +20,7 @@ return {
   dependencies = {
     { "leafo/magick" },
   },
-  ft = { "markdown", "org", "norg" },
+  ft = { "markdown", "typst" },
   event = function(plugin)
     return {
       {

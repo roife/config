@@ -12,20 +12,13 @@ vim.keymap.set("t", "jj", vim.cmd.stopinsert, { desc = "Exit terminal mode" })
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 
 --  Use CTRL+<hjkl> to switch between windows
-local window_nav = {
-  { key = "h", label = "left" },
-  { key = "l", label = "right" },
-  { key = "j", label = "lower" },
-  { key = "k", label = "upper" },
-}
-for _, nav in ipairs(window_nav) do
-  vim.keymap.set(
-    "n",
-    "<C-" .. nav.key .. ">",
-    function() vim.cmd.wincmd(nav.key) end,
-    { desc = "Move focus to " .. nav.label }
-  )
-end
+vim.keymap.set("n", "<C-h>", function() vim.cmd.wincmd("h") end, { desc = "Move focus to left" })
+
+vim.keymap.set("n", "<C-l>", function() vim.cmd.wincmd("l") end, { desc = "Move focus to right" })
+
+vim.keymap.set("n", "<C-j>", function() vim.cmd.wincmd("j") end, { desc = "Move focus to lower" })
+
+vim.keymap.set("n", "<C-k>", function() vim.cmd.wincmd("k") end, { desc = "Move focus to upper" })
 
 -- Swap the behavior for moving by physical lines and display lines
 vim.keymap.set({ "n", "x", "o" }, "j", "gj")
@@ -35,7 +28,8 @@ vim.keymap.set({ "n", "x", "o" }, "gk", "k")
 
 -- Simulating Emacs keybindings
 -- Cursor movement
-vim.keymap.set({ "c", "i" }, "<C-a>", "<C-o>^", { desc = "BOL" })
+vim.keymap.set({ "c" }, "<C-a>", "<Home>", { desc = "BOL" })
+vim.keymap.set({ "i" }, "<C-a>", "<C-o>^", { desc = "BOL" })
 vim.keymap.set({ "c", "i" }, "<C-e>", "<End>", { desc = "EOL" })
 vim.keymap.set({ "n", "i" }, "<C-n>", "<Down>", { desc = "Next line" })
 vim.keymap.set({ "n", "i" }, "<C-p>", "<Up>", { desc = "Prev line" })

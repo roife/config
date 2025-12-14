@@ -20,5 +20,6 @@ return {
   config = function(_, opts)
     local iw = require("interestingwords")
     iw.setup(opts)
+    vim.keymap.del("n", "<leader>M")
   end,
 }

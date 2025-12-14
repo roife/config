@@ -4,7 +4,7 @@ return {
   opts = { rename_files = false },
   keys = {
     {
-      "<leader>h",
+      "<leader>tr",
       function() require("replacer").run() end,
       desc = "run replacer.nvim",
     },

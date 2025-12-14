@@ -15,18 +15,10 @@ return {
         "path",
         "snippets",
         "buffer",
-        "lazydev",
       },
       providers = {
         lsp = {
           name = "LSP",
-          fallbacks = {
-            "lazydev",
-          },
-        },
-        lazydev = {
-          name = "Development",
-          module = "lazydev.integrations.blink",
         },
       },
     },
@@ -40,7 +32,6 @@ return {
         },
       },
       menu = {
-        -- border = "rounded",
         -- Minimum width should be controlled by components
         min_width = 1,
         draw = {
@@ -57,21 +48,12 @@ return {
       },
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 0,
+        auto_show_delay_ms = 50,
         update_delay_ms = 50,
-        window = {
-          border = "rounded",
-          winblend = vim.o.pumblend,
-        },
       },
     },
     signature = {
-      enabled = true,
-      window = {
-        show_documentation = true,
-        border = "rounded",
-        winblend = vim.o.pumblend,
-      },
+      enabled = false,
     },
   },
 }

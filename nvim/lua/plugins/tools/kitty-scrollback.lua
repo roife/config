@@ -8,34 +8,6 @@ return {
   event = { "User KittyScrollbackLaunch" },
   opts = {
     {
-      paste_window = {
-        winopts_overrides = function(winopts)
-          winopts.border = {
-            "╭",
-            "─",
-            "╮",
-            "│",
-            "┤",
-            "─",
-            "├",
-            "│",
-          }
-          return winopts
-        end,
-        footer_winopts_overrides = function(winopts)
-          winopts.border = {
-            "│",
-            " ",
-            "│",
-            "│",
-            "╯",
-            "─",
-            "╰",
-            "│",
-          }
-          return winopts
-        end,
-      },
       callbacks = {
         after_paste_window_ready = function(pastewin_data)
           local winid = pastewin_data.paste_window.winid

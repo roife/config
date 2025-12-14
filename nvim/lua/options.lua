@@ -56,7 +56,7 @@ vim.o.inccommand = "split" -- Preview substitutions live, as you type!
 
 -- Performance
 vim.o.updatetime = 500
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 600
 
 -- Folding
 vim.o.foldlevel = 99

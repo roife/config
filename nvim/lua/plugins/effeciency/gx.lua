@@ -7,8 +7,6 @@ return {
       function() vim.cmd.Browse() end,
     },
   },
-  cmd = {
-    "Browse",
-  },
+  cmd = { "Browse" },
   opts = {},
 }

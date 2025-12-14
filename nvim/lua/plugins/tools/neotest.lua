@@ -4,16 +4,11 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
-
-    -- Adapters
-    "nvim-neotest/neotest-jest",
-    "nvim-neotest/neotest-go",
   },
   opts = function()
     return {
       adapters = {
-        require("neotest-jest"),
-        require("neotest-go"),
+        require('rustaceanvim.neotest'),
       },
       consumers = {
         overseer = require("neotest.consumers.overseer"),
