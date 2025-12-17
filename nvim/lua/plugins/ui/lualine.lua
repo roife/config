@@ -22,12 +22,6 @@ local function osv_or_dap()
   end
 end
 
-local function macro_indicator()
-  local rec = vim.fn.reg_recording()
-  if rec ~= "" then return "Recording @" .. rec end
-  return ""
-end
-
 local function osv_or_dap_and_filetype()
   local osv_or_dap = osv_or_dap()
   if osv_or_dap and osv_or_dap ~= "" then osv_or_dap = " (" .. osv_or_dap .. ")" end
@@ -59,9 +53,13 @@ return {
             return custom_tabname .. " "
           end,
         },
+        {
+          require("noice").api.status.mode.get,
+          cond = require("noice").api.status.mode.has,
+          color = { fg = "#ff9e64" },
+        },
       },
       lualine_b = {
-        macro_indicator,
         { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" }, color = "nil" },
       },
       lualine_c = {},

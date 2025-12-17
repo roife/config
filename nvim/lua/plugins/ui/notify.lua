@@ -5,5 +5,6 @@ return {
   opts = {
     render = "minimal",
     top_down = false,
+    stages = "static",
   },
 }
