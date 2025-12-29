@@ -40,10 +40,7 @@ return {
           "tabs",
           mode = 2,
           use_mode_colors = true,
-          show_modified_status = true, -- Shows a symbol next to the tab name if the file has been modified.
-          symbols = {
-            modified = "*", -- Text to show when the file is modified.
-          },
+          show_modified_status = false, -- Shows a symbol next to the tab name if the file has been modified.
 
           -- HACK: show custom tabname
           padding = { left = 1, right = 0 },
