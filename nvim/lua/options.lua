@@ -31,7 +31,6 @@ vim.o.termguicolors = true
 vim.o.title = true
 vim.o.titlestring = "%t - Nvim"
 vim.o.conceallevel = 2 -- hide most concealed text unless on the line (used by Markdown/LaTeX).
-vim.o.colorcolumn = "81"
 vim.opt.shortmess:append("I") -- don't show welcome message
 vim.o.confirm = true -- prompt to save when closing modified buffers instead of failing.
 
