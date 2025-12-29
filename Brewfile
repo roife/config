@@ -1,39 +1,51 @@
-brew "cmake"
+tap "daipeihust/tap"
+brew "im-select"
+
 brew "direnv"
+brew "ripgrep"
 brew "fd"
 brew "fnm"
 brew "fzf"
 brew "gh"
 brew "graphviz"
 brew "imagemagick"
-brew "lua"
-brew "lua-language-server"
-brew "mas"
 brew "ninja"
-brew "tree-sitter"
 brew "neovim"
 brew "ninja"
 brew "pandoc"
 brew "pngpaste"
-brew "ripgrep"
-brew "rustup"
-brew "stylua"
 brew "tldr"
 brew "tokei"
 brew "tree"
+brew "wget"
+brew "zellij"
+
+brew "rustup"
+
+brew "cmake"
+brew "llvm"
+
+brew "tree-sitter"
 brew "tree-sitter-cli"
+
+brew "lua"
+brew "stylua"
+brew "lua-language-server"
+
 brew "typst"
 brew "tinymist"
-brew "wget"
+
 brew "z"
-brew "zellij"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
+
 cask "bettertouchtool"
 cask "copilot-cli"
 cask "font-iosevka"
 cask "kitty"
 cask "launchbar"
+
+brew "mas"
 mas "AdGuard for Safari", id: 1440147259
 mas "Bob", id: 1630034110
 mas "Immersive Translate", id: 6447957425
