@@ -33,7 +33,7 @@ vim.o.titlestring = "%t - Nvim"
 vim.o.conceallevel = 2 -- hide most concealed text unless on the line (used by Markdown/LaTeX).
 vim.o.colorcolumn = "81"
 vim.opt.shortmess:append("I") -- don't show welcome message
-vim.opt.confirm = true -- prompt to save when closing modified buffers instead of failing.
+vim.o.confirm = true -- prompt to save when closing modified buffers instead of failing.
 
 -- Scrolling
 vim.o.scrolloff = 5
@@ -44,7 +44,7 @@ vim.o.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Splitting
-vim.opt.splitkeep = "screen" -- keep windows’ view stable when splitting/closing
+vim.o.splitkeep = "screen" -- keep windows’ view stable when splitting/closing
 vim.o.splitbelow = true -- open new vertical split bottom
 vim.o.splitright = true -- open new horizontal splits right
 

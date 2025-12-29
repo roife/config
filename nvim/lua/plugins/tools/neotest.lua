@@ -8,7 +8,7 @@ return {
   opts = function()
     return {
       adapters = {
-        require('rustaceanvim.neotest'),
+        require("rustaceanvim.neotest"),
       },
       consumers = {
         overseer = require("neotest.consumers.overseer"),

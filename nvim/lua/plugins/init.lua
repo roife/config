@@ -77,5 +77,4 @@ return {
   { import = "plugins.vc" },
   { import = "plugins.tools" },
   { import = "plugins.effeciency" },
-  { import = "plugins.fun" },
 }

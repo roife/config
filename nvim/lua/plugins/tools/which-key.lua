@@ -12,10 +12,10 @@ return {
     },
     icons = {
       breadcrumb = "»",
-      separator  = "➜",
-      group      = "+",
-      ellipsis   = "…",
-      mappings   = false,
+      separator = "➜",
+      group = "+",
+      ellipsis = "…",
+      mappings = false,
     },
     spec = {
       { "<leader>i", group = "insert" },

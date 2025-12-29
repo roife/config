@@ -84,7 +84,7 @@ return {
     {
       "<leader>fR",
       function() require("fzf-lua").resume() end,
-      desc = "Resume,"
+      desc = "Resume,",
     },
     {
       "<leader>fk",

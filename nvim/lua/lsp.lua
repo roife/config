@@ -107,4 +107,5 @@ vim.lsp.enable {
   "copilot",
   "pyright",
   "rust-analyzer",
+  "tinymist",
 }

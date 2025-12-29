@@ -1,20 +1,13 @@
 ---@type LazyPluginSpec
 return {
   "nvim-treesitter/nvim-treesitter",
-  event = "VeryLazy",
   build = ":TSUpdate",
+  lazy = false,
   opts = {
-    ---@diagnostic disable-next-line: param-type-mismatch
-    parser_install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
-    ensure_installed = "all",
-    highlight = {
-      enable = true,
-      -- Should be controlled by vimtex
-      disable = { "latex" },
-    },
-    indent = {
-      enable = true,
-    },
+    install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
+    highlight = { enable = true },
+    indent = { enable = true },
   },
-  config = function(_, opts) require("nvim-treesitter").setup(opts) end,
+
+  config = function(_, opts) require("nvim-treesitter.configs").setup(opts) end,
 }

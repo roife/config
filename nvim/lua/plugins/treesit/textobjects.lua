@@ -1,9 +1,11 @@
 ---@type LazyPluginSpec
 return {
   "nvim-treesitter/nvim-treesitter-textobjects",
+  branch = "main",
   dependencies = {
     { "ghostbuster91/nvim-next" },
   },
+  init = function() vim.g.textobjects_enable_mappings = 0 end,
   opts = {
     select = {
       lookahead = true,
@@ -106,28 +108,16 @@ return {
         desc = "inner part of a class region",
       },
       {
-        "aj",
-        function() ts.select.select_textobject("@conditional.outer") end,
+        "ab",
+        function() ts.select.select_textobject("@block.outer") end,
         mode = { "x", "o" },
-        desc = "a judge",
+        desc = "a block",
       },
       {
-        "ij",
-        function() ts.select.select_textobject("@conditional.inner") end,
+        "ib",
+        function() ts.select.select_textobject("@block.inner") end,
         mode = { "x", "o" },
-        desc = "inner part of a judge region",
-      },
-      {
-        "al",
-        function() ts.select.select_textobject("@loop.outer") end,
-        mode = { "x", "o" },
-        desc = "a loop",
-      },
-      {
-        "il",
-        function() ts.select.select_textobject("@loop.inner") end,
-        mode = { "x", "o" },
-        desc = "inner part of a loop",
+        desc = "inner part of a block",
       },
       {
         "an",
@@ -217,52 +207,28 @@ return {
         desc = "Previous class end",
       },
       {
-        "]j",
-        function() ts.move.goto_next_start("@conditional.outer") end,
+        "]b",
+        function() ts.move.goto_next_start("@block.outer") end,
         mode = { "n", "x", "o" },
-        desc = "Next judge start",
+        desc = "Next block start",
       },
       {
-        "]J",
-        function() ts.move.goto_next_end("@conditional.outer") end,
+        "]B",
+        function() ts.move.goto_next_end("@block.outer") end,
         mode = { "n", "x", "o" },
-        desc = "Next judge end",
+        desc = "Next block end",
       },
       {
-        "[j",
-        function() ts.move.goto_previous_start("@conditional.outer") end,
+        "[b",
+        function() ts.move.goto_previous_start("@block.outer") end,
         mode = { "n", "x", "o" },
-        desc = "Previous judge start",
+        desc = "Previous block start",
       },
       {
-        "[J",
-        function() ts.move.goto_previous_end("@conditional.outer") end,
+        "[B",
+        function() ts.move.goto_previous_end("@block.outer") end,
         mode = { "n", "x", "o" },
-        desc = "Previous judge end",
-      },
-      {
-        "]l",
-        function() ts.move.goto_next_start("@loop.outer") end,
-        mode = { "n", "x", "o" },
-        desc = "Next loop start",
-      },
-      {
-        "]L",
-        function() ts.move.goto_next_end("@loop.outer") end,
-        mode = { "n", "x", "o" },
-        desc = "Next loop end",
-      },
-      {
-        "[l",
-        function() ts.move.goto_previous_start("@loop.outer") end,
-        mode = { "n", "x", "o" },
-        desc = "Previous loop start",
-      },
-      {
-        "[L",
-        function() ts.move.goto_previous_end("@loop.outer") end,
-        mode = { "n", "x", "o" },
-        desc = "Previous loop end",
+        desc = "Previous block end",
       },
       {
         "[n",

@@ -1,4 +1,4 @@
--- ---@type LazyPluginSpec
+---@type LazyPluginSpec
 return {
   "gabrielpoca/replacer.nvim",
   opts = { rename_files = false },
