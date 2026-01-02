@@ -7,10 +7,6 @@ vim.g.maplocalleader = "  "
 -- Clear highlights on search when pressing <Esc> in normal mode
 vim.keymap.set("n", "<Esc>", vim.cmd.nohlsearch, { desc = "Clear search results" })
 
--- Exit terminal mode in the builtin terminal with a shortcut
-vim.keymap.set("t", "jj", vim.cmd.stopinsert, { desc = "Exit terminal mode" })
-vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
-
 --  Use CTRL+<hjkl> to switch between windows
 vim.keymap.set("n", "<C-h>", function() vim.cmd.wincmd("h") end, { desc = "Move focus to left" })
 

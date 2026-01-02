@@ -51,6 +51,18 @@ return {
           filetype = { "cpp" },
         },
       },
+      {
+        name = "Rust build debug mode",
+        builder = function()
+          return {
+            cmd = { "cargo" },
+            args = { "build" },
+          }
+        end,
+        condition = {
+          filetype = { "rust" },
+        },
+      },
     }
     for _, template in ipairs(templates) do
       overseer.register_template(template)

@@ -1,4 +1,3 @@
-
 ---@type LazyPluginSpec
 return {
   "LiadOz/nvim-dap-repl-highlights",

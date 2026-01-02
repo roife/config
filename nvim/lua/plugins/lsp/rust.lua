@@ -1,22 +1,83 @@
 ---@type LazyPluginSpec
 return {
-  "mrcjkb/rustaceanvim",
-  ft = { "rust" },
+  dir = "~/code/rustaceanvim/",
+  version = "^6",
+  lazy = false,
   opts = {
-    dap = {
-      adapter = {
-        type = "server",
-        port = "${port}",
-        host = "127.0.0.1",
-        executable = {
-          command = "codelldb",
-          args = {
-            "--port",
-            "${port}",
-            "--settings",
-            vim.json.encode {
-              showDisassembly = "never",
+    server = {
+      default_settings = {
+        ["rust-analyzer"] = {
+          cargo = {
+            allFeatures = true,
+            allTargets = true,
+            features = "full",
+          },
+          checkOnSave = false,
+          completion = {
+            termSearch = {
+              enable = true,
             },
+            fullFunctionSignatures = {
+              enable = true,
+            },
+          },
+          hover = {
+            memoryLayout = {
+              size = "both",
+            },
+            show = {
+              traitAssocItems = 5,
+            },
+            documentation = {
+              keywords = {
+                -- :enable :json-false
+                enable = false,
+              },
+            },
+          },
+          inlayHints = {
+            lifetimeElisionHints = {
+              enable = "skip_trivial",
+              useParameterNames = true,
+            },
+            closureReturnTypeHints = {
+              enable = "always",
+            },
+            discriminantHints = {
+              enable = true,
+            },
+            genericParameterHints = {
+              lifetime = {
+                enable = true,
+              },
+            },
+          },
+          semanticHighlighting = {
+            operator = {
+              specialization = {
+                enable = true,
+              },
+            },
+            punctuation = {
+              enable = true,
+              specialization = {
+                enable = true,
+              },
+            },
+          },
+          workspace = {
+            symbol = {
+              search = {
+                kind = "all_symbols",
+                scope = "workspace_and_dependencies",
+              },
+            },
+          },
+          lru = {
+            capacity = 1024,
+          },
+          diagnostics = {
+            enable = true,
           },
         },
       },

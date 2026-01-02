@@ -2,32 +2,20 @@
 return {
   "mfussenegger/nvim-dap",
   init = function()
-    vim.fn.sign_define(
-      "DapBreakpoint",
-      { text = "●", texthl = "DiagnosticError" }
-    )
-    vim.fn.sign_define(
-      "DapBreakpointCondition",
-      { text = "◎", texthl = "DiagnosticError" }
-    )
-    vim.fn.sign_define(
-      "DapLogPoint",
-      { text = "▮", texthl = "DiagnosticInfo" }
-    )
-    vim.fn.sign_define(
-      "DapStopped",
-      { text = "▶", texthl = "Constant", linehl = "debugPC" }
-    )
-    vim.fn.sign_define("DapBreakpointRejected", { text = "" })
+    vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError" })
+    vim.fn.sign_define("DapBreakpointCondition", { text = "◎", texthl = "DiagnosticError" })
+    vim.fn.sign_define("DapLogPoint", { text = "▮", texthl = "DiagnosticInfo" })
+    vim.fn.sign_define("DapStopped", { text = "▶", texthl = "Constant", linehl = "debugPC" })
+    vim.fn.sign_define("DapBreakpointRejected", { text = "⊘" })
   end,
   dependencies = {
-    "jay-babu/mason-nvim-dap.nvim",
     "LiadOz/nvim-dap-repl-highlights",
     "theHamsta/nvim-dap-virtual-text",
     "rcarriga/nvim-dap-ui",
   },
   config = function()
-    local dap = require "dap"
+    local dap = require("dap")
+
     dap.defaults.fallback.external_terminal = {
       command = "/usr/bin/kitty",
       args = {
@@ -48,6 +36,7 @@ return {
         port = config.port or 8086,
       }
     end
+
     dap.configurations.lua = {
       {
         type = "nvim-lua",
@@ -59,31 +48,22 @@ return {
     dap.adapters.gdb = {
       type = "executable",
       command = "gdb",
-      args = { "-i", "dap" },
+      args = { "--interpreter=dap", "--eval-command", "set print pretty on" }
     }
 
-    dap.adapters.codelldb = {
-      type = "server",
-      port = "${port}",
-      executable = {
-        command = vim.fn.exepath "codelldb",
-        args = {
-          "--port",
-          "${port}",
-          "--settings",
-          vim.json.encode {
-            showDisassembly = "never",
-          },
-        },
-      },
+    dap.adapters.lldb = {
+      type = "executable",
+      command = vim.fn.exepath("lldb-dap"),
+      name = "lldb",
     }
+
     vim
       .iter({
         {
           name = "LLDB: Launch active file",
-          type = "codelldb",
+          type = "lldb",
           request = "launch",
-          program = "${fileBasenameNoExtension}",
+          program = "${workspaceFolder}/${fileBasenameNoExtension}",
           cwd = "${workspaceFolder}",
           stopOnEntry = false,
           args = {},
@@ -93,7 +73,7 @@ return {
 
         {
           name = "LLDB: Attach to a running process",
-          type = "codelldb",
+          type = "lldb",
           request = "attach",
           pid = "${command:pickProcess}",
           stopOnEntry = true,
@@ -102,52 +82,19 @@ return {
       :map(function(configuration)
         dap.configurations.cpp = dap.configurations.cpp or {}
         table.insert(dap.configurations.cpp, configuration)
+
+        dap.configurations.c = dap.configurations.c or {}
+        table.insert(dap.configurations.c, configuration)
       end)
-    vim
-      .iter({
-        {
-          name = "LLDB: Launch a new process",
-          type = "codelldb",
-          request = "launch",
-          program = "${workspaceFolder}/zig-out/bin/${workspaceFolderBasename}",
-          cwd = "${workspaceFolder}",
-          stopOnEntry = false,
-          args = {},
-          console = "integratedTerminal",
-          preLaunchTask = "zig build",
-        },
-        {
-          name = "LLDB: Launch a new process with arguments",
-          type = "codelldb",
-          request = "launch",
-          program = "${workspaceFolder}/zig-out/bin/${workspaceFolderBasename}",
-          cwd = "${workspaceFolder}",
-          stopOnEntry = false,
-          args = function()
-            local args = {}
-            local input = vim.fn.input "Enter program arguments: "
-            if input ~= "" then
-              for arg in vim.gsplit(input, " ") do
-                table.insert(args, arg)
-              end
-            end
-            return args
-          end,
-          console = "integratedTerminal",
-          preLaunchTask = "zig build",
-        },
-      })
-      :map(function(configuration)
-        dap.configurations.zig = dap.configurations.zig or {}
-        table.insert(dap.configurations.zig, configuration)
-      end)
+
+    -- Dap support for Rust is implemented via rustaceanvim
 
     dap.adapters["pwa-node"] = {
       type = "server",
       host = "localhost",
       port = "${port}",
       executable = {
-        command = vim.fn.exepath "js-debug-adapter",
+        command = vim.fn.exepath("js-debug-adapter"),
         args = { "${port}" },
       },
     }
@@ -170,54 +117,40 @@ return {
   keys = {
     {
       "<F5>",
-      function()
-        require("dap").continue()
-      end,
+      function() require("dap").continue() end,
       desc = "Debug: Continue",
     },
     {
       "<F17>",
-      function()
-        require("dap").terminate()
-      end,
+      function() require("dap").terminate() end,
       desc = "Debug: Terminate",
     },
     {
       "<F10>",
-      function()
-        require("dap").step_over()
-      end,
+      function() require("dap").step_over() end,
       desc = "Debug: Step over",
     },
     {
       "<F11>",
-      function()
-        require("dap").step_into()
-      end,
+      function() require("dap").step_into() end,
       desc = "Debug: Step into",
     },
     {
       "<F23>", -- Shift + <F11>
-      function()
-        require("dap").step_out()
-      end,
+      function() require("dap").step_out() end,
       desc = "Debug: Step out",
     },
     {
       "<F9>",
-      function()
-        require("dap").toggle_breakpoint()
-      end,
+      function() require("dap").toggle_breakpoint() end,
       desc = "Debug: Toggle breakpoint",
     },
 
     {
       "<leader>dp",
       function()
-        local condition = vim.fn.input "Breakpoint condition: "
-        if condition == "" then
-          return
-        end
+        local condition = vim.fn.input("Breakpoint condition: ")
+        if condition == "" then return end
         require("dap").set_breakpoint(condition)
       end,
       desc = "Set condition breakpoint",
@@ -225,33 +158,25 @@ return {
     {
       "<leader>dP",
       function()
-        local message = vim.fn.input "Log point message: "
-        if message == "" then
-          return
-        end
+        local message = vim.fn.input("Log point message: ")
+        if message == "" then return end
         require("dap").set_breakpoint(nil, nil, message)
       end,
       desc = "Set log point",
     },
     {
       "<leader>db",
-      function()
-        require("dap").list_breakpoints(true)
-      end,
+      function() require("dap").list_breakpoints(true) end,
       desc = "Open breakpoints",
     },
     {
       "<leader>dR",
-      function()
-        require("dap").repl.toggle()
-      end,
+      function() require("dap").repl.toggle() end,
       desc = "Toggle REPL",
     },
     {
       "<leader>dl",
-      function()
-        require("dap").run_last()
-      end,
+      function() require("dap").run_last() end,
       desc = "Run last",
     },
   },

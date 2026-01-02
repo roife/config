@@ -106,6 +106,6 @@ vim.lsp.enable {
   "lua_ls",
   "copilot",
   "pyright",
-  "rust-analyzer",
+  --"rust-analyzer",
   "tinymist",
 }

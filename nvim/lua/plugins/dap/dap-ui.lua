@@ -1,27 +1,23 @@
 ---@type LazyPluginSpec
 return {
   "rcarriga/nvim-dap-ui",
-  ---@type dapui.Config
+  dependencies = { "nvim-neotest/nvim-nio" },
   opts = {
     icons = {
-      collapsed = "",
-      current_frame = "",
-      expanded = "",
+      collapsed = "+",
+      current_frame = "*",
+      expanded = "-",
     },
   },
   keys = {
     {
       "<leader>du",
-      function()
-        require("dapui").toggle()
-      end,
+      function() require("dapui").toggle() end,
       desc = "Toggle full UI",
     },
     {
-      "<C-k>",
-      function()
-        require("dapui").eval()
-      end,
+      "<leader>de",
+      function() require("dapui").eval() end,
       desc = "Evaluate expression",
       mode = { "n", "v" },
     },
