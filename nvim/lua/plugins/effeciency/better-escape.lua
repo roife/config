@@ -5,7 +5,5 @@ return {
     mapping = { "jj" },
     timeout = vim.o.timeoutlen,
   },
-  config = function()
-    require("better_escape").setup()
-  end,
+  config = function() require("better_escape").setup() end,
 }

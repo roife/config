@@ -25,14 +25,9 @@ return {
         max_duration = 200,
         chars_for_max_duration = 15,
         color = "#D7BA7D",
-        effect = function (self, _)
-          return self.settings.color, 1
-        end,
+        effect = function(self, _) return self.settings.color, 1 end,
       },
     },
   },
-  config = function(_, opts)
-    require("tiny-glimmer").setup(opts)
-  end,
+  config = function(_, opts) require("tiny-glimmer").setup(opts) end,
 }
-
