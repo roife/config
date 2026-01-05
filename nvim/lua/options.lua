@@ -33,6 +33,7 @@ vim.o.titlestring = "%t - Nvim"
 vim.o.conceallevel = 2 -- hide most concealed text unless on the line (used by Markdown/LaTeX).
 vim.opt.shortmess:append("I") -- don't show welcome message
 vim.o.confirm = true -- prompt to save when closing modified buffers instead of failing.
+vim.o.laststatus = 0 -- prompt to save when closing modified buffers instead of failing.
 
 -- Scrolling
 vim.o.scrolloff = 5

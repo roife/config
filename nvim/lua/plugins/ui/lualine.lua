@@ -31,13 +31,12 @@ end
 ---@type LazyPluginSpec
 return {
   "nvim-lualine/lualine.nvim",
-  init = function() vim.o.laststatus = 0 end,
   event = "VeryLazy",
   dependencies = {
     "Bekaboo/dropbar.nvim",
   },
   opts = {
-    sections = {
+    tabline = {
       lualine_a = {
         {
           "tabs",
@@ -93,11 +92,58 @@ return {
         "location",
       },
     },
+    sections = {
+      lualine_a = {
+        {
+          'filename',
+          file_status = true,
+          newfile_status = true,
+          path = 1,
+
+          shorting_target = 40,
+          symbols = {
+            modified = '*',
+            readonly = 'RO',
+            unnamed = '[No Name]',
+            newfile = '[New]',
+          }
+        }
+      },
+      lualine_b = {},
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {},
+    },
+    inactive_sections = {
+      lualine_a = {
+        {
+          'filename',
+          file_status = true,
+          newfile_status = true,
+          path = 1,
+
+          shorting_target = 40,
+          symbols = {
+            modified = '*',
+            readonly = 'RO',
+            unnamed = '[No Name]',
+            newfile = '[New]',
+          }
+        }
+      },
+      lualine_b = {},
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {},
+    },
     options = {
       icons_enabled = false,
       theme = "auto",
       always_divide_middle = true,
-      globalstatus = true,
+      always_show_tabline = true,
+      globalstatus = false,
       section_separators = { left = "", right = "" },
       component_separators = { left = "", right = "|" },
     },
@@ -115,5 +161,7 @@ return {
       "lazy",
     },
   },
-  config = function(_, opts) require("lualine").setup(opts) end,
+  config = function(_, opts)
+    require("lualine").setup(opts)
+  end,
 }
