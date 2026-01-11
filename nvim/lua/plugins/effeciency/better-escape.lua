@@ -3,7 +3,7 @@ return {
   "max397574/better-escape.nvim",
   opts = {
     default_mappings = false,
-    mapping = {
+    mappings = {
       i = {
         j = {
           j = "<Esc>",
