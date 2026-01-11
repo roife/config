@@ -36,7 +36,7 @@ alias ec='emacsclient -n'
 #alias-git
 # Oh My Zsh Git aliases — 常用 alias 列表
 alias g='git'
-alias gst='git status -sb && echo "@ $(git rev-parse --short HEAD)"'
+alias gst='git status'
 alias gss='git status -s'
 alias ga='git add'
 alias gaa='git add --all'
@@ -74,6 +74,7 @@ alias gcf='git config --list'
 alias gclean='git clean -id'
 
 alias gd='git diff'
+alias gdt='GIT_EXTERNAL_DIFF=difft git diff'
 alias gdca='git diff --cached'
 alias gds='git diff --staged'
 alias gdw='git diff --word-diff'
