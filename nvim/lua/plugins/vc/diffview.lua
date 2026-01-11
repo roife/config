@@ -51,7 +51,5 @@ return {
       },
     }
   end,
-  config = function(_, opts)
-    require("diffview").setup(opts)
-  end,
+  config = function(_, opts) require("diffview").setup(opts) end,
 }

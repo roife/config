@@ -95,19 +95,19 @@ return {
     sections = {
       lualine_a = {
         {
-          'filename',
+          "filename",
           file_status = true,
           newfile_status = true,
           path = 1,
 
           shorting_target = 40,
           symbols = {
-            modified = '*',
-            readonly = 'RO',
-            unnamed = '[No Name]',
-            newfile = '[New]',
-          }
-        }
+            modified = "*",
+            readonly = "RO",
+            unnamed = "[No Name]",
+            newfile = "[New]",
+          },
+        },
       },
       lualine_b = {},
       lualine_c = {},
@@ -118,19 +118,19 @@ return {
     inactive_sections = {
       lualine_a = {
         {
-          'filename',
+          "filename",
           file_status = true,
           newfile_status = true,
           path = 1,
 
           shorting_target = 40,
           symbols = {
-            modified = '*',
-            readonly = 'RO',
-            unnamed = '[No Name]',
-            newfile = '[New]',
-          }
-        }
+            modified = "*",
+            readonly = "RO",
+            unnamed = "[No Name]",
+            newfile = "[New]",
+          },
+        },
       },
       lualine_b = {},
       lualine_c = {},
@@ -161,7 +161,5 @@ return {
       "lazy",
     },
   },
-  config = function(_, opts)
-    require("lualine").setup(opts)
-  end,
+  config = function(_, opts) require("lualine").setup(opts) end,
 }

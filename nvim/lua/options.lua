@@ -19,8 +19,8 @@ vim.o.breakindent = true -- Wrapped line will continue visually indented
 -- Mouse
 vim.o.mouse = "a" -- allow the mouse to be used in nvim
 vim.o.mousemoveevent = true -- fire CursorMoved-style events on mouse move
-vim.keymap.set({'n','i','v'}, '<ScrollWheelLeft>',  '<Nop>', { noremap = true, silent = true })
-vim.keymap.set({'n','i','v'}, '<ScrollWheelRight>', '<Nop>', { noremap = true, silent = true })
+vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelLeft>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelRight>", "<Nop>", { noremap = true, silent = true })
 
 -- UI
 -- vim.o.background = "light"

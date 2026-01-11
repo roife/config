@@ -16,9 +16,9 @@ return {
     },
   },
   config = function()
-    require("difft").setup({
+    require("difft").setup {
       command = "GIT_EXTERNAL_DIFF='difft --color=always' git diff",
       layout = "float",
-    })
+    }
   end,
 }
