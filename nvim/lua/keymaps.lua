@@ -9,11 +9,8 @@ vim.keymap.set("n", "<Esc>", vim.cmd.nohlsearch, { desc = "Clear search results"
 
 --  Use CTRL+<hjkl> to switch between windows
 vim.keymap.set("n", "<C-h>", function() vim.cmd.wincmd("h") end, { desc = "Move focus to left" })
-
 vim.keymap.set("n", "<C-l>", function() vim.cmd.wincmd("l") end, { desc = "Move focus to right" })
-
 vim.keymap.set("n", "<C-j>", function() vim.cmd.wincmd("j") end, { desc = "Move focus to lower" })
-
 vim.keymap.set("n", "<C-k>", function() vim.cmd.wincmd("k") end, { desc = "Move focus to upper" })
 
 -- Swap the behavior for moving by physical lines and display lines
