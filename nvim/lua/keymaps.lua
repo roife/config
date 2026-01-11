@@ -37,6 +37,17 @@ vim.keymap.set("i", "<C-y>", '<C-r>"', { desc = "Yank last kill" })
 vim.keymap.set("n", "<C-a>", "^", { desc = "Bol" })
 vim.keymap.set("n", "<C-e>", "$", { desc = "Eol" })
 
+-- Tabs (based on Meta key)
+for i = 1, 9 do
+  local key = "<M-" .. i .. ">"
+  local desc = "Go to tab " .. i
+  vim.keymap.set("n", key, function() vim.cmd.tabn(i) end, { desc = desc })
+end
+vim.keymap.set("n", "<M-S-Tab>", function() vim.cmd.tabprevious() end, { desc = "Go to previous tab" })
+vim.keymap.set("n", "<M-Tab>", function() vim.cmd.tabnext() end, { desc = "Go to next tab" })
+vim.keymap.set("n", "<M-t>", function() vim.cmd.tabnew() end, { desc = "Open new tab" })
+vim.keymap.set("n", "<M-w>", function() vim.cmd.tabclose() end, { desc = "Close current tab" })
+
 -- Disable righ-click popups
 vim.keymap.set({ "n", "i", "v" }, "<RightMouse>", utils.noop)
 
