@@ -32,6 +32,11 @@ return {
       desc = "Buffers",
     },
     {
+      "<leader>fl",
+      function() require("fzf-lua").lines() end,
+      desc = "Buffers",
+    },
+    {
       "<leader>f?",
       function() require("fzf-lua").help_tags() end,
       desc = "Help tags",
@@ -58,17 +63,12 @@ return {
     },
     {
       "<leader>fc",
-      function() require("fzf-lua").colorschemes() end,
+      function() require("fzf-lua").commands() end,
       desc = "Colorscheme",
     },
     {
-      "<leader>fH",
-      function() require("fzf-lua").highlights() end,
-      desc = "Highlights",
-    },
-    {
       "<leader>fj",
-      function() require("fzf-lua").jump() end,
+      function() require("fzf-lua").jumps() end,
       desc = "Jumplist",
     },
     {
@@ -91,14 +91,6 @@ return {
       function() require("fzf-lua").keymaps() end,
       desc = "Keymaps",
     },
-    -- {
-    --   "<leader>fn",
-    --   function()
-    --     -- To be implement
-    --   end,
-    --   desc = "Notify",
-    -- },
-
     -- git
     {
       "<leader>fgc",
@@ -107,7 +99,7 @@ return {
     },
     {
       "<leader>fgb",
-      function() require("fzf-lua").git_branchs() end,
+      function() require("fzf-lua").git_branches() end,
       desc = "Branchs",
     },
     {
