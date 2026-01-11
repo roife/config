@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 -- Restore last cursor position
 vim.api.nvim_create_autocmd("BufRead", {
   desc = "Restore last cursor position",

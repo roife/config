@@ -19,6 +19,8 @@ vim.o.breakindent = true -- Wrapped line will continue visually indented
 -- Mouse
 vim.o.mouse = "a" -- allow the mouse to be used in nvim
 vim.o.mousemoveevent = true -- fire CursorMoved-style events on mouse move
+vim.keymap.set({'n','i','v'}, '<ScrollWheelLeft>',  '<Nop>', { noremap = true, silent = true })
+vim.keymap.set({'n','i','v'}, '<ScrollWheelRight>', '<Nop>', { noremap = true, silent = true })
 
 -- UI
 -- vim.o.background = "light"
@@ -34,6 +36,8 @@ vim.o.conceallevel = 2 -- hide most concealed text unless on the line (used by M
 vim.opt.shortmess:append("I") -- don't show welcome message
 vim.o.confirm = true -- prompt to save when closing modified buffers instead of failing.
 vim.o.laststatus = 0 -- prompt to save when closing modified buffers instead of failing.
+vim.opt.fillchars:append("diff:╱")
+vim.opt.diffopt:append("iwhiteall")
 
 -- Scrolling
 vim.o.scrolloff = 5

@@ -100,3 +100,31 @@ set_repeatable_move(
 vim.keymap.set("n", "<leader>hi", vim.show_pos, { desc = "Inspect" })
 vim.keymap.set("n", "<leader>ht", vim.treesitter.inspect_tree, { desc = "Treesit Tree" })
 vim.keymap.set("n", "<leader>hq", vim.treesitter.query.edit, { desc = "Treesit Query" })
+
+-- diff
+local function toggle_diff_ignore_whitespace()
+  local diffopt = vim.opt.diffopt
+  local target = "iwhiteall"
+  local exists = false
+
+  for _, v in ipairs(diffopt:get()) do
+    if v == target then
+      exists = true
+      break
+    end
+  end
+
+  if exists then
+    diffopt:remove(target)
+    vim.notify("Ignore whitespaces in diff", vim.log.levels.INFO)
+  else
+    diffopt:append(target)
+    vim.notify("Do not ignore whitespaces in diff", vim.log.levels.INFO)
+  end
+
+  vim.cmd("diffupdate")
+end
+
+vim.keymap.set("n", "<leader>gdw", toggle_diff_ignore_whitespace, {
+  desc = "Toggle ignore whitespace in diff",
+})

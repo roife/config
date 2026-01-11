@@ -31,6 +31,7 @@ return {
       -- "trail",
     },
     signs_scrollbar_overlap = "over",
+    signs_max_per_row = 1,
     visibility = "info",
   },
   config = function(_, opts)

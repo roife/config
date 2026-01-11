@@ -1,10 +1,11 @@
 ---@type LazyPluginSpec
 return {
-  dir = "~/code/rustaceanvim/",
+  "mrcjkb/rustaceanvim",
   version = "^6",
   lazy = false,
   opts = {
     server = {
+      cmd = { "/Users/roife/.cargo/bin/rust-analyzer" },
       default_settings = {
         ["rust-analyzer"] = {
           cargo = {

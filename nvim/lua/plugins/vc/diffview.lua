@@ -21,6 +21,12 @@ return {
     return {
       enhanced_diff_hl = true,
       show_help_hints = false,
+      use_icons = false,
+      view = {
+        merge_tool = {
+          layout = "diff3_mixed",
+        },
+      },
       file_panel = {
         win_config = {
           width = math.floor(vim.go.columns * 0.2) > 25 and math.floor(vim.go.columns * 0.2) or 25,
@@ -44,5 +50,8 @@ return {
         },
       },
     }
+  end,
+  config = function(_, opts)
+    require("diffview").setup(opts)
   end,
 }

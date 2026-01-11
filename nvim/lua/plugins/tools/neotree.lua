@@ -93,6 +93,18 @@ return {
         Operator = { icon = "Op" },
         TypeParameter = { icon = "Tp" },
       },
+      renderers = {
+        root = {
+          { "indent" },
+          { "icon", default="C" },
+          { "name", zindex = 10 },
+        },
+        symbol = {
+          {"indent", with_expanders = true},
+          {"kind_icon", default="?" },
+          {"name", zindex = 10},
+        },
+      },
     },
     source_selector = {
       winbar = true,

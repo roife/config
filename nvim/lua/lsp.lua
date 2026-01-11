@@ -20,7 +20,6 @@ vim.diagnostic.config {
   severity_sort = true,
 }
 
-vim.lsp.inlay_hint.enable()
 if vim.lsp.inline_completion then vim.lsp.inline_completion.enable() end
 
 if vim.lsp._folding_range then

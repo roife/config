@@ -26,12 +26,10 @@ end
 
 ---@type LazyPluginSpec
 return {
-  "ellisonleao/gruvbox.nvim",
+  "sainnhe/gruvbox-material",
   priority = 1000,
-  opts = {},
-  config = function(_, opts)
-    require("gruvbox").setup(opts)
-    vim.cmd.colorscheme("gruvbox")
+  config = function()
+    vim.cmd.colorscheme("gruvbox-material")
     update_colorscheme()
 
     vim.api.nvim_create_autocmd("ColorScheme", {
