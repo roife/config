@@ -17,8 +17,8 @@ return {
       "noice",
     },
     signs_on_startup = {
-      "conflicts",
       "cursor",
+      "conflicts",
       "diagnostics",
       -- "folds",
       "keywords",
@@ -31,7 +31,7 @@ return {
       -- "trail",
     },
     signs_scrollbar_overlap = "over",
-    signs_max_per_row = 1,
+    signs_max_per_row = 2,
     visibility = "info",
   },
   config = function(_, opts)
