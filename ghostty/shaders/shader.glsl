@@ -54,7 +54,7 @@ float easeFast(float x) {
     return x * (2.0 - x);
 }
 
-const float DURATION = 0.1;
+const float DURATION = 0.08;
 
 // ======================
 // Main
