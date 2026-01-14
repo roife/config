@@ -42,7 +42,7 @@ return {
       desc = "Help tags",
     },
     {
-      "<leader>fh",
+      "<leader>fo",
       function() require("fzf-lua").oldfiles() end,
       desc = "Old files",
     },
@@ -52,19 +52,19 @@ return {
       desc = "Marks",
     },
     {
-      "<leader>fs",
+      "<leader>fls",
       function() require("fzf-lua").lsp_document_symbols() end,
       desc = "Document Symbols",
     },
     {
-      "<leader>fS",
+      "<leader>flS",
       function() require("fzf-lua").lsp_workspace_symbols() end,
       desc = "Workspace Symbols",
     },
     {
       "<leader>fc",
       function() require("fzf-lua").commands() end,
-      desc = "Colorscheme",
+      desc = "Commands",
     },
     {
       "<leader>fj",
@@ -72,9 +72,9 @@ return {
       desc = "Jumplist",
     },
     {
-      "<leader>fw",
+      "<leader>fs",
       function() require("fzf-lua").live_grep_native() end,
-      desc = "Live grep",
+      desc = "Search by live grep",
     },
     {
       "<leader>fr",
@@ -91,6 +91,7 @@ return {
       function() require("fzf-lua").keymaps() end,
       desc = "Keymaps",
     },
+
     -- git
     {
       "<leader>fgc",
@@ -105,6 +106,11 @@ return {
     {
       "<leader>fgt",
       function() require("fzf-lua").git_tags() end,
+      desc = "Tags",
+    },
+    {
+      "<leader>fgs",
+      function() require("fzf-lua").git_status() end,
       desc = "Tags",
     },
 

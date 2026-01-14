@@ -20,6 +20,7 @@ vim.diagnostic.config {
   severity_sort = true,
 }
 
+vim.lsp.inlay_hint.enable()
 if vim.lsp.inline_completion then vim.lsp.inline_completion.enable() end
 
 if vim.lsp._folding_range then
@@ -80,6 +81,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("<leader>lih", toggle_lsp_inlay_hint, "Toggle inlay hints")
 
     nmap_local("<leader>lca", vim.lsp.buf.code_action, "Code Action")
+    nmap_local("<M-CR>", vim.lsp.buf.code_action, "Code Action")
 
     vim.keymap.set("i", "<C-J>", function()
       if not vim.lsp.inline_completion.get() then return "<C-J>" end

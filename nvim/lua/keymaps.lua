@@ -43,7 +43,12 @@ for i = 1, 9 do
   local desc = "Go to tab " .. i
   vim.keymap.set("n", key, function() vim.cmd.tabn(i) end, { desc = desc })
 end
-vim.keymap.set("n", "<M-S-Tab>", function() vim.cmd.tabprevious() end, { desc = "Go to previous tab" })
+vim.keymap.set(
+  "n",
+  "<M-S-Tab>",
+  function() vim.cmd.tabprevious() end,
+  { desc = "Go to previous tab" }
+)
 vim.keymap.set("n", "<M-Tab>", function() vim.cmd.tabnext() end, { desc = "Go to next tab" })
 vim.keymap.set("n", "<M-t>", function() vim.cmd.tabnew() end, { desc = "Open new tab" })
 vim.keymap.set("n", "<M-w>", function() vim.cmd.tabclose() end, { desc = "Close current tab" })

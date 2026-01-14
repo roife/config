@@ -13,8 +13,10 @@ return {
   },
   opts = {
     disable_hint = true,
-    graph_style = "kitty",
+    graph_style = "unicode",
+    remember_settings = true,
     integrations = {
+      fzf_lua = true,
       diffview = true,
     },
     sections = {
@@ -24,6 +26,9 @@ return {
       recent = {
         folded = false,
       },
+    },
+    status = {
+      recent_commit_count = 20,
     },
   },
 }
