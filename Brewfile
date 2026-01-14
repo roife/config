@@ -20,6 +20,7 @@ brew "tldr"
 brew "tokei"
 brew "tree"
 brew "wget"
+brew "yazi"
 
 brew "rustup"
 
