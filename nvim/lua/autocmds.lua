@@ -33,22 +33,3 @@ vim.api.nvim_create_autocmd("FileType", {
   desc = "Disallow change buf for quickfix",
   callback = function() vim.wo.winfixbuf = true end,
 })
-
--- Treesitter
-vim.api.nvim_create_autocmd("FileType", {
-  desc = "Enable treesitter features for supported filetypes",
-  callback = function(args)
-    local bufnr = args.buf
-    local filetype = args.match
-    local lang = vim.treesitter.language.get_lang(filetype)
-    if lang and vim.treesitter.language.add(lang) then
-      -- Highlighting
-      vim.treesitter.start(bufnr, lang)
-      -- Folds
-      vim.wo[0][0].foldmethod = "expr"
-      vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
-      -- Indentation
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    end
-  end,
-})
