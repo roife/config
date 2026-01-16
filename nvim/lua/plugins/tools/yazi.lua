@@ -23,7 +23,5 @@ return {
     },
   },
   -- 👇 if you use `open_for_directories=true`, this is recommended
-  init = function()
-    vim.g.loaded_netrwPlugin = 1
-  end,
+  init = function() vim.g.loaded_netrwPlugin = 1 end,
 }
