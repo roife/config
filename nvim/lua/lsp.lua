@@ -65,7 +65,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("gI", vim.lsp.buf.implementation, "Implementation")
 
     -- CodeLens
-    nmap_local("<leader>rl", vim.lsp.codelens.run, "Run lens")
+    nmap_local("<leader>llr", vim.lsp.codelens.run, "Run lens")
 
     -- Call hierarchy
     nmap_local("<leader>lci", vim.lsp.buf.incoming_calls, "Incoming calls")

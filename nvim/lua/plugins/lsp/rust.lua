@@ -1,7 +1,6 @@
 ---@type LazyPluginSpec
 return {
   "mrcjkb/rustaceanvim",
-  version = "^6",
   lazy = false,
   opts = {
     server = {
@@ -31,7 +30,6 @@ return {
             },
             documentation = {
               keywords = {
-                -- :enable :json-false
                 enable = false,
               },
             },
