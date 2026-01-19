@@ -10,8 +10,11 @@ return {
       preset = "super-tab",
       ["<Tab>"] = {
         function(cmp)
-          if cmp.snippet_active() then return cmp.accept()
-          else return cmp.select_and_accept() end
+          if cmp.snippet_active() then
+            return cmp.accept()
+          else
+            return cmp.select_and_accept()
+          end
         end,
         "snippet_forward",
         function() -- sidekick next edit suggestion

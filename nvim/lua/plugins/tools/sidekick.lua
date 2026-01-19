@@ -31,7 +31,7 @@ return {
 {git_diff}.
 # Review recent commit conventions:
 {git_history}.
-# Generate a thoughtful and succinct commit message.]]
+# Generate a thoughtful and succinct commit message.]],
       },
     },
   },

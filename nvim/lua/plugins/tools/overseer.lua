@@ -87,7 +87,7 @@ return {
           return {
             cmd = { "open" },
             args = {
-              vim.fn.expand('%:r') .. '.pdf'
+              vim.fn.expand("%:r") .. ".pdf",
             },
           }
         end,
