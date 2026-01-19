@@ -58,6 +58,43 @@ return {
           filetype = { "cpp" },
         },
       },
+      {
+        name = "Typst build blog post",
+        builder = function()
+          return {
+            cmd = { "typst" },
+            args = {
+              "compile",
+              vim.fn.expand("%:p"),
+              "--root",
+              vim.fn.getcwd(),
+            },
+            default_component_params = {
+              errorformat = [[%Eerror: %m,]]
+                .. [[%Wwarning: %m,]]
+                .. [[%C %#┌─ %f:%l:%c,]]
+                .. [[%-G%.%#]],
+            },
+          }
+        end,
+        condition = {
+          filetype = { "typst" },
+        },
+      },
+      {
+        name = "Typst open blog post",
+        builder = function()
+          return {
+            cmd = { "open" },
+            args = {
+              vim.fn.expand('%:r') .. '.pdf'
+            },
+          }
+        end,
+        condition = {
+          filetype = { "typst" },
+        },
+      },
     }
     for _, template in ipairs(templates) do
       overseer.register_template(template)
