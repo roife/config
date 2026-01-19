@@ -5,25 +5,23 @@ return {
     default_mappings = false,
     mappings = {
       i = {
-        j = {
-          k = "<Esc>",
+        i = {
+          i = "<Esc>",
         },
       },
       c = {
-        j = {
-          k = "<C-c>",
+        i = {
+          i = "<C-c>",
         },
       },
       t = {
-        j = {
-          j = {
-            j = "<C-\\><C-n>",
-          },
+        i = {
+          i = "<C-\\><C-n>",
         },
       },
       s = {
-        j = {
-          k = "<Esc>",
+        i = {
+          i = "<Esc>",
         },
       },
     },
