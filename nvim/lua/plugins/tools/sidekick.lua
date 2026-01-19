@@ -2,8 +2,37 @@
 return {
   "folke/sidekick.nvim",
   opts = {
+    nes = {
+      clear = {
+        events = { "InsertEnter" },
+        esc = true,
+      },
+    },
     signs = {
       icon = "✦",
+    },
+    cli = {
+      picker = "fzf-lua",
+      ---@type table<string, sidekick.context.Fn>
+      context = {
+        git_history = function()
+          local cmd = { "git", "log", "--pretty=format:%s", "-n", "5" }
+          local history = vim.fn.systemlist(cmd)
+          return history
+        end,
+        git_diff = function()
+          local cmd = { "git", "diff", "--cached", "-w" }
+          local diff = vim.fn.systemlist(cmd)
+          return diff
+        end,
+      },
+      prompts = {
+        commit_message = [[# Analyze CHANGES to understand and identify *why*:
+{git_diff}.
+# Review recent commit conventions:
+{git_history}.
+# Generate a thoughtful and succinct commit message.]]
+      },
     },
   },
   keys = {
@@ -15,6 +44,7 @@ return {
           return "<Tab>" -- fallback to normal tab
         end
       end,
+      mode = { "n" },
       expr = true,
       desc = "Goto/Apply Next Edit Suggestion",
     },
@@ -49,6 +79,12 @@ return {
       "<leader>ap",
       function() require("sidekick.cli").prompt() end,
       mode = { "n", "x" },
+      desc = "Sidekick Select Prompt",
+    },
+    {
+      "<C-;>",
+      function() require("sidekick.cli").prompt() end,
+      mode = { "t" },
       desc = "Sidekick Select Prompt",
     },
   },

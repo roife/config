@@ -83,14 +83,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("<leader>lca", vim.lsp.buf.code_action, "Code Action")
     nmap_local("<M-CR>", vim.lsp.buf.code_action, "Code Action")
 
-    vim.keymap.set("i", "<C-J>", function()
-      if not vim.lsp.inline_completion.get() then return "<C-J>" end
-    end, {
-      expr = true,
-      desc = "Accept the current inline completion",
-      buffer = bufnr,
-    })
-
     -- Workspace folders
     nmap_local("<leader>lwa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
     nmap_local("<leader>lwr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
