@@ -2,7 +2,7 @@
 return {
   "neovim/nvim-lspconfig",
   event = {
-    "Filetype",
+    "FileType",
   },
   dependencies = {
     "folke/neoconf.nvim",

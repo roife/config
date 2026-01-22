@@ -12,17 +12,7 @@ return {
       autoload_mode = config.AutoloadMode.Disabled,
     }
   end,
-  config = function(_, opts)
-    local manager = require("session_manager")
-
-    manager.setup(opts)
-
-    -- Convert the cwd to a simple file name
-    local function get_cwd_as_name()
-      local dir = vim.fn.getcwd(0)
-      return dir:gsub("[^A-Za-z0-9]", "_")
-    end
-  end,
+  config = function(_, opts) require("session_manager").setup(opts) end,
   keys = {
     {
       "<leader>sls",
