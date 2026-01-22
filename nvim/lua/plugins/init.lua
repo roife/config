@@ -13,7 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup {
   spec = "plugins",
   install = {
-    colorscheme = { "gruvbox" },
+    colorscheme = { "gruvbox-material" },
   },
   diff = {
     cmd = "diffview.nvim",

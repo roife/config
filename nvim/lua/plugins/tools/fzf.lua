@@ -19,6 +19,7 @@ return {
         symbol_style = 3,
       },
     },
+    unique_line_items = true,
   },
   keys = {
     {
