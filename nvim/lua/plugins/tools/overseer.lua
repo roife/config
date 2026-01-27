@@ -32,9 +32,9 @@ return {
       local success, lualine = pcall(require, "lualine")
       if not success then return end
       local lualine_cfg = lualine.get_config()
-      for i, item in ipairs(lualine_cfg.tabline.lualine_x) do
+      for i, item in ipairs(lualine_cfg.sections.lualine_x) do
         if type(item) == "table" and item.name == "overseer-placeholder" then
-          lualine_cfg.tabline.lualine_x[i] = "overseer"
+          lualine_cfg.sections.lualine_x[i] = "overseer"
         end
       end
       lualine.setup(lualine_cfg)
