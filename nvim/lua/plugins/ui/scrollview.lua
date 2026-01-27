@@ -20,19 +20,20 @@ return {
       "cursor",
       "conflicts",
       "diagnostics",
-      -- "folds",
       "keywords",
+      "latestchange",
       "loclist",
       "marks",
       "quickfix",
       "search",
       "spell",
-      -- "textwidth",
-      -- "trail",
     },
     signs_scrollbar_overlap = "over",
     signs_max_per_row = 2,
     visibility = "info",
+
+    cursor_priority = 100,
+    latestchange_priority = 90,
   },
   config = function(_, opts)
     local scrollview = require("scrollview")
@@ -41,10 +42,7 @@ return {
     scrollview.setup(opts)
     scrollview_gitsigns.setup {
       add_highlight = "GitSignsAdd",
-      add_priority = 100,
-      change_priority = 100,
       change_highlight = "GitSignsChange",
-      delete_priority = 100,
       delete_highlight = "GitSignsDelete",
     }
   end,

@@ -64,16 +64,22 @@ return {
       lualine_c = {},
       lualine_x = {
         {
+          require("noice").api.status.command.get,
+          cond = require("noice").api.status.command.has,
+        },
+        {
           name = "overseer-placeholder",
           function() return "" end,
         },
+      },
+      lualine_y = {
+        "branch",
         {
           "encoding",
           show_bomb = true,
           separator = "",
           cond = function() return vim.bo.fileencoding:lower() ~= "utf-8" or vim.bo.bomb end,
         },
-        "branch",
         {
           "fileformat",
           icons_enabled = true,
@@ -85,11 +91,8 @@ return {
           cond = function() return vim.bo.fileformat ~= "unix" end,
         },
       },
-      lualine_y = {
-        osv_or_dap_and_filetype,
-      },
       lualine_z = {
-        "location",
+        osv_or_dap_and_filetype,
       },
     },
     sections = {
@@ -103,7 +106,7 @@ return {
           shorting_target = 40,
           symbols = {
             modified = "*",
-            readonly = "RO",
+            readonly = "%",
             unnamed = "[No Name]",
             newfile = "[New]",
           },
@@ -113,7 +116,9 @@ return {
       lualine_c = {},
       lualine_x = {},
       lualine_y = {},
-      lualine_z = {},
+      lualine_z = {
+        "location",
+      },
     },
     inactive_sections = {
       lualine_a = {
@@ -126,7 +131,7 @@ return {
           shorting_target = 40,
           symbols = {
             modified = "*",
-            readonly = "RO",
+            readonly = "%",
             unnamed = "[No Name]",
             newfile = "[New]",
           },
@@ -136,7 +141,9 @@ return {
       lualine_c = {},
       lualine_x = {},
       lualine_y = {},
-      lualine_z = {},
+      lualine_z = {
+        "location",
+      },
     },
     options = {
       icons_enabled = false,

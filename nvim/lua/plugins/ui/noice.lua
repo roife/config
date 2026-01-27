@@ -47,12 +47,18 @@ return {
         },
       },
     },
+    popupmenu = {
+      kind_icons = false,
+    },
     markdown = {
       hover = {
         ["%[.-%]%((%S-)%)"] = function(...) vim.ui.open(...) end,
       },
     },
     lsp = {
+      progress = {
+        throttle = 100,
+      },
       override = {
         ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
         ["vim.lsp.util.stylize_markdown"] = true,
@@ -66,6 +72,10 @@ return {
         },
       },
     },
+    presets = {
+      long_message_to_split = true,
+      command_palette = true,
+    }
   },
   keys = {
     {
