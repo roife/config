@@ -1,5 +1,5 @@
 font-family = "Iosevka Term"
-font-size = 16
+font-size = 15
 
 theme = light:Gruvbox Material Light,dark:Gruvbox Material Dark
 
