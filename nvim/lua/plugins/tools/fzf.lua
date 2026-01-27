@@ -12,7 +12,6 @@ return {
   opts = {
     files = {
       formatter = "path.filename_first",
-      no_ignore = true,
     },
     lsp = {
       symbols = {
