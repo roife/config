@@ -21,7 +21,7 @@ return {
         local sources = require("dropbar.sources")
         local utils = require("dropbar.utils")
 
-        vim.api.nvim_set_hl(0, 'DropBarFileName', { underline = true })
+        vim.api.nvim_set_hl(0, 'DropBarFileName', { bold = true })
         local custom_path = {
           get_symbols = function(buff, win, cursor)
             local symbols = sources.path.get_symbols(buff, win, cursor)
