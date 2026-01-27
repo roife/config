@@ -20,6 +20,16 @@ return {
       sources = function(buf, _)
         local sources = require("dropbar.sources")
         local utils = require("dropbar.utils")
+
+        vim.api.nvim_set_hl(0, 'DropBarFileName', { underline = true })
+        local custom_path = {
+          get_symbols = function(buff, win, cursor)
+            local symbols = sources.path.get_symbols(buff, win, cursor)
+            symbols[#symbols].name_hl = 'DropBarFileName'
+            return symbols
+          end,
+        }
+
         if vim.bo[buf].ft == "markdown" then
           return {
             sources.path,
@@ -30,7 +40,7 @@ return {
           sources.terminal,
         } end
         return {
-          sources.path,
+          custom_path,
           utils.source.fallback {
             sources.lsp,
             sources.treesitter,

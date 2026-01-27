@@ -32,7 +32,7 @@ brew "tree-sitter-cli"
 
 brew "lua"
 brew "stylua"
-brew "lua-language-server"
+brew "emmylua_ls"
 
 brew "typst"
 brew "tinymist"

@@ -96,7 +96,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.lsp.enable {
   "clangd",
-  "lua_ls",
+  "emmylua_ls",
   "copilot",
   "pyright",
   --"rust-analyzer",
