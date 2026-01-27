@@ -22,12 +22,6 @@ local function osv_or_dap()
   end
 end
 
-local function osv_or_dap_and_filetype()
-  local osv_or_dap = osv_or_dap()
-  if osv_or_dap and osv_or_dap ~= "" then osv_or_dap = " (" .. osv_or_dap .. ")" end
-  return vim.bo.filetype .. osv_or_dap
-end
-
 ---@type LazyPluginSpec
 return {
   "nvim-lualine/lualine.nvim",
@@ -36,7 +30,7 @@ return {
     "Bekaboo/dropbar.nvim",
   },
   opts = {
-    tabline = {
+    sections = {
       lualine_a = {
         {
           "tabs",
@@ -59,21 +53,32 @@ return {
         },
       },
       lualine_b = {
+        {
+          "filename",
+          file_status = true,
+          newfile_status = true,
+          path = 1,
+
+          shorting_target = 40,
+          symbols = {
+            modified = "*",
+            readonly = "%",
+            unnamed = "[No Name]",
+            newfile = "[New]",
+          },
+        },
+      },
+      lualine_c = {
         { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" }, color = "nil" },
       },
-      lualine_c = {},
       lualine_x = {
-        {
-          require("noice").api.status.command.get,
-          cond = require("noice").api.status.command.has,
-        },
         {
           name = "overseer-placeholder",
           function() return "" end,
         },
+        osv_or_dap,
       },
       lualine_y = {
-        "branch",
         {
           "encoding",
           show_bomb = true,
@@ -90,32 +95,8 @@ return {
           },
           cond = function() return vim.bo.fileformat ~= "unix" end,
         },
+        "branch",
       },
-      lualine_z = {
-        osv_or_dap_and_filetype,
-      },
-    },
-    sections = {
-      lualine_a = {
-        {
-          "filename",
-          file_status = true,
-          newfile_status = true,
-          path = 1,
-
-          shorting_target = 40,
-          symbols = {
-            modified = "*",
-            readonly = "%",
-            unnamed = "[No Name]",
-            newfile = "[New]",
-          },
-        },
-      },
-      lualine_b = {},
-      lualine_c = {},
-      lualine_x = {},
-      lualine_y = {},
       lualine_z = {
         "location",
       },
@@ -149,10 +130,10 @@ return {
       icons_enabled = false,
       theme = "auto",
       always_divide_middle = true,
-      always_show_tabline = true,
+      always_show_tabline = false,
       globalstatus = false,
       section_separators = { left = "", right = "" },
-      component_separators = { left = "", right = "|" },
+      component_separators = { left = "", right = "" },
     },
     extensions = {
       "man",
