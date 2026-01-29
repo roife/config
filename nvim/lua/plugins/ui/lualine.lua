@@ -61,7 +61,7 @@ return {
 
           symbols = {
             modified = "*",
-            readonly = "%",
+            readonly = "%%",
             unnamed = "[No Name]",
             newfile = "[New]",
           },
@@ -111,7 +111,7 @@ return {
           shorting_target = 40,
           symbols = {
             modified = "*",
-            readonly = "%",
+            readonly = "%%",
             unnamed = "[No Name]",
             newfile = "[New]",
           },
