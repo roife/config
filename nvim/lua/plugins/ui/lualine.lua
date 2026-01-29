@@ -57,7 +57,7 @@ return {
           "filename",
           file_status = true,
           newfile_status = true,
-          path = 0,
+          path = 1,
 
           symbols = {
             modified = "*",
@@ -76,6 +76,7 @@ return {
           function() return "" end,
         },
         osv_or_dap,
+        "location",
       },
       lualine_y = {
         {
@@ -94,10 +95,9 @@ return {
           },
           cond = function() return vim.bo.fileformat ~= "unix" end,
         },
-        "branch",
       },
       lualine_z = {
-        "location",
+        "branch",
       },
     },
     inactive_sections = {

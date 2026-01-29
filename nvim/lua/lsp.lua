@@ -63,6 +63,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("gD", vim.lsp.buf.declaration, "Declaration")
     nmap_local("gt", vim.lsp.buf.type_definition, "Type definition")
     nmap_local("gI", vim.lsp.buf.implementation, "Implementation")
+    nmap_local("gr", vim.lsp.buf.references, "Implementation")
 
     -- CodeLens
     nmap_local("<leader>llr", vim.lsp.codelens.run, "Run lens")

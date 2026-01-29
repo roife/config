@@ -74,7 +74,6 @@ return {
     },
     presets = {
       long_message_to_split = true,
-      command_palette = true,
     },
   },
   keys = {
