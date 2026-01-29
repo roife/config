@@ -55,7 +55,7 @@ return {
       lualine_b = {
         {
           "filename",
-          file_status = true,
+          file_status = false,
           newfile_status = true,
           path = 1,
 
@@ -65,6 +65,32 @@ return {
             unnamed = "[No Name]",
             newfile = "[New]",
           },
+
+          fmt = function(str)
+            vim.api.nvim_set_hl(0, 'LualinePathMixed', {
+              fg = vim.api.nvim_get_hl(0, { name = 'Comment' }).fg,
+              bg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg
+            })
+
+            vim.api.nvim_set_hl(0, 'LualineFilename', {
+              fg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).fg,
+              bg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg,
+              bold = true,
+              italic = vim.bo.modified,
+              underline = vim.bo.readonly,
+            })
+
+            if str == '' or str:find('://', 1, true) then
+              return '%#LualineFilename#' .. str
+            end
+
+            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
+            if not path then
+              return '%#LualineFilename#' .. str
+            end
+
+            return '%#LualinePathMixed#' .. path .. '%#LualineFilename#' .. fname .. '%#lualine_b_normal#'
+          end,
         },
       },
       lualine_c = {
@@ -129,8 +155,8 @@ return {
       icons_enabled = false,
       theme = "auto",
       always_divide_middle = true,
-      always_show_tabline = false,
-      globalstatus = false,
+      always_show_tabline = true,
+      globalstatus = true,
       section_separators = { left = "", right = "" },
       component_separators = { left = "", right = "" },
     },
@@ -151,5 +177,8 @@ return {
       "overseer",
     },
   },
-  config = function(_, opts) require("lualine").setup(opts) end,
+  config = function(_, opts)
+    require("lualine").setup(opts)
+    vim.o.laststatus = 3
+  end,
 }
