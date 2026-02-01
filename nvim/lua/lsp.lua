@@ -21,23 +21,23 @@ vim.diagnostic.config {
 }
 
 vim.lsp.inlay_hint.enable()
-if vim.lsp.inline_completion then vim.lsp.inline_completion.enable() end
+vim.lsp.inline_completion.enable()
+vim.lsp.document_color.enable()
+vim.lsp.semantic_tokens.enable()
 
-if vim.lsp._folding_range then
-  vim.o.foldmethod = "expr"
-  vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
-  vim.o.foldtext = "v:lua.vim.lsp.foldtext()"
-  vim.o.foldcolumn = "0"
-  vim.o.foldlevel = 99
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
+vim.o.foldtext = "v:lua.vim.lsp.foldtext()"
+vim.o.foldcolumn = "0"
+vim.o.foldlevel = 99
 
-  vim.api.nvim_create_autocmd("LspNotify", {
-    callback = function(args)
-      if args.data.method == "textDocument/didOpen" then
-        vim.lsp.foldclose("imports", vim.fn.bufwinid(args.buf))
-      end
-    end,
-  })
-end
+vim.api.nvim_create_autocmd("LspNotify", {
+  callback = function(args)
+    if args.data.method == "textDocument/didOpen" then
+      vim.lsp.foldclose("imports", vim.fn.bufwinid(args.buf))
+    end
+  end,
+})
 
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "General LSP Attach",
@@ -82,7 +82,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("<leader>lih", toggle_lsp_inlay_hint, "Toggle inlay hints")
 
     nmap_local("<leader>lca", vim.lsp.buf.code_action, "Code Action")
-    nmap_local("<M-CR>", vim.lsp.buf.code_action, "Code Action")
 
     -- Workspace folders
     nmap_local("<leader>lwa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
@@ -92,8 +91,28 @@ vim.api.nvim_create_autocmd("LspAttach", {
       function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end,
       "List workspace folders"
     )
+
+    -- document highlight
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.document_highlight()
+      end,
+    })
+
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.clear_references()
+      end,
+    })
   end,
 })
+
+-- LSP document highlight groups
+vim.api.nvim_set_hl(0, "LspReferenceText",  { underline = true })
+vim.api.nvim_set_hl(0, "LspReferenceRead",  { underline = true })
+vim.api.nvim_set_hl(0, "LspReferenceWrite", { underline = true })
 
 vim.lsp.enable {
   "clangd",

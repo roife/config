@@ -59,7 +59,7 @@ vim.o.smartcase = true -- but make it case sensitive if an uppercase is entered
 vim.o.inccommand = "split" -- Preview substitutions live, as you type!
 
 -- Performance
-vim.o.updatetime = 500
+vim.o.updatetime = 750
 vim.o.timeoutlen = 600
 
 -- Folding
