@@ -107,6 +107,9 @@ PATH=$(brew --prefix rustup)/bin:$PATH
 alias brewdump='brew bundle dump --file="~/.config/Brewfile"'
 alias brewrestore='brew bundle --file="~/.config/Brewfile"'
 
+# Integration with fzf
+source <(fzf --zsh)
+
 # Backup
 recover() {
     ln -s .gitconfig ~
