@@ -191,6 +191,7 @@ return {
       end,
     },
     filesystem = {
+      hijack_netrw_behavior = "disabled",
       group_empty_dirs = true,
       follow_current_file = {
         enabled = true,
