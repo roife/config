@@ -63,6 +63,7 @@ vim.o.updatetime = 750
 vim.o.timeoutlen = 600
 
 -- Folding
+vim.o.foldcolumn = "0"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true

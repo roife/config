@@ -25,12 +25,6 @@ vim.lsp.inline_completion.enable()
 vim.lsp.document_color.enable()
 vim.lsp.semantic_tokens.enable()
 
-vim.o.foldmethod = "expr"
-vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
-vim.o.foldtext = "v:lua.vim.lsp.foldtext()"
-vim.o.foldcolumn = "0"
-vim.o.foldlevel = 99
-
 vim.api.nvim_create_autocmd("LspNotify", {
   callback = function(args)
     if args.data.method == "textDocument/didOpen" then
@@ -43,6 +37,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   desc = "General LSP Attach",
   callback = function(args)
     local bufnr = args.buf
+    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
 
     local function nmap_local(lhs, rhs, desc, opts)
       opts = opts or {}
@@ -92,20 +87,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "List workspace folders"
     )
 
-    -- document highlight
-    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.buf.document_highlight()
-      end,
-    })
-
-    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.buf.clear_references()
-      end,
-    })
+    -- Folding
+    if client:supports_method('textDocument/foldingRange', bufnr) then
+      vim.o.foldmethod = 'expr'
+      vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
+      vim.o.foldtext = 'v:lua.vim.lsp.foldtext()'
+    end
   end,
 })
 
