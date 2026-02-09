@@ -43,7 +43,6 @@ return {
   'b0o/incline.nvim',
   opts = {
     hide = {
-      focused_win = true,
       only_win = true,
     },
     window = {
