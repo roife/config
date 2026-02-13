@@ -105,7 +105,7 @@ vim.lsp.enable {
   "clangd",
   "emmylua_ls",
   "copilot",
-  "pyright",
   --"rust-analyzer",
   "tinymist",
+  "pyrefly",
 }

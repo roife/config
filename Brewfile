@@ -33,6 +33,10 @@ brew "lua"
 brew "stylua"
 brew "emmylua_ls"
 
+brew "uv"
+brew "ruff"
+brew "pyrefly"
+
 brew "typst"
 brew "tinymist"
 
