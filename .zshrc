@@ -120,3 +120,4 @@ recover() {
     fnm i --lts
     tldr -u
 }
+eval "$(direnv hook zsh)"
