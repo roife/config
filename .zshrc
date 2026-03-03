@@ -31,7 +31,6 @@ alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
 alias ll='ls -laGh'      #long list
 alias rm='rm -i'
 alias grep='grep --color'
-alias ec='emacsclient -n'
 
 #alias-git
 # Oh My Zsh Git aliases — 常用 alias 列表
@@ -120,4 +119,6 @@ recover() {
     fnm i --lts
     tldr -u
 }
+
+# direnv
 eval "$(direnv hook zsh)"
