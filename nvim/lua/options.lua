@@ -8,6 +8,7 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" } -- always show the popup
 vim.o.jumpoptions = "stack" -- keeps a full stack of jumps
 
 vim.o.undofile = true
+vim.schedule(function() vim.cmd.packadd("nvim.undotree") end)
 
 -- Tab
 vim.o.tabstop = 4 -- number of visual spaces per TAB

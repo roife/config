@@ -133,3 +133,6 @@ end
 vim.keymap.set("n", "<leader>gdw", toggle_diff_ignore_whitespace, {
   desc = "Toggle ignore whitespace in diff",
 })
+
+-- Undo tree
+vim.keymap.set('n', '<leader>u', '<Cmd>Undotree<CR>', { desc = 'Undo Tree' })
