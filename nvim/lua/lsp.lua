@@ -24,6 +24,7 @@ vim.lsp.inlay_hint.enable()
 vim.lsp.inline_completion.enable()
 vim.lsp.document_color.enable()
 vim.lsp.semantic_tokens.enable()
+vim.lsp.codelens.enable()
 
 vim.api.nvim_create_autocmd("LspNotify", {
   callback = function(args)
