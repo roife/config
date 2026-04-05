@@ -40,6 +40,10 @@ vim.o.laststatus = 0 -- prompt to save when closing modified buffers instead of 
 vim.opt.fillchars:append("diff:╱")
 vim.opt.diffopt:append("iwhiteall")
 
+-- Cmd
+vim.o.cmdheight = 0
+require('vim._core.ui2').enable({})
+
 -- Scrolling
 vim.o.scrolloff = 5
 vim.o.sidescrolloff = 5

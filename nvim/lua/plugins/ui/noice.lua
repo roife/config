@@ -2,6 +2,7 @@
 return {
   "folke/noice.nvim",
   event = "VeryLazy",
+  enabled = false,
   init = function()
     vim.o.cmdheight = 0
 
