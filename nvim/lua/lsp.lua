@@ -92,6 +92,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
       vim.o.foldtext = 'v:lua.vim.lsp.foldtext()'
     end
+
+    -- Basic
+    nmap_local("<leader>lR", function() vim.cmd.lsp('restart') end, "Reload LSP")
+    nmap_local("<leader>lI", function() vim.cmd.checkhealth('lsp') end, "LSP info")
   end,
 })
 
