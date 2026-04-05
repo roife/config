@@ -27,13 +27,6 @@ vim.api.nvim_create_autocmd({
   end,
 })
 
--- Quickfix
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  desc = "Disallow change buf for quickfix",
-  callback = function() vim.wo.winfixbuf = true end,
-})
-
 
 vim.api.nvim_create_autocmd("FileType", {
   desc = "Enable treesitter features for supported filetypes",

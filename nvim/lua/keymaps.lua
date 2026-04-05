@@ -73,14 +73,6 @@ local function toggle_quickfix()
 end
 vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle Quickfix" })
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  callback = function(args)
-    local bufnr = args.buf
-    vim.keymap.set("n", "q", vim.cmd.close, { buffer = bufnr })
-  end,
-})
-
 -- Repeatable moves
 local function set_repeatable_move(key, element_name, forward_fn, backward_fn)
   local forward, backward = utils.make_repeatable_move_pair(forward_fn, backward_fn)
