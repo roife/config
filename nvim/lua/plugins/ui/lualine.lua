@@ -122,7 +122,13 @@ return {
           end,
         },
       },
-      lualine_b = {},
+      lualine_b = {
+        {
+          'searchcount',
+          maxcount = 999,
+          timeout = 500,
+        }
+      },
       lualine_c = {},
       lualine_x = {},
       lualine_y = {},
