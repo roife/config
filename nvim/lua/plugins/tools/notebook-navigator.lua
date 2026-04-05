@@ -12,7 +12,6 @@ return {
   },
   event = "VeryLazy",
   config = function(_, opts)
-    local nn = require "notebook-navigator"
-    nn.setup{}
+    require("notebook-navigator").setup(opts)
   end,
 }

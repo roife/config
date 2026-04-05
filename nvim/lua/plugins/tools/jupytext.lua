@@ -1,6 +1,8 @@
 ---@LazyPluginSpec
 return {
-  "GCBallesteros/jupytext.nvim",
+  "goerz/jupytext.nvim",
+  opts = {
+    format = "py",
+  },
   config = true,
-  lazy = false,
 }
