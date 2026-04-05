@@ -1,7 +1,7 @@
 ----@type LazyPluginSpec
 return {
   "roife/ws-butler.nvim",
-  event = "BufReadPost",
+  lazy = false,
   opts = {
     trim_eob = true,
     ignore_filetypes = {},
