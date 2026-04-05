@@ -2,9 +2,6 @@
 return {
   "nvim-treesitter/nvim-treesitter-textobjects",
   branch = "main",
-  dependencies = {
-    { "ghostbuster91/nvim-next" },
-  },
   init = function() vim.g.textobjects_enable_mappings = 0 end,
   opts = {
     select = {
