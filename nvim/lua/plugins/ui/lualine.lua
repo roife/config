@@ -30,7 +30,7 @@ return {
     "Bekaboo/dropbar.nvim",
   },
   opts = {
-    sections = {
+    tabline = {
       lualine_a = {
         {
           "tabs",
@@ -52,47 +52,7 @@ return {
           color = { fg = "#ff9e64" },
         },
       },
-      lualine_b = {
-        {
-          "filename",
-          file_status = false,
-          newfile_status = true,
-          path = 1,
-
-          symbols = {
-            modified = "*",
-            readonly = "%%",
-            unnamed = "[No Name]",
-            newfile = "[New]",
-          },
-
-          fmt = function(str)
-            vim.api.nvim_set_hl(0, 'LualinePathMixed', {
-              fg = vim.api.nvim_get_hl(0, { name = 'Comment' }).fg,
-              bg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg
-            })
-
-            vim.api.nvim_set_hl(0, 'LualineFilename', {
-              fg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).fg,
-              bg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg,
-              bold = true,
-              italic = vim.bo.modified,
-              underline = vim.bo.readonly,
-            })
-
-            if str == '' or str:find('://', 1, true) then
-              return '%#LualineFilename#' .. str
-            end
-
-            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
-            if not path then
-              return '%#LualineFilename#' .. str
-            end
-
-            return '%#LualinePathMixed#' .. path .. '%#LualineFilename#' .. fname .. '%#lualine_b_normal#'
-          end,
-        },
-      },
+      lualine_b = {},
       lualine_c = {
         { "%{%v:lua.dropbar()%}", separator = { left = "", right = "" }, color = "nil" },
       },
@@ -102,7 +62,6 @@ return {
           function() return "" end,
         },
         osv_or_dap,
-        "location",
       },
       lualine_y = {
         {
@@ -126,21 +85,91 @@ return {
         "branch",
       },
     },
-    inactive_sections = {
+    sections = {
       lualine_a = {
         {
           "filename",
-          file_status = true,
+          file_status = false,
           newfile_status = true,
           path = 1,
 
-          shorting_target = 40,
           symbols = {
             modified = "*",
             readonly = "%%",
             unnamed = "[No Name]",
             newfile = "[New]",
           },
+
+          fmt = function(str)
+            vim.api.nvim_set_hl(0, 'LualinePathMixed', {
+              fg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg,
+              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg
+            })
+
+            vim.api.nvim_set_hl(0, 'LualineFilename', {
+              fg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).fg,
+              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg,
+              bold = true,
+              italic = vim.bo.modified,
+              underline = vim.bo.readonly,
+            })
+
+            if str == '' or str:find('://', 1, true) then
+              return '%#LualineFilename#' .. str
+            end
+
+            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
+            if not path then
+              return '%#LualineFilename#' .. str
+            end
+
+            return '%#LualinePathMixed#' .. path .. '%#LualineFilename#' .. fname .. '%#lualine_a_normal#'
+          end,
+        },
+      },
+      lualine_b = {},
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {
+        "location",
+      },
+    },
+    inactive_sections = {
+      lualine_a = {
+        {
+          "filename",
+          file_status = false,
+          newfile_status = true,
+          path = 1,
+
+          symbols = {
+            modified = "*",
+            readonly = "%%",
+            unnamed = "[No Name]",
+            newfile = "[New]",
+          },
+
+          fmt = function(str)
+            vim.api.nvim_set_hl(0, 'LualineInactiveFilename', {
+              fg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg,
+              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_inactive' }).bg,
+              bold = true,
+              italic = vim.bo.modified,
+              underline = vim.bo.readonly,
+            })
+
+            if str == '' or str:find('://', 1, true) then
+              return '%#LualineInactiveFilename#' .. str
+            end
+
+            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
+            if not path then
+              return '%#LualineInactiveFilename#' .. str
+            end
+
+            return '%#lualine_a_inactive#' .. path .. '%#LualineInactiveFilename#' .. fname .. '%#lualine_a_inactive#'
+          end,
         },
       },
       lualine_b = {},
@@ -156,7 +185,7 @@ return {
       theme = "auto",
       always_divide_middle = true,
       always_show_tabline = true,
-      globalstatus = true,
+      globalstatus = false,
       section_separators = { left = "", right = "" },
       component_separators = { left = "", right = "" },
     },
@@ -179,6 +208,5 @@ return {
   },
   config = function(_, opts)
     require("lualine").setup(opts)
-    vim.o.laststatus = 3
   end,
 }
