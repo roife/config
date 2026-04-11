@@ -26,7 +26,7 @@ vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelRight>", "<Nop>", { noremap = tru
 -- UI
 -- vim.o.background = "light"
 vim.o.cursorline = true -- highlight cursor line
-vim.o.showtabline = 0 -- disable tabline
+vim.o.switchbuf = 'usetab,newtab'
 vim.o.signcolumn = "yes" -- Keep signcolumn on by default
 vim.o.showmode = false -- remove "-- INSERT --" mode hint
 vim.o.smoothscroll = true
@@ -45,34 +45,7 @@ vim.o.cmdheight = 0
 require("vim._core.ui2").enable {
   enable = true,
   msg = {
-    targets = {
-      [""] = "msg",
-      empty = "cmd",
-      bufwrite = "msg",
-      confirm = "cmd",
-      emsg = "pager",
-      echo = "msg",
-      echomsg = "msg",
-      echoerr = "pager",
-      completion = "cmd",
-      list_cmd = "pager",
-      lua_error = "pager",
-      lua_print = "msg",
-      progress = "pager",
-      rpc_error = "pager",
-      quickfix = "msg",
-      search_cmd = "cmd",
-      search_count = "cmd",
-      shell_cmd = "pager",
-      shell_err = "pager",
-      shell_out = "pager",
-      shell_ret = "msg",
-      undo = "msg",
-      verbose = "pager",
-      wildlist = "cmd",
-      wmsg = "msg",
-      typed_cmd = "cmd",
-    },
+    targets = "msg",
     cmd = {
       height = 0.5,
     },
