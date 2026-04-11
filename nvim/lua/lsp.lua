@@ -60,6 +60,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap_local("gt", vim.lsp.buf.type_definition, "Type definition")
     nmap_local("gI", vim.lsp.buf.implementation, "Implementation")
     nmap_local("gr", vim.lsp.buf.references, "Implementation")
+    nmap_local("<leader>lr", vim.lsp.buf.rename, "Rename")
 
     -- CodeLens
     nmap_local("<leader>llr", vim.lsp.codelens.run, "Run lens")
@@ -89,20 +90,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
     )
 
     -- Folding
-    if client:supports_method('textDocument/foldingRange', bufnr) then
-      vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
-      vim.o.foldtext = 'v:lua.vim.lsp.foldtext()'
+    if client:supports_method("textDocument/foldingRange", bufnr) then
+      vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
+      vim.o.foldtext = "v:lua.vim.lsp.foldtext()"
     end
 
     -- Basic
-    nmap_local("<leader>lR", function() vim.cmd.lsp('restart') end, "Reload LSP")
-    nmap_local("<leader>lI", function() vim.cmd.checkhealth('lsp') end, "LSP info")
+    nmap_local("<leader>lR", function() vim.cmd.lsp("restart") end, "Reload LSP")
+    nmap_local("<leader>lI", function() vim.cmd.checkhealth("lsp") end, "LSP info")
   end,
 })
 
 -- LSP document highlight groups
-vim.api.nvim_set_hl(0, "LspReferenceText",  { underline = true })
-vim.api.nvim_set_hl(0, "LspReferenceRead",  { underline = true })
+vim.api.nvim_set_hl(0, "LspReferenceText", { underline = true })
+vim.api.nvim_set_hl(0, "LspReferenceRead", { underline = true })
 vim.api.nvim_set_hl(0, "LspReferenceWrite", { underline = true })
 
 vim.lsp.enable {

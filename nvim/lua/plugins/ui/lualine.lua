@@ -96,38 +96,42 @@ return {
           },
 
           fmt = function(str)
-            vim.api.nvim_set_hl(0, 'LualinePathMixed', {
-              fg = vim.api.nvim_get_hl(0, { name = 'lualine_b_normal' }).bg,
-              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg
+            vim.api.nvim_set_hl(0, "LualinePathMixed", {
+              fg = vim.api.nvim_get_hl(0, { name = "lualine_b_normal" }).bg,
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).bg,
             })
 
-            vim.api.nvim_set_hl(0, 'LualineFilename', {
-              fg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).fg,
-              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg,
+            vim.api.nvim_set_hl(0, "LualineFilename", {
+              fg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).fg,
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).bg,
               bold = true,
               italic = vim.bo.modified,
               underline = vim.bo.readonly,
             })
 
-            if str == '' or str:find('://', 1, true) then
-              return '%#LualineFilename#' .. str
-            end
+            if str == "" or str:find("://", 1, true) then return "%#LualineFilename#" .. str end
 
-            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
-            if not path then
-              return '%#LualineFilename#' .. str
-            end
+            local path, fname = str:match("^(.*[/\\\\])([^/\\\\]+)$")
+            if not path then return "%#LualineFilename#" .. str end
 
-            return '%#LualinePathMixed#' .. path .. '%#LualineFilename#' .. fname .. '%#lualine_a_normal#'
+            return "%#LualinePathMixed#"
+              .. path
+              .. "%#LualineFilename#"
+              .. fname
+              .. "%#lualine_a_normal#"
           end,
         },
       },
       lualine_b = {
         {
-          'searchcount',
+          "searchcount",
           maxcount = 999,
           timeout = 500,
-        }
+        },
+        {
+          function() return require("symbol_marks").lualine.get() end,
+          cond = function() return require("symbol_marks").lualine.has() end,
+        },
       },
       lualine_c = {},
       lualine_x = {},
@@ -152,24 +156,26 @@ return {
           },
 
           fmt = function(str)
-            vim.api.nvim_set_hl(0, 'LualineInactiveFilename', {
-              fg = vim.api.nvim_get_hl(0, { name = 'lualine_a_normal' }).bg,
-              bg = vim.api.nvim_get_hl(0, { name = 'lualine_a_inactive' }).bg,
+            vim.api.nvim_set_hl(0, "LualineInactiveFilename", {
+              fg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).bg,
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_inactive" }).bg,
               bold = true,
               italic = vim.bo.modified,
               underline = vim.bo.readonly,
             })
 
-            if str == '' or str:find('://', 1, true) then
-              return '%#LualineInactiveFilename#' .. str
+            if str == "" or str:find("://", 1, true) then
+              return "%#LualineInactiveFilename#" .. str
             end
 
-            local path, fname = str:match('^(.*[/\\\\])([^/\\\\]+)$')
-            if not path then
-              return '%#LualineInactiveFilename#' .. str
-            end
+            local path, fname = str:match("^(.*[/\\\\])([^/\\\\]+)$")
+            if not path then return "%#LualineInactiveFilename#" .. str end
 
-            return '%#lualine_a_inactive#' .. path .. '%#LualineInactiveFilename#' .. fname .. '%#lualine_a_inactive#'
+            return "%#lualine_a_inactive#"
+              .. path
+              .. "%#LualineInactiveFilename#"
+              .. fname
+              .. "%#lualine_a_inactive#"
           end,
         },
       },
@@ -207,7 +213,5 @@ return {
       "overseer",
     },
   },
-  config = function(_, opts)
-    require("lualine").setup(opts)
-  end,
+  config = function(_, opts) require("lualine").setup(opts) end,
 }

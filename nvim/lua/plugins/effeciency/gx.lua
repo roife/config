@@ -14,9 +14,7 @@ return {
         name = "jira",
         handle = function(mode, line, _)
           local ticket = require("gx.helper").find(line, mode, "(%u+-%d+)")
-          if ticket and #ticket < 20 then
-            return "http://jira.company.com/browse/" .. ticket
-          end
+          if ticket and #ticket < 20 then return "http://jira.company.com/browse/" .. ticket end
         end,
       },
       rust = {
@@ -25,9 +23,7 @@ return {
         handle = function(mode, line, _)
           local crate = require("gx.helper").find(line, mode, "(%w+)%s-=%s")
 
-          if crate then
-            return "https://crates.io/crates/" .. crate
-          end
+          if crate then return "https://crates.io/crates/" .. crate end
         end,
       },
     },
