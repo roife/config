@@ -1,11 +1,10 @@
 ---@type LazyPluginSpec
 return {
   "rcarriga/nvim-notify",
+  enabled = false,
   event = "VeryLazy",
   init = function()
-    vim.notify = function(...)
-      return require('notify')(...)
-    end
+    vim.notify = function(...) return require("notify")(...) end
   end,
   opts = {
     render = "minimal",

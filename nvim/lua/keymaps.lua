@@ -135,4 +135,4 @@ vim.keymap.set("n", "<leader>gdw", toggle_diff_ignore_whitespace, {
 })
 
 -- Undo tree
-vim.keymap.set('n', '<leader>u', '<Cmd>Undotree<CR>', { desc = 'Undo Tree' })
+vim.keymap.set("n", "<leader>u", "<Cmd>Undotree<CR>", { desc = "Undo Tree" })
