@@ -1,6 +1,7 @@
 # auto-completion
+zstyle ':completion:*' sort         false # don't sort completion candidates
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}" # colors for ls
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' # case-insensitive when completion with tab
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*' # case-insensitive when completion with tab & fuzzy
 autoload -U compinit
 compinit
 
