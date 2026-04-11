@@ -22,6 +22,15 @@ local function osv_or_dap()
   end
 end
 
+local function is_macro_recording()
+  local rec = vim.fn.reg_recording()
+  return rec and rec ~= ""
+end
+
+local function get_macro_recording()
+  return "Recoding @" .. vim.fn.reg_recording()
+end
+
 ---@type LazyPluginSpec
 return {
   "nvim-lualine/lualine.nvim",
@@ -75,6 +84,10 @@ return {
           },
           cond = function() return vim.bo.fileformat ~= "unix" end,
         },
+        {
+          get_macro_recording,
+          cond = is_macro_recording,
+        }
       },
       lualine_z = {
         "branch",
