@@ -31,6 +31,22 @@ local function get_macro_recording()
   return "Recoding @" .. vim.fn.reg_recording()
 end
 
+local mode_to_highlight = {
+  ['n'] = 'normal',
+  ['i'] = 'insert',
+  ['v'] = 'visual',
+  ['V'] = 'visual',
+  [''] = 'visual',
+  ['R'] = 'replace',
+  ['c'] = 'command',
+  ['t'] = 'terminal',
+}
+
+local function get_mode_highlight()
+  local mode = vim.api.nvim_get_mode().mode
+  return mode_to_highlight[mode] or '_normal'
+end
+
 ---@type LazyPluginSpec
 return {
   "nvim-lualine/lualine.nvim",
@@ -66,6 +82,10 @@ return {
           function() return "" end,
         },
         osv_or_dap,
+        {
+          get_macro_recording,
+          cond = is_macro_recording,
+        },
       },
       lualine_y = {
         {
@@ -84,13 +104,13 @@ return {
           },
           cond = function() return vim.bo.fileformat ~= "unix" end,
         },
-        {
-          get_macro_recording,
-          cond = is_macro_recording,
-        }
+        "branch",
       },
       lualine_z = {
-        "branch",
+        {
+          "project",
+          format = "full",
+        },
       },
     },
     sections = {
@@ -109,14 +129,16 @@ return {
           },
 
           fmt = function(str)
+            local mode = get_mode_highlight()
             vim.api.nvim_set_hl(0, "LualinePathMixed", {
               fg = vim.api.nvim_get_hl(0, { name = "lualine_b_normal" }).bg,
-              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).bg,
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_" ..  mode }).bg,
+              nocombine = false
             })
 
             vim.api.nvim_set_hl(0, "LualineFilename", {
-              fg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).fg,
-              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_normal" }).bg,
+              fg = vim.api.nvim_get_hl(0, { name = "lualine_a_" .. mode }).fg,
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_" .. mode }).bg,
               bold = true,
               italic = vim.bo.modified,
               underline = vim.bo.readonly,
@@ -131,7 +153,6 @@ return {
               .. path
               .. "%#LualineFilename#"
               .. fname
-              .. "%#lualine_a_normal#"
           end,
         },
       },
