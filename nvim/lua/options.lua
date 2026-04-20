@@ -28,6 +28,7 @@ vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelRight>", "<Nop>", { noremap = tru
 vim.o.cursorline = true -- highlight cursor line
 vim.o.switchbuf = 'usetab,newtab'
 vim.o.signcolumn = "yes" -- Keep signcolumn on by default
+vim.o.statuscolumn = " %s"
 vim.o.showmode = false -- remove "-- INSERT --" mode hint
 vim.o.smoothscroll = true
 vim.o.termguicolors = true

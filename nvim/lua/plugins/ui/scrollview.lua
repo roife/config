@@ -3,10 +3,6 @@ return {
   "dstein64/nvim-scrollview",
   event = "VeryLazy",
   opts = {
-    winblend = 50,
-    winblend_gui = 50,
-    floating_windows = true,
-    consider_border = true,
     excluded_filetypes = {
       "dropbar_menu",
       "cmp_docs",
@@ -29,8 +25,10 @@ return {
       "spell",
     },
     signs_scrollbar_overlap = "over",
-    signs_max_per_row = 2,
+    signs_max_per_row = 1,
     visibility = "info",
+    base = "left",
+    column = 1,
 
     cursor_priority = 100,
     latestchange_priority = 90,
