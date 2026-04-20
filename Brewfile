@@ -25,6 +25,8 @@ brew "rustup"
 brew "cmake"
 brew "llvm"
 
+brew "sdkman"
+
 brew "tree-sitter"
 brew "tree-sitter-cli"
 
