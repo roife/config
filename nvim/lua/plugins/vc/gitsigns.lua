@@ -106,12 +106,6 @@ return {
         gitsigns.toggle_deleted,
         { buffer = bufnr, desc = "Git deleted" }
       )
-      vim.keymap.set(
-        "n",
-        "<leader>tb",
-        gitsigns.toggle_current_line_blame,
-        { buffer = bufnr, desc = "Line blame" }
-      )
 
       -- Text object
       vim.keymap.set({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "a git hunk" })

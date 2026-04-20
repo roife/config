@@ -6,21 +6,6 @@ return {
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
   },
-  init = function()
-    vim.api.nvim_create_autocmd("BufEnter", {
-      group = vim.api.nvim_create_augroup("load_neo_tree", {}),
-      desc = "Loads neo-tree when openning a directory",
-      callback = function(args)
-        local stats = vim.uv.fs_stat(args.file)
-
-        if not stats or stats.type ~= "directory" then return end
-
-        require("neo-tree")
-
-        return true
-      end,
-    })
-  end,
   opts = {
     default_source = "last",
     enable_cursor_hijack = true,
@@ -36,8 +21,12 @@ return {
     default_component_configs = {
       modified = { symbol = "*" },
       indent = {
-        expander_collapsed = "+",
-        expander_expanded = "-",
+        padding = 0,
+        expander_collapsed = "-",
+        expander_expanded = "+",
+      },
+      container = {
+        right_padding = 0,
       },
       icon = {
         folder_closed = "+",
@@ -64,50 +53,81 @@ return {
     },
     document_symbols = {
       kinds = {
-        Unknown = { icon = "?" },
-        Root = { icon = "Rt" },
-        File = { icon = "Fl" },
-        Module = { icon = "Md" },
-        Namespace = { icon = "Ns" },
-        Package = { icon = "Pk" },
-        Class = { icon = "Cl" },
-        Method = { icon = "Mt" },
-        Property = { icon = "Pr" },
-        Field = { icon = "Fd" },
-        Constructor = { icon = "Cr" },
-        Enum = { icon = "En" },
-        Interface = { icon = "If" },
-        Function = { icon = "Fn" },
-        Variable = { icon = "Vr" },
-        Constant = { icon = "Cn" },
-        String = { icon = "St" },
-        Number = { icon = "Nr" },
-        Boolean = { icon = "Bl" },
-        Array = { icon = "Ar" },
-        Object = { icon = "Ob" },
-        Key = { icon = "Ke" },
-        Null = { icon = "Nu" },
-        EnumMember = { icon = "Em" },
-        Struct = { icon = "St" },
-        Event = { icon = "Ev" },
-        Operator = { icon = "Op" },
-        TypeParameter = { icon = "Tp" },
+        Unknown = { name = "Unk" },
+        Root = { name = "Root" },
+        File = { name = "File" },
+        Module = { name = "Mod" },
+        Namespace = { name = "Ns" },
+        Package = { name = "Pack" },
+        Class = { name = "Cls" },
+        Method = { name = "Mtd" },
+        Property = { name = "Prop" },
+        Field = { name = "Fld" },
+        Constructor = { name = "Ctor" },
+        Enum = { name = "Enum" },
+        Interface = { name = "Intf" },
+        Function = { name = "Fn" },
+        Variable = { name = "Var" },
+        Constant = { name = "Cnst" },
+        String = { name = "Str" },
+        Number = { name = "Num" },
+        Boolean = { name = "Bool" },
+        Array = { name = "Arr" },
+        Object = { name = "Obj" },
+        Key = { name = "Key" },
+        Null = { name = "Nul" },
+        EnumMember = { name = "EnMem" },
+        Struct = { name = "Strct" },
+        Event = { name = "Evt" },
+        Operator = { name = "Op" },
+        TypeParameter = { name = "TyPar" },
       },
       renderers = {
         root = {
           { "indent" },
-          { "icon", default = "C" },
           { "name", zindex = 10 },
         },
         symbol = {
           { "indent", with_expanders = true },
-          { "kind_icon", default = "?" },
-          { "name", zindex = 10 },
+          {
+            "container",
+            content = {
+              { "name", zindex = 10 },
+              { "kind_name", zindex = 20, align = "right" },
+            },
+          },
         },
+      },
+    },
+    renderers = {
+      file = {
+        { "indent" },
+        {
+          "container",
+          content = {
+            { "name", zindex = 10 },
+            { "symlink_target", zindex = 10, highlight = "NeoTreeSymbolicLinkTarget" },
+            { "clipboard", zindex = 10 },
+            { "bufnr", zindex = 10 },
+            { "modified", zindex = 20, align = "right" },
+            { "diagnostics", zindex = 20, align = "right" },
+            { "git_status", zindex = 10, align = "right" },
+            { "file_size", zindex = 10, align = "right" },
+            { "type", zindex = 10, align = "right" },
+            { "last_modified", zindex = 10, align = "right" },
+            { "created", zindex = 10, align = "right" },
+          },
+        },
+      },
+      terminal = {
+        { "indent" },
+        { "name" },
+        { "bufnr" },
       },
     },
     source_selector = {
       winbar = true,
+      statusline = true,
       sources = {
         {
           source = "filesystem",
@@ -208,8 +228,8 @@ return {
       { event = events.FILE_MOVED, handler = on_move },
       { event = events.FILE_RENAMED, handler = on_move },
     })
+
     require("neo-tree").setup(opts)
-    vim.api.nvim_create_augroup("load_neo_tree", {})
   end,
   keys = {
     { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "File Explorer" },
