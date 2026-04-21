@@ -1,3 +1,33 @@
+local function sort_key(item)
+  if item.type == "directory" then
+    return 1, item.name
+  end
+  if item.type == "file" and item.name:sub(-3) == ".rs" then
+    return 0, item.name:sub(1, -4)
+  end
+  return 2, item.name
+end
+
+local function filesystem_sort(a, b)
+  local a_kind, a_group = sort_key(a)
+  local b_kind, b_group = sort_key(b)
+
+  if a_kind == 2 or b_kind == 2 then
+    if a_kind ~= b_kind then
+      return a_kind < b_kind
+    end
+    return a.path < b.path
+  end
+
+  if a_group ~= b_group then
+    return a_group < b_group
+  end
+  if a_kind ~= b_kind then
+    return a_kind < b_kind
+  end
+  return a.path < b.path
+end
+
 ---@type LazyPluginSpec
 return {
   "nvim-neo-tree/neo-tree.nvim",
@@ -24,6 +54,7 @@ return {
         padding = 0,
         expander_collapsed = "-",
         expander_expanded = "+",
+        last_indent_marker = "│",
       },
       container = {
         right_padding = 0,
@@ -33,6 +64,7 @@ return {
         folder_open = "-",
         folder_empty = "-",
         default = " ",
+        provider = nil,
       },
       git_status = {
         symbols = {
@@ -51,6 +83,7 @@ return {
         enabled = true,
       },
     },
+    sort_function = filesystem_sort,
     document_symbols = {
       kinds = {
         Unknown = { name = "Unk" },
@@ -171,6 +204,9 @@ return {
             use_image_nvim = true,
           },
         },
+
+        ["gd"] = "codediff_head",
+        ["gD"] = "codediff_pr",
       },
     },
     commands = {
@@ -208,6 +244,30 @@ return {
         elseif node.type == "file" then
           require("neo-tree.sources.common.commands").open(state)
         end
+      end,
+
+      codediff_head = function(state)
+        local node = state.tree:get_node()
+        if not node or node.type ~= "file" then
+          return
+        end
+
+        state.commands.open(state)
+        vim.schedule(function()
+          vim.cmd("CodeDiff file HEAD")
+        end)
+      end,
+
+      codediff_pr = function(state)
+        local node = state.tree:get_node()
+        if not node or node.type ~= "file" then
+          return
+        end
+
+        state.commands.open(state)
+        vim.schedule(function()
+          vim.cmd("CodeDiff file main...")
+        end)
       end,
     },
     filesystem = {

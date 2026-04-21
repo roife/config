@@ -33,7 +33,7 @@ return {
       { "<leader>fd", group = "debug" },
 
       { "<leader>g", group = "git" },
-      { "<leader>gd", group = "diffview" },
+      { "<leader>gd", group = "codediff" },
 
       { "<leader>s", group = "session" },
       { "<leader>sc", group = "current" },

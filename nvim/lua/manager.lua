@@ -16,7 +16,7 @@ require("lazy").setup {
     colorscheme = { "gruvbox-material" },
   },
   diff = {
-    cmd = "diffview.nvim",
+    cmd = "codediff.nvim",
   },
   change_detection = {
     -- automatically check for config file changes and reload the ui

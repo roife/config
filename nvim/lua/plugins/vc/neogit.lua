@@ -3,7 +3,7 @@ return {
   "NeogitOrg/neogit",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "sindrets/diffview.nvim",
+    "esmuellert/codediff.nvim",
   },
   cmd = {
     "Neogit",
@@ -17,7 +17,7 @@ return {
     remember_settings = true,
     integrations = {
       fzf_lua = true,
-      diffview = true,
+      codediff = true,
     },
     sections = {
       stashes = {
