@@ -3,6 +3,8 @@ return {
   "dstein64/nvim-scrollview",
   event = "VeryLazy",
   opts = {
+    winblend = 0,
+    winblend_gui = 0,
     excluded_filetypes = {
       "dropbar_menu",
       "cmp_docs",
@@ -12,11 +14,11 @@ return {
       "blink-cmp-signature",
     },
     signs_on_startup = {
-      "cursor",
+      --"cursor",
       "conflicts",
       "diagnostics",
       "keywords",
-      "latestchange",
+      --"latestchange",
       "loclist",
       "marks",
       "quickfix",
@@ -37,6 +39,7 @@ return {
     local scrollview_gitsigns = require("scrollview.contrib.gitsigns")
 
     scrollview.setup(opts)
+    vim.api.nvim_set_hl(0, "ScrollView", { link = "MatchParen" })
     scrollview_gitsigns.setup {
       add_highlight = "GitSignsAdd",
       change_highlight = "GitSignsChange",
