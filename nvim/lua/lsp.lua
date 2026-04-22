@@ -108,7 +108,7 @@ vim.api.nvim_set_hl(0, "LspReferenceWrite", { underline = true })
 
 vim.lsp.enable {
   "clangd",
-  "emmylua_ls",
+  "lua_ls",
   "copilot",
   --"rust-analyzer",
   "tinymist",
