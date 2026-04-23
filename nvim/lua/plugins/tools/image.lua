@@ -31,5 +31,15 @@ return {
   end,
   opts = {
     hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" },
+    integrations = {
+      markdown = {
+        only_render_image_at_cursor = true,
+        only_render_image_at_cursor_mode = "inline",
+      },
+      typst = {
+        only_render_image_at_cursor = true,
+        only_render_image_at_cursor_mode = "inline",
+      },
+    },
   },
 }
