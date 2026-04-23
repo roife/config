@@ -49,4 +49,20 @@ function M.shorten_path(path, sep, max_len)
   return table.concat(segments, sep)
 end
 
+--- Adjusts the brightness of a color represented as an integer (0xRRGGBB).
+--- @param color_int integer The color as an integer (0xRRGGBB).
+--- @param amount integer The amount to adjust the brightness (positive to brighten, negative to darken).
+--- @return integer The adjusted color as an integer (0xRRGGBB).
+function M.adjust_brightness(color_int, amount)
+  local r = math.floor(color_int / 0x10000)
+  local g = math.floor((color_int % 0x10000) / 0x100)
+  local b = color_int % 0x100
+
+  r = math.min(255, math.max(0, r + amount))
+  g = math.min(255, math.max(0, g + amount))
+  b = math.min(255, math.max(0, b + amount))
+
+  return (r * 0x10000) + (g * 0x100) + b
+end
+
 return M
