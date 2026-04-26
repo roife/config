@@ -42,3 +42,11 @@ vim.api.nvim_create_autocmd("FileType", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("TermOpen", {
+  desc = "Name terminal tabs by cwd",
+  callback = function(args)
+    local cwd = vim.api.nvim_buf_get_name(args.buf):match("^term://(.-)//%d+:")
+    require("utils").set_tabname(cwd and vim.fn.fnamemodify(vim.fn.expand(cwd), ":~"))
+  end,
+})

@@ -2,6 +2,13 @@
 return {
   "rcarriga/nvim-dap-ui",
   dependencies = { "nvim-neotest/nvim-nio" },
+  init = function()
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "dapui_*",
+      desc = "Name nvim-dap-ui tabs",
+      callback = function() require("utils").set_tabname("dap-ui") end,
+    })
+  end,
   opts = {
     icons = {
       collapsed = "+",

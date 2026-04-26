@@ -8,6 +8,13 @@ return {
   cmd = {
     "Neogit",
   },
+  init = function()
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "Neogit*",
+      desc = "Name Neogit tabs",
+      callback = function() require("utils").set_tabname("neogit") end,
+    })
+  end,
   keys = {
     { "<leader>gg", "<Cmd>Neogit<CR>", desc = "Open Neogit" },
   },

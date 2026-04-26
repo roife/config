@@ -2,6 +2,13 @@
 return {
   "esmuellert/codediff.nvim",
   cmd = "CodeDiff",
+  init = function()
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "CodeDiffOpen",
+      desc = "Name CodeDiff tabs",
+      callback = function() require("utils").set_tabname("codediff") end,
+    })
+  end,
   opts = {
     diff = {
       ignore_trim_whitespace = true,
@@ -24,5 +31,5 @@ return {
       "<Cmd>CodeDiff file HEAD<CR>",
       desc = "Current History",
     },
-  }
+  },
 }

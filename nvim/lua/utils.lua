@@ -27,6 +27,11 @@ function M.noop() end
 
 function M.empty_str(...) return "" end
 
+function M.set_tabname(name)
+  if not name or name == "" or (vim.t.tabname and vim.t.tabname ~= "") then return end
+  vim.t.tabname = name
+end
+
 ---shortens path by turning apple/orange -> a/orange
 ---@param path string
 ---@param sep string path separator
