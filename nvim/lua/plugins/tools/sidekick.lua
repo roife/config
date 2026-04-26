@@ -33,6 +33,8 @@ return {
 {git_history}.
 # Generate a thoughtful and succinct commit message.
 # Commit changes]],
+        inline = [[#Analyze the usage of these functions and inline those that are used only once:
+{this}.]],
       },
       win = {
         layout = "float",
