@@ -18,88 +18,8 @@ return {
     },
   },
   keys = function()
-    local on_create = function(t)
-      local bufnr = t.bufnr
-      vim.keymap.set("t", "<Esc>", "<Nop>", { buffer = bufnr })
-    end
-
-    local lazygit
-    local lazydocker
-    local gh_dash
-    local lf
-
     return {
       { "<C-\\>" },
-      {
-        "<leader>tt",
-        "<Cmd>ToggleTermToggleAll<CR>",
-        mode = "n",
-        desc = "All Terminal",
-      },
-
-      -- External programs
-      {
-        "<leader>gl",
-        function()
-          if not lazygit then
-            lazygit = require("toggleterm.terminal").Terminal:new {
-              cmd = "lazygit",
-              hidden = true,
-              direction = "float",
-              on_create = on_create,
-            }
-          end
-          lazygit:toggle()
-        end,
-        desc = "LazyGit",
-      },
-      {
-        "<leader>pd",
-        function()
-          if not lazydocker then
-            lazydocker = require("toggleterm.terminal").Terminal:new {
-              cmd = "lazydocker",
-              hidden = true,
-              direction = "float",
-              on_create = on_create,
-            }
-          end
-          lazydocker:toggle()
-        end,
-        desc = "Lazy Docker",
-      },
-      {
-        "<leader>pg",
-        function()
-          if not gh_dash then
-            gh_dash = require("toggleterm.terminal").Terminal:new {
-              -- https://github.com/dlvhdr/gh-dash/issues/316
-              env = { LANG = "en_US.UTF-8" },
-              cmd = "gh-dash",
-              hidden = true,
-              direction = "float",
-              on_create = on_create,
-            }
-          end
-          gh_dash:toggle()
-        end,
-        desc = "GitHub Dash",
-      },
-      {
-        "<leader>N",
-        function()
-          if not lf then
-            lf = require("toggleterm.terminal").Terminal:new {
-              cmd = "lf",
-              hidden = true,
-              direction = "float",
-              on_create = on_create,
-            }
-          end
-          lf:toggle()
-        end,
-        desc = "File Navigator",
-      },
     }
   end,
 }
