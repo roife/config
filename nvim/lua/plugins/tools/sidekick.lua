@@ -37,6 +37,17 @@ return {
       win = {
         layout = "float",
       },
+      tools = {
+        codex = {
+          cmd = {
+            "codex",
+            "--disable",
+            "apps",
+            "--disable",
+            "plugins",
+          },
+        },
+      },
     },
   },
   keys = {
