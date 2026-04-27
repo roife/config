@@ -98,6 +98,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- Basic
     nmap_local("<leader>lR", function() vim.cmd.lsp("restart") end, "Reload LSP")
     nmap_local("<leader>lI", function() vim.cmd.checkhealth("lsp") end, "LSP info")
+    nmap_local(
+      "<leader>lL",
+      function()
+        vim.cmd.tabnew(vim.fn.fnameescape(vim.lsp.log.get_filename()))
+        vim.t.tabname = "LspLog"
+      end,
+      "LSP info"
+    )
   end,
 })
 
