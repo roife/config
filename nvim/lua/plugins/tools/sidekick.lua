@@ -75,6 +75,7 @@ return {
     {
       "<C-S-\\>",
       function() require("sidekick.cli").toggle { name = "codex", focus = true } end,
+      mode = { "n", "t" },
       desc = "Sidekick Toggle CLI",
     },
     {

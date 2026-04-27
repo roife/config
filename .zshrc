@@ -97,6 +97,8 @@ alias gcpc='git cherry-pick --continue'
 
 alias glog='git log --all --pretty="format:%d %h  %s" --graph'
 
+alias codex='codex --disable apps --disable plugins'
+
 # nodejs
 eval "$(fnm env)"
 
