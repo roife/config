@@ -24,10 +24,27 @@ vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelLeft>", "<Nop>", { noremap = true
 vim.keymap.set({ "n", "i", "v" }, "<ScrollWheelRight>", "<Nop>", { noremap = true, silent = true })
 
 -- UI
+_G.GitSignsClick = function(_, _, button, _)
+  local pos = vim.fn.getmousepos()
+  if pos.winid == 0 or pos.line <= 0 then return end
+
+  vim.api.nvim_set_current_win(pos.winid)
+  vim.api.nvim_win_set_cursor(pos.winid, { pos.line, 0 })
+
+  local gs = require("gitsigns")
+  if button == "l" then
+    gs.preview_hunk()
+  elseif button == "m" then
+    gs.reset_hunk()
+  elseif button == "r" then
+    gs.stage_hunk()
+  end
+end
+
 -- vim.o.background = "light"
 vim.o.cursorline = true -- highlight cursor line
 vim.o.signcolumn = "yes" -- Keep signcolumn on by default
-vim.o.statuscolumn = " %s"
+vim.o.statuscolumn = "  %@v:lua.GitSignsClick@%s"
 vim.o.showmode = false -- remove "-- INSERT --" mode hint
 vim.o.smoothscroll = true
 vim.o.termguicolors = true

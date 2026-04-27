@@ -27,24 +27,22 @@ local function is_macro_recording()
   return rec and rec ~= ""
 end
 
-local function get_macro_recording()
-  return "Recoding @" .. vim.fn.reg_recording()
-end
+local function get_macro_recording() return "Recoding @" .. vim.fn.reg_recording() end
 
 local mode_to_highlight = {
-  ['n'] = 'normal',
-  ['i'] = 'insert',
-  ['v'] = 'visual',
-  ['V'] = 'visual',
-  [''] = 'visual',
-  ['R'] = 'replace',
-  ['c'] = 'command',
-  ['t'] = 'terminal',
+  ["n"] = "normal",
+  ["i"] = "insert",
+  ["v"] = "visual",
+  ["V"] = "visual",
+  [""] = "visual",
+  ["R"] = "replace",
+  ["c"] = "command",
+  ["t"] = "terminal",
 }
 
 local function get_mode_highlight()
   local mode = vim.api.nvim_get_mode().mode
-  return mode_to_highlight[mode] or '_normal'
+  return mode_to_highlight[mode] or "_normal"
 end
 
 ---@type LazyPluginSpec
@@ -132,8 +130,8 @@ return {
             local mode = get_mode_highlight()
             vim.api.nvim_set_hl(0, "LualinePathMixed", {
               fg = vim.api.nvim_get_hl(0, { name = "lualine_b_normal" }).bg,
-              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_" ..  mode }).bg,
-              nocombine = false
+              bg = vim.api.nvim_get_hl(0, { name = "lualine_a_" .. mode }).bg,
+              nocombine = false,
             })
 
             vim.api.nvim_set_hl(0, "LualineFilename", {
@@ -149,10 +147,7 @@ return {
             local path, fname = str:match("^(.*[/\\\\])([^/\\\\]+)$")
             if not path then return "%#LualineFilename#" .. str end
 
-            return "%#LualinePathMixed#"
-              .. path
-              .. "%#LualineFilename#"
-              .. fname
+            return "%#LualinePathMixed#" .. path .. "%#LualineFilename#" .. fname
           end,
         },
       },

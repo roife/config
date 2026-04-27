@@ -15,6 +15,9 @@ return {
   opts = {
     -- word_diff = true,
     attach_to_untracked = true,
+    preview_config = {
+      border = "rounded",
+    },
     on_attach = function(bufnr)
       local gitsigns = require("gitsigns")
       local next_hunk, prev_hunk = utils.make_repeatable_move_pair(
@@ -103,7 +106,7 @@ return {
       vim.keymap.set(
         "n",
         "<leader>tD",
-        gitsigns.toggle_deleted,
+        gitsigns.preview_hunk_inline,
         { buffer = bufnr, desc = "Git deleted" }
       )
 
