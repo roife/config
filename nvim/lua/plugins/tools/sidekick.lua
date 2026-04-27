@@ -8,9 +8,6 @@ return {
         esc = true,
       },
     },
-    signs = {
-      icon = "✦",
-    },
     cli = {
       picker = "fzf-lua",
       ---@type table<string, sidekick.context.Fn>
@@ -49,6 +46,11 @@ return {
             "plugins",
           },
         },
+      },
+    },
+    ui = {
+      icons = {
+        nes = "✦",
       },
     },
   },

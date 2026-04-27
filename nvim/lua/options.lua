@@ -43,8 +43,6 @@ end
 
 -- vim.o.background = "light"
 vim.o.cursorline = true -- highlight cursor line
-vim.o.signcolumn = "yes" -- Keep signcolumn on by default
-vim.o.statuscolumn = "  %@v:lua.GitSignsClick@%s"
 vim.o.showmode = false -- remove "-- INSERT --" mode hint
 vim.o.smoothscroll = true
 vim.o.termguicolors = true
