@@ -1,5 +1,14 @@
 local M = {}
 
+local config_file = io.open(vim.fn.expand("~/config.json"), "r")
+if config_file then
+  local content = config_file:read("*a")
+  config_file:close()
+  local ok, config = pcall(vim.json.decode, content)
+  if ok then M.work = config.work end
+end
+M.work = false
+
 --- Wrapper for tree-sitter repeatable move,
 ---@param forward_move_fn function
 ---@param backward_move_fn function

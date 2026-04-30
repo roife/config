@@ -1,3 +1,6 @@
+local utils = require("utils")
+local codex_cmd = utils.work and "codex-internal" or "codex"
+
 ---@type LazyPluginSpec
 return {
   "folke/sidekick.nvim",
@@ -39,7 +42,7 @@ return {
       tools = {
         codex = {
           cmd = {
-            "codex",
+            codex_cmd,
             "--disable",
             "apps",
             "--disable",
