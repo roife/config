@@ -84,6 +84,16 @@ return {
           get_macro_recording,
           cond = is_macro_recording,
         },
+        {
+          "lsp_status",
+          icon = "",
+          symbols = {
+            spinner = { "|", "/", "-", "\\" },
+            done = "",
+            separator = " ",
+          },
+          show_name = true,
+        },
       },
       lualine_y = {
         {

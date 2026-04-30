@@ -27,7 +27,7 @@ return {
     },
     {
       "<leader>wc",
-      function() require("symbol_marks").clear_all() end,
+      function() require("symbol_marks").clear() end,
       desc = "Delete All Symbols",
     },
   },

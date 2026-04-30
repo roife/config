@@ -11,7 +11,6 @@ return {
   end,
   opts = {
     diff = {
-      ignore_trim_whitespace = true,
       compute_moves = true,
     },
 
