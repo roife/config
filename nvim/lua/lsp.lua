@@ -124,7 +124,7 @@ vim.api.nvim_create_autocmd('LspProgress', {
         desc = 'Clear LSP progress on exit',
         group = vim.api.nvim_create_augroup(name, { clear = true }),
         callback = function()
-          vim.api.nvim_echo({}, false, {
+          vim.api.nvim_echo({}, true, {
             id = 'lsp.' .. ev.data.params.token,
             kind = 'progress',
             source = 'vim.lsp',
@@ -137,7 +137,7 @@ vim.api.nvim_create_autocmd('LspProgress', {
       vim.api.nvim_del_augroup_by_name(name)
     end
 
-    vim.api.nvim_echo({ { value.message or 'done' } }, false, {
+    vim.api.nvim_echo({ { value.message or 'done' } }, true, {
       id = 'lsp.' .. ev.data.params.token,
       kind = 'progress',
       source = 'vim.lsp',
@@ -158,6 +158,7 @@ vim.lsp.enable {
   "lua_ls",
   "copilot",
   --"rust-analyzer",
+  --"jdtls",
   "tinymist",
   "pyrefly",
 }

@@ -41,6 +41,10 @@ brew "pyrefly"
 brew "typst"
 brew "tinymist"
 
+brew "jdtls"
+
+brew "mactex"
+
 brew "z"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
