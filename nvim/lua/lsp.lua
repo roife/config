@@ -109,6 +109,45 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+vim.api.nvim_create_autocmd('LspProgress', {
+  desc = 'Display LSP progress in the terminal',
+  callback = function(ev)
+    ---@type
+    ---| lsp.WorkDoneProgressBegin
+    ---| lsp.WorkDoneProgressReport
+    ---| lsp.WorkDoneProgressEnd
+    local value = ev.data.params.value
+
+    local name = 'ofseed_lsp_progress_clear:' .. ev.data.params.token
+    if value.kind == 'begin' then
+      vim.api.nvim_create_autocmd('VimLeave', {
+        desc = 'Clear LSP progress on exit',
+        group = vim.api.nvim_create_augroup(name, { clear = true }),
+        callback = function()
+          vim.api.nvim_echo({}, false, {
+            id = 'lsp.' .. ev.data.params.token,
+            kind = 'progress',
+            source = 'vim.lsp',
+            title = value.title,
+            status = 'cancel',
+          })
+        end,
+      })
+    elseif value.kind == 'end' then
+      vim.api.nvim_del_augroup_by_name(name)
+    end
+
+    vim.api.nvim_echo({ { value.message or 'done' } }, false, {
+      id = 'lsp.' .. ev.data.params.token,
+      kind = 'progress',
+      source = 'vim.lsp',
+      title = value.title,
+      status = value.kind ~= 'end' and 'running' or 'success',
+      percent = value.percentage,
+    })
+  end,
+})
+
 -- LSP document highlight groups
 vim.api.nvim_set_hl(0, "LspReferenceText", { underline = true })
 vim.api.nvim_set_hl(0, "LspReferenceRead", { underline = true })
