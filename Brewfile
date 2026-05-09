@@ -1,5 +1,5 @@
 tap "daipeihust/tap"
-brew "im-select"
+brew "daipeihust/tap/im-select"
 
 brew "direnv"
 brew "difftastic"
@@ -21,11 +21,13 @@ brew "tree"
 brew "wget"
 
 brew "rustup"
+cargo "pest-language-server"
 
 brew "cmake"
 brew "llvm"
 
-brew "sdkman"
+tap "sdkman/tap"
+brew "sdkman/tap/sdkman-cli"
 
 brew "tree-sitter"
 brew "tree-sitter-cli"
@@ -43,17 +45,18 @@ brew "tinymist"
 
 brew "jdtls"
 
-brew "mactex"
-
 brew "z"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 cask "bettertouchtool"
-cask "copilot-cli"
+cask "copilot-language-server"
+cask "codex"
 cask "font-iosevka"
 cask "ghostty"
 cask "launchbar"
+cask "mactex-no-gui"
+cask "zotero"
 
 brew "mas"
 mas "AdGuard for Safari", id: 1440147259
