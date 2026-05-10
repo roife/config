@@ -2,20 +2,12 @@
 !*/
 
 !.zshrc
+!.zprofile
 !.gitconfig
 !.gitignore
 !.gitignore_global
 
 !Brewfile
 
-!nvim/
-!nvim/**
-nvim/after/
-nvim/after/**
-nvim/nvim.log
-
 !ghostty/
 !ghostty/**
-
-!yazi/
-!yazi/**

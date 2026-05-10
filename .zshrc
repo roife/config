@@ -99,18 +99,18 @@ alias glog='git log --all --pretty="format:%d %h  %s" --graph'
 
 alias codex='codex --disable apps --disable plugins'
 
-# nodejs
-eval "$(fnm env)"
-
-# rust
-PATH=$(brew --prefix rustup)/bin:$PATH
-
 # brew
 alias brewdump='brew bundle dump --file="~/.config/Brewfile"'
 alias brewrestore='brew bundle --file="~/.config/Brewfile"'
 
 # Integration with fzf
 source <(fzf --zsh)
+
+# direnv
+eval "$(direnv hook zsh)"
+
+# java
+[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
 # Backup
 recover() {
@@ -122,14 +122,3 @@ recover() {
     fnm i --lts
     tldr -u
 }
-
-# direnv
-eval "$(direnv hook zsh)"
-
-# java
-export SDKMAN_DIR=$(brew --prefix sdkman-cli)/libexec
-[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
-export JDTLS_JAVA_HOME=$(brew --prefix openjdk)/libexec/openjdk.jdk/Contents/Home
-
-# mactex
-eval "$(/usr/libexec/path_helper)"
