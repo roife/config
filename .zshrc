@@ -1,10 +1,10 @@
 # auto-completion
 zstyle ':completion:*' sort         false # don't sort completion candidates
 zstyle ':completion:*' menu select
-zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}" # colors for ls
+[[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}" # colors for ls
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*' # case-insensitive when completion with tab & fuzzy
-autoload -U compinit
-compinit
+autoload -Uz compinit
+compinit -C -d ~/.cache/zsh/zcompdump
 
 # cd folder without "cd"
 setopt auto_cd
@@ -13,17 +13,14 @@ setopt pushd_ignore_dups
 setopt pushd_silent
 
 # correct
-setopt correct
+setopt correct_all
 
 # auto-suggestion
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # z
 source /opt/homebrew/etc/profile.d/z.sh
-# highlighting
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # PS
-PS1="%F{green}%~%f "
+PS1='%(?.%F{green}.%F{red})%~%f '
 
 # history
 HISTFILE=$HOME/.zsh_history
@@ -32,25 +29,32 @@ SAVEHIST=50000
 
 setopt append_history
 setopt inc_append_history
-setopt share_history
+unsetopt share_history
 setopt hist_ignore_dups
 setopt hist_reduce_blanks
 setopt hist_expire_dups_first
+setopt hist_ignore_space
+setopt hist_verify
+setopt extended_history
+setopt hist_find_no_dups
 
 # Treat - and / as word separators for Option+Left/Right
 WORDCHARS=${WORDCHARS//[\/.-]/}
 
 # alias
-alias l='ls -lFh'     #size,show type,human readable
+alias l='ls -laGh'     #size,show type,human readable
 alias la='ls -lAFh'   #long list,show almost all,show type,human readable
 alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
 alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
-alias ll='ls -laGh'      #long list
 alias rm='rm -i'
-alias grep='grep --color'
+alias grep='grep --color=auto'
 
 #alias-git
 # Oh My Zsh Git aliases — 常用 alias 列表
+git_current_branch() {
+    git symbolic-ref --short HEAD 2>/dev/null
+}
+
 alias g='git'
 alias gst='git status'
 alias gss='git status -s'
@@ -116,8 +120,8 @@ alias glog='git log --all --pretty="format:%d %h  %s" --graph'
 alias codex='codex --disable apps --disable plugins'
 
 # brew
-alias brewdump='brew bundle dump --file="~/.config/Brewfile"'
-alias brewrestore='brew bundle --file="~/.config/Brewfile"'
+alias brewdump='brew bundle dump --file="$HOME/.config/Brewfile"'
+alias brewrestore='brew bundle --file="$HOME/.config/Brewfile"'
 
 # Integration with fzf
 source <(fzf --zsh)
@@ -127,9 +131,9 @@ eval "$(direnv hook zsh)"
 
 # Backup
 recover() {
-    ln -s .gitconfig ~
-    ln -s .gitignore_global ~
-    brew bundle --file="~/.config/Brewfile"
+    ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
+    ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
+    brew bundle --file="$HOME/.config/Brewfile"
 
     rustup install nightly
     fnm i --lts
@@ -137,4 +141,7 @@ recover() {
 }
 
 # Added by CodeBuddy CN - shell command
-export PATH="/Users/roifewu/.codebuddy/bin:$PATH"
+# export PATH="/Users/roifewu/.codebuddy/bin:$PATH"
+
+# highlighting
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
