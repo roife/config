@@ -1,28 +1,44 @@
 # auto-completion
 zstyle ':completion:*' sort         false # don't sort completion candidates
+zstyle ':completion:*' menu select
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}" # colors for ls
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*' # case-insensitive when completion with tab & fuzzy
 autoload -U compinit
 compinit
 
 # cd folder without "cd"
-setopt autocd
+setopt auto_cd
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushd_silent
 
-# highlighting
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# correct
+setopt correct
+
 # auto-suggestion
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # z
 source /opt/homebrew/etc/profile.d/z.sh
+# highlighting
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # PS
 PS1="%F{green}%~%f "
 
 # history
-HISTFILE=~/.histfile
-HISTSIZE=5000
-SAVEHIST=5000
-setopt appendhistory
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+
+setopt append_history
+setopt inc_append_history
+setopt share_history
+setopt hist_ignore_dups
+setopt hist_reduce_blanks
+setopt hist_expire_dups_first
+
+# Treat - and / as word separators for Option+Left/Right
+WORDCHARS=${WORDCHARS//[\/.-]/}
 
 # alias
 alias l='ls -lFh'     #size,show type,human readable
@@ -109,9 +125,6 @@ source <(fzf --zsh)
 # direnv
 eval "$(direnv hook zsh)"
 
-# java
-[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
-
 # Backup
 recover() {
     ln -s .gitconfig ~
@@ -122,3 +135,6 @@ recover() {
     fnm i --lts
     tldr -u
 }
+
+# Added by CodeBuddy CN - shell command
+export PATH="/Users/roifewu/.codebuddy/bin:$PATH"
