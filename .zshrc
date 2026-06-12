@@ -89,6 +89,10 @@ alias gcb='git checkout -b'
 alias gcm='git checkout master'
 alias gcd='git checkout develop'
 
+alias gr='git reset'
+alias grh='git reset --hard'
+alias grhh='git reset HEAD --hard'
+
 alias gcl='git clone --recurse-submodules'
 alias gcf='git config --list'
 alias gclean='git clean -id'
