@@ -20,6 +20,7 @@ brew "wget"
 
 brew "rustup"
 cargo "pest-language-server"
+cargo "emacs-lsp-booster"
 
 brew "cmake"
 brew "llvm"

@@ -3,6 +3,7 @@ eval "$(fnm env)"
 
 # rust 
 PATH="$(brew --prefix rustup)/bin:$PATH"
+PATH="$HOME/.cargo/bin:$PATH"
 
 # java
 export JDTLS_JAVA_HOME="$(brew --prefix openjdk)/libexec/openjdk.jdk/Contents/Home"
