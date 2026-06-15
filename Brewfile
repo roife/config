@@ -44,6 +44,9 @@ brew "z"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
+tap "d12frosted/emacs-plus"
+brew "emacs-plus", args: ["--with-imagemagick", "--with-xwidgets"]
+
 cask "bettertouchtool"
 cask "copilot-language-server"
 cask "codex"
