@@ -5,6 +5,8 @@
 	hooksPath = ~/.git-hooks
 	quotepath = false
 	excludesfile = /Users/roifewu/.gitignore_global
+	fsmonitor = true
+	preloadindex = true
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true

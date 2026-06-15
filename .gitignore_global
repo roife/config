@@ -97,3 +97,5 @@ Gemfile.lock
 # SVN / Mercurial
 .svn/
 .hg/
+
+**/.claude/settings.local.json
