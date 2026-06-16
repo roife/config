@@ -1,6 +1,9 @@
 font-family = "Sarasa Term"
 font-size = 15
 
+adjust-cell-height = 0%
+theme = light:Gruvbox Light,dark:Gruvbox Dark
+
 macos-option-as-alt = true
 
 quick-terminal-position = top
@@ -10,4 +13,3 @@ quick-terminal-size = 50%
 keybind = global:cmd+shift+space=toggle_quick_terminal
 
 custom-shader = ~/.config/ghostty/shaders/shader.glsl
-
