@@ -1,4 +1,4 @@
-tap "daipeihust/tap"
+tap "daipeihust/tap", trusted: true
 brew "daipeihust/tap/im-select"
 
 brew "coreutils"
@@ -25,7 +25,7 @@ cargo "emacs-lsp-booster"
 brew "cmake"
 brew "llvm"
 
-tap "sdkman/tap"
+tap "sdkman/tap", trusted: true
 brew "sdkman/tap/sdkman-cli"
 
 brew "tree-sitter"
@@ -44,15 +44,15 @@ brew "z"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
-tap "d12frosted/emacs-plus"
-brew "emacs-plus", args: ["--with-imagemagick", "--with-xwidgets"]
+tap "d12frosted/emacs-plus", trusted: true
+brew "d12frosted/emacs-plus/emacs-plus", args: ["--with-imagemagick", "--with-xwidgets"]
 
 cask "bettertouchtool"
 cask "copilot-language-server"
 cask "codex"
 cask "mactex-no-gui"
 cask "font-sarasa-gothic"
-cask "zotero"
+cask "ghostty"
 
 brew "mas"
 mas "AdGuard for Safari", id: 1440147259
