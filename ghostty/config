@@ -1,8 +1,16 @@
-font-family = "Sarasa Term"
-font-size = 15
+font-family = "Sarasa Term SC"
+font-size = 16
 
-adjust-cell-height = 0%
+adjust-cell-height = -4%
 theme = light:Gruvbox Light,dark:Gruvbox Dark
+
+clipboard-read = allow
+clipboard-write = allow
+
+window-step-resize = false
+window-padding-balance = true
+window-padding-x = 1
+window-padding-y = 0
 
 macos-option-as-alt = true
 
