@@ -25,9 +25,6 @@ cargo "emacs-lsp-booster"
 brew "cmake"
 brew "llvm"
 
-tap "sdkman/tap", trusted: true
-brew "sdkman/tap/sdkman-cli"
-
 brew "tree-sitter"
 brew "tree-sitter-cli"
 
@@ -38,6 +35,7 @@ brew "pyrefly"
 brew "typst"
 brew "tinymist"
 
+brew "openjdk"
 brew "jdtls"
 
 brew "z"
