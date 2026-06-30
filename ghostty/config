@@ -1,7 +1,7 @@
 font-family = "Sarasa Term SC"
 font-size = 16
 
-adjust-cell-height = -4%
+adjust-cell-height = -8%
 theme = light:Gruvbox Light,dark:Gruvbox Dark
 
 clipboard-read = allow
@@ -21,3 +21,5 @@ quick-terminal-size = 50%
 keybind = global:cmd+shift+space=toggle_quick_terminal
 
 custom-shader = ~/.config/ghostty/shaders/shader.glsl
+
+macos-titlebar-style = tabs
