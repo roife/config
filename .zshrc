@@ -123,8 +123,20 @@ alias glog='git log --all --pretty="format:%d %h  %s" --graph'
 
 alias codex='codex --disable apps --disable plugins'
 
-alias ec='emacsclient -c .'
-alias e='emacsclient -nw .'
+e() {
+  if (( $# == 0 )); then
+    emacsclient .
+  else
+    emacsclient "$@"
+  fi
+}
+ec() {
+  if (( $# == 0 )); then
+    emacsclient -c .
+  else
+    emacsclient -c "$@"
+  fi
+}
 
 # brew
 alias brewdump='brew bundle dump --file="$HOME/.config/Brewfile"'
@@ -147,8 +159,22 @@ recover() {
     tldr -u
 }
 
-# Added by CodeBuddy CN - shell command
-# export PATH="/Users/roifewu/.codebuddy/bin:$PATH"
+# IME switching
+autoload -Uz add-zsh-hook
+
+focus-in()  { im-select com.apple.keylayout.ABC }
+focus-out() { : }
+zle -N focus-in
+zle -N focus-out
+bindkey '\e[I' focus-in
+bindkey '\e[O' focus-out
+
+_focus_on()  { print -n '\e[?1004h' }
+_focus_off() { print -n '\e[?1004l' }
+add-zsh-hook precmd  _focus_on
+add-zsh-hook preexec _focus_off
+add-zsh-hook zshexit _focus_off
 
 # highlighting
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
