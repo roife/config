@@ -7,6 +7,9 @@
 	excludesfile = /Users/roifewu/.gitignore_global
 	fsmonitor = true
 	preloadindex = true
+	untrackedCache = true
+[fetch]
+	prune = true
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
