@@ -1,0 +1,19 @@
+# rime_frost_double_pinyin_flypy.custom.yaml
+# 开启语言模型（语法/搭配），使用万象 LTS 简体模型 wanxiang-lts-zh-hans.gram。
+# 模型来源：https://github.com/amzxyz/RIME-LMDG/releases/tag/LTS
+# 参考 README「语言模型」一节。修改后需「重新部署」生效。
+
+patch:
+  # emoji 开关默认开启（index 4 = emoji 开关，states[1]=😄）
+  switches/@4/reset: 1
+  # 移除 is_in_user_dict 过滤器：不再给候选加 *（用户词典）和 ∞（整句联想）标记
+  engine/filters/@0: null
+  grammar:
+    language: wanxiang-lts-zh-hans   # 万象 LTS 简体，wanxiang-lts-zh-hans.gram
+    non_collocation_penalty: -4
+    collocation_max_length: 5
+    collocation_min_length: 2
+    collocation_penalty: -14
+  translator/contextual_suggestions: true  # 使用语言模型优化整句输出
+  translator/max_homophones: 6
+  translator/max_homographs: 2

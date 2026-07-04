@@ -157,6 +157,11 @@ recover() {
     rustup install nightly
     fnm i --lts
     tldr -u
+
+    git clone https://github.com/roife/emacs.d "$HOME/.emacs.d"
+
+    git clone --depth 1 https://github.com/gaboolic/rime-frost "$HOME/Library/Rime"
+    ln -sfn "$HOME/.config/rime/"* "$HOME/Library/Rime/"
 }
 
 # highlighting
