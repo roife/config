@@ -13,6 +13,7 @@ brew "graphviz"
 brew "imagemagick"
 brew "ninja"
 brew "pandoc"
+brew "squirrel-app"
 brew "tldr"
 brew "tokei"
 brew "tree"
@@ -44,6 +45,9 @@ brew "zsh-syntax-highlighting"
 
 tap "d12frosted/emacs-plus", trusted: true
 brew "d12frosted/emacs-plus/emacs-plus", args: ["--with-imagemagick", "--with-xwidgets"]
+brew "mupdf"
+brew "tdlib", args: ["--HEAD"]
+brew "librime"
 
 cask "bettertouchtool"
 cask "copilot-language-server"
