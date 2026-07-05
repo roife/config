@@ -1,3 +1,5 @@
+PATH="$HOME/.local/bin:$PATH"
+
 # nodejs
 eval "$(fnm env)"
 
