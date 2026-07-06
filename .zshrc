@@ -166,6 +166,8 @@ recover() {
 
     git clone --depth 1 https://github.com/gaboolic/rime-frost "$HOME/Library/Rime"
     ln -sfn "$HOME/.config/rime/"* "$HOME/Library/Rime/"
+
+    mkdir -p "$HOME/.local/bin"
 }
 
 # highlighting

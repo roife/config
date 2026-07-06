@@ -45,7 +45,6 @@ brew "zsh-syntax-highlighting"
 tap "d12frosted/emacs-plus", trusted: true
 brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
 brew "mupdf"
-brew "tdlib", args: ["HEAD"]
 brew "librime"
 
 cask "bettertouchtool"
