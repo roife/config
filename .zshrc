@@ -166,6 +166,7 @@ recover() {
 
     git clone --depth 1 https://github.com/gaboolic/rime-frost "$HOME/Library/Rime"
     ln -sfn "$HOME/.config/rime/"* "$HOME/Library/Rime/"
+    curl -fL -o "$HOME/Library/Rime/wanxiang-lts-zh-hans.gram" https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
     mkdir -p "$HOME/.local/bin"
 }
