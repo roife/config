@@ -1,6 +1,7 @@
 tap "daipeihust/tap", trusted: true
 brew "daipeihust/tap/im-select"
 
+brew "aspell"
 brew "coreutils"
 brew "direnv"
 brew "difftastic"
@@ -13,6 +14,7 @@ brew "graphviz"
 brew "imagemagick"
 brew "ninja"
 brew "pandoc"
+npm "readability-cli"
 brew "tldr"
 brew "tokei"
 brew "tree"
