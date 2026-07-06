@@ -52,7 +52,7 @@ brew "librime"
 cask "bettertouchtool"
 cask "copilot-language-server"
 cask "codex"
-# cask "mactex-no-gui"
+cask "mactex-no-gui"
 cask "font-sarasa-gothic"
 cask "ghostty"
 

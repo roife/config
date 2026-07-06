@@ -150,6 +150,9 @@ eval "$(direnv hook zsh)"
 
 # Backup
 recover() {
+    ln -sfn "$HOME/.config/.zshrc" "$HOME/.zshrc"
+    ln -sfn "$HOME/.config/.zprofile" "$HOME/.zprofile"
+
     ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
     ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
     brew bundle --file="$HOME/.config/Brewfile"
@@ -166,4 +169,3 @@ recover() {
 
 # highlighting
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
