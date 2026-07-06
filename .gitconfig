@@ -4,7 +4,7 @@
 [core]
 	hooksPath = ~/.git-hooks
 	quotepath = false
-	excludesfile = /Users/roifewu/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	fsmonitor = true
 	preloadindex = true
 	untrackedCache = true
