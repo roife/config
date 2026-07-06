@@ -43,9 +43,9 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 tap "d12frosted/emacs-plus", trusted: true
-brew "d12frosted/emacs-plus/emacs-plus", args: ["--with-imagemagick", "--with-xwidgets"]
+brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
 brew "mupdf"
-brew "tdlib", args: ["--HEAD"]
+brew "tdlib", args: ["HEAD"]
 brew "librime"
 
 cask "bettertouchtool"
