@@ -155,6 +155,7 @@ recover() {
 
     ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
     ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
+    ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
     brew bundle --file="$HOME/.config/Brewfile"
 
     rustup install nightly
