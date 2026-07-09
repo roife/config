@@ -37,6 +37,7 @@ brew "typst"
 brew "tinymist"
 
 brew "openjdk"
+brew "openjdk@21"
 brew "jdtls"
 
 brew "z"

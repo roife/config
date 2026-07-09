@@ -14,5 +14,5 @@ eval "$(/usr/libexec/path_helper)"
 export PATH="$HOME/.local/slang/bin:$PATH"
 
 # java
-export JAVA_HOME="$HOMEBREW/opt/openjdk/libexec/openjdk.jdk/Contents/Home"
-export JDTLS_JAVA_HOME="$JAVA_HOME"
+export JAVA_HOME="$HOMEBREW/opt/openjdk/"
+export JDTLS_JAVA_HOME="$HOMEBREW/opt/openjdk@21/"
