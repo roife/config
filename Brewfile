@@ -1,7 +1,7 @@
 tap "daipeihust/tap", trusted: true
 brew "daipeihust/tap/im-select"
 
-brew "aspell"
+brew "enchant"
 brew "coreutils"
 brew "direnv"
 brew "difftastic"
