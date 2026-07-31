@@ -3,6 +3,7 @@
 
 !.zshrc
 !.zprofile
+!.mbsyncrc
 !.gitconfig
 !.gitignore
 !.gitignore_global
@@ -11,6 +12,10 @@
 
 !ghostty/
 !ghostty/**
+
+!gnupg/
+!gnupg/common.conf
+!gnupg/gpg-agent.conf
 
 !rime/
 !rime/**

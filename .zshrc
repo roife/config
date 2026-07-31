@@ -137,6 +137,8 @@ ec() {
     emacsclient -c "$@"
   fi
 }
+export EDITOR='emacsclient --alternate-editor=""'
+export GIT_EDITOR="$EDITOR"
 
 # brew
 alias brewdump='brew bundle dump --file="$HOME/.config/Brewfile"'
@@ -152,6 +154,7 @@ eval "$(direnv hook zsh)"
 recover() {
     ln -sfn "$HOME/.config/.zshrc" "$HOME/.zshrc"
     ln -sfn "$HOME/.config/.zprofile" "$HOME/.zprofile"
+    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
 
     ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
     ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
