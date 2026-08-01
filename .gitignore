@@ -19,3 +19,6 @@
 
 !rime/
 !rime/**
+
+!mpv/
+!mpv/mpv.conf
