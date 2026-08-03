@@ -52,5 +52,9 @@ recover() {
         https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
     git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
-    emacs --batch -Q --load "$HOME/.emacs.d/init.el"
+    emacs --batch \
+      --load ~/.emacs.d/early-init.el \
+      --load ~/.emacs.d/init.el
 }
+
+recover
