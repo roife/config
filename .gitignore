@@ -11,7 +11,8 @@
 !Brewfile
 
 !fish/
-!fish/**
+!fish/config.fish
+!fish/fish_plugins
 
 !mise/
 !mise/**

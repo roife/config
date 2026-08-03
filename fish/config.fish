@@ -8,8 +8,6 @@ else
 end
 fish_add_path --global "$HOME/.cargo/bin" "$HOME/.local/bin"
 
-status is-interactive; or return
-
 if command -q mise
     mise activate fish | source
 
@@ -19,6 +17,12 @@ if command -q mise
     if mise where java@21 >/dev/null 2>&1
         set -gx JDTLS_JAVA_HOME (mise where java@21)
     end
+end
+
+status is-interactive; or return
+
+if functions -q theme_gruvbox
+    theme_gruvbox dark medium
 end
 
 set -gx EDITOR 'emacsclient --alternate-editor=""'
@@ -62,21 +66,22 @@ function install_fish_plugins --description 'Install or update Fish plugins'
 end
 
 function recover --description 'Restore this user environment'
-    ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
-    ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
-
-    mise install
-    or return $status
+    install_fish_plugins
 
     if test "$is_macos" -eq 1
         ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
         brew bundle --file="$HOME/.config/Brewfile"
     end
 
-    install_fish_plugins
-    mise exec tealdeer -- tldr -u
+    mise install
+    or return $status
 
-    git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
+    ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
+    ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
+
+    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
+
+    tldr -u
 
     mkdir -p (path dirname "$rime_user_dir")
     git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
@@ -87,7 +92,8 @@ function recover --description 'Restore this user environment'
         -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" \
         https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
-    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
+    git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
+    emacs --batch -Q --load "$HOME/.emacs.d/init.el"
 end
 
 # Interactive shell
