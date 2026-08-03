@@ -1,66 +1,68 @@
-# auto-completion
-zstyle ':completion:*' sort         false # don't sort completion candidates
-zstyle ':completion:*' menu select
-[[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}" # colors for ls
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*' # case-insensitive when completion with tab & fuzzy
-autoload -Uz compinit
-compinit -C -d ~/.cache/zsh/zcompdump
-
-# cd folder without "cd"
-setopt auto_cd
-setopt auto_pushd
-setopt pushd_ignore_dups
-setopt pushd_silent
-
-# correct
-setopt correct_all
-
-# platform
-is_macos=0
-[[ "$OSTYPE" == darwin* ]] && is_macos=1
-
-if (( is_macos )); then
+# Platform
+if [[ "$OSTYPE" == darwin* ]]; then
+    is_macos=1
+    package_prefix=/opt/homebrew
+    zsh_plugin_root="$package_prefix/share"
+    z_script="$package_prefix/etc/profile.d/z.sh"
     rime_user_dir="$HOME/Library/Rime"
 else
+    is_macos=0
+    package_prefix=/usr
+    zsh_plugin_root="$package_prefix/share"
+    [[ -d "$zsh_plugin_root/zsh/plugins" ]] && zsh_plugin_root="$zsh_plugin_root/zsh/plugins"
+    z_script="$package_prefix/share/z/z.sh"
+    [[ -r "$z_script" ]] || z_script="$zsh_plugin_root/z/z.sh"
     rime_user_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fcitx5/rime"
 fi
 
-# auto-suggestion
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-# z
-source /opt/homebrew/etc/profile.d/z.sh
-# PS
-PS1='%(?.%F{green}.%F{red})%~%f '
+autosuggestions_file="$zsh_plugin_root/zsh-autosuggestions/zsh-autosuggestions.zsh"
+syntax_highlighting_file="$zsh_plugin_root/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
-# history
-HISTFILE=$HOME/.zsh_history
-HISTSIZE=50000
-SAVEHIST=50000
-
-setopt append_history
-setopt inc_append_history
-unsetopt share_history
-setopt hist_ignore_dups
-setopt hist_reduce_blanks
-setopt hist_expire_dups_first
-setopt hist_ignore_space
-setopt hist_verify
-setopt extended_history
-setopt hist_find_no_dups
-
-# Treat - and / as word separators for Option+Left/Right
+# Shell behavior
+setopt auto_cd auto_pushd pushd_ignore_dups pushd_silent correct_all
 WORDCHARS=${WORDCHARS//[\/.-]/}
 
-# alias
-alias l='ls -laGh'     #size,show type,human readable
-alias la='ls -lAFh'   #long list,show almost all,show type,human readable
-alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
-alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+# Completion
+zstyle ':completion:*' menu select
+zstyle ':completion:*' sort false
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*'
+[[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+autoload -Uz compinit
+zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+mkdir -p -- "$zsh_cache_dir"
+compinit -C -d "$zsh_cache_dir/zcompdump"
+unset zsh_cache_dir
+
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt append_history inc_append_history extended_history
+setopt hist_ignore_dups hist_reduce_blanks hist_expire_dups_first
+setopt hist_ignore_space hist_verify hist_find_no_dups
+unsetopt share_history
+
+# Prompt
+PS1='%(?.%F{green}.%F{red})%~%f '
+if [[ -n ${SSH_CONNECTION:-} || -n ${SUDO_USER:-} ]] || (( EUID == 0 )); then
+    PS1='%F{cyan}%n@%m%f '"$PS1"
+fi
+
+# General aliases
+if (( is_macos )); then
+    alias ls='ls -G'
+else
+    alias ls='ls --color=auto'
+fi
+alias l='ls -lah'
+alias la='ls -lAFh'
+alias lr='ls -tRFh'
+alias lt='ls -ltFh'
 alias rm='rm -i'
 alias grep='grep --color=auto'
+alias codex='codex --disable apps --disable plugins'
 
-#alias-git
-# Oh My Zsh Git aliases — 常用 alias 列表
+# Git aliases
 git_current_branch() {
     git symbolic-ref --short HEAD 2>/dev/null
 }
@@ -131,36 +133,23 @@ alias gcpc='git cherry-pick --continue'
 
 alias glog='git log --all --pretty="format:%d %h  %s" --graph'
 
-alias codex='codex --disable apps --disable plugins'
-
+# Editor
 e() {
-  if (( $# == 0 )); then
-    emacsclient .
-  else
-    emacsclient "$@"
-  fi
+    emacsclient "${@:-.}"
 }
+
 ec() {
-  if (( $# == 0 )); then
-    emacsclient -c .
-  else
-    emacsclient -c "$@"
-  fi
+    emacsclient -c "${@:-.}"
 }
+
 export EDITOR='emacsclient --alternate-editor=""'
 export GIT_EDITOR="$EDITOR"
 
-# brew
+# Homebrew
 alias brewdump='brew bundle dump --file="$HOME/.config/Brewfile"'
 alias brewrestore='brew bundle --file="$HOME/.config/Brewfile"'
 
-# Integration with fzf
-source <(fzf --zsh)
-
-# direnv
-eval "$(direnv hook zsh)"
-
-# Backup
+# Recovery
 recover() {
     ln -sfn "$HOME/.config/.zshrc" "$HOME/.zshrc"
     ln -sfn "$HOME/.config/.zprofile" "$HOME/.zprofile"
@@ -182,10 +171,19 @@ recover() {
     mkdir -p "${rime_user_dir:h}"
     git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
     ln -sfn "$HOME/.config/rime/"* "$rime_user_dir/"
-    curl -fL -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
+    curl -fL \
+        -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" \
+        https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
     ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
 }
 
-# highlighting
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Plugins and integrations
+[[ -r "$autosuggestions_file" ]] && source "$autosuggestions_file"
+[[ -r "$z_script" ]] && source "$z_script"
+(( $+commands[fnm] )) && eval "$(fnm env)"
+(( $+commands[fzf] )) && source <(fzf --zsh 2>/dev/null)
+(( $+commands[direnv] )) && eval "$(direnv hook zsh)"
+
+# Syntax highlighting must be loaded last
+[[ -r "$syntax_highlighting_file" ]] && source "$syntax_highlighting_file"

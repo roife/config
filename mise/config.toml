@@ -1,0 +1,30 @@
+[tools]
+node = "lts"
+rust = ["stable", "nightly"]
+java = ["latest", "21"]
+
+coreutils = "latest"
+direnv = "latest"
+difftastic = "latest"
+ripgrep = "latest"
+fd = "latest"
+ffmpeg = "latest"
+fzf = "latest"
+gh = "latest"
+imagemagick = "latest"
+ninja = "latest"
+pandoc = "latest"
+tokei = "latest"
+
+cmake = "latest"
+tree-sitter = "latest"
+
+uv = "latest"
+ruff = "latest"
+
+typst = "latest"
+tinymist = "latest"
+
+mas = "latest"
+codex = "latest"
+tealdeer = "latest"

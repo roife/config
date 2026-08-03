@@ -1,18 +1,18 @@
+# platform
+is_macos=0
+package_prefix=/usr
 PATH="$HOME/.local/bin:$PATH"
 
-# nodejs
-eval "$(fnm env)"
+if [[ "$OSTYPE" == darwin* ]]; then
+    is_macos=1
+    package_prefix=/opt/homebrew
+    PATH="$package_prefix/opt/rustup/bin:$PATH"
+fi
 
-HOMEBREW=/opt/homebrew
-
-# rust
-PATH="$HOMEBREW/opt/rustup/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
 
-# mactex
-eval "$(/usr/libexec/path_helper)"
-export PATH="$HOME/.local/slang/bin:$PATH"
-
-# java
-export JAVA_HOME="$HOMEBREW/opt/openjdk/"
-export JDTLS_JAVA_HOME="$HOMEBREW/opt/openjdk@21/"
+# java; Linux version selection will be handled separately
+if (( is_macos )); then
+    export JAVA_HOME="$package_prefix/opt/openjdk/"
+    export JDTLS_JAVA_HOME="$package_prefix/opt/openjdk@21/"
+fi
