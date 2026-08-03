@@ -62,6 +62,7 @@ end
 set -g fish_greeting
 
 abbr --add l 'll'
+abbr --add la 'll -a'
 abbr --add rm 'rm -i'
 abbr --add codex 'codex --disable apps --disable plugins'
 
