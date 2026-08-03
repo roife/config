@@ -15,6 +15,16 @@ setopt pushd_silent
 # correct
 setopt correct_all
 
+# platform
+is_macos=0
+[[ "$OSTYPE" == darwin* ]] && is_macos=1
+
+if (( is_macos )); then
+    rime_user_dir="$HOME/Library/Rime"
+else
+    rime_user_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fcitx5/rime"
+fi
+
 # auto-suggestion
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # z
@@ -154,12 +164,14 @@ eval "$(direnv hook zsh)"
 recover() {
     ln -sfn "$HOME/.config/.zshrc" "$HOME/.zshrc"
     ln -sfn "$HOME/.config/.zprofile" "$HOME/.zprofile"
-    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
 
     ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
     ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
-    ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
-    brew bundle --file="$HOME/.config/Brewfile"
+
+    if (( is_macos )); then
+        ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
+        brew bundle --file="$HOME/.config/Brewfile"
+    fi
 
     rustup install nightly
     fnm i --lts
@@ -167,11 +179,12 @@ recover() {
 
     git clone https://github.com/roife/emacs.d "$HOME/.emacs.d"
 
-    git clone --depth 1 https://github.com/gaboolic/rime-frost "$HOME/Library/Rime"
-    ln -sfn "$HOME/.config/rime/"* "$HOME/Library/Rime/"
-    curl -fL -o "$HOME/Library/Rime/wanxiang-lts-zh-hans.gram" https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
+    mkdir -p "${rime_user_dir:h}"
+    git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
+    ln -sfn "$HOME/.config/rime/"* "$rime_user_dir/"
+    curl -fL -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
-    mkdir -p "$HOME/.local/bin"
+    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
 }
 
 # highlighting
