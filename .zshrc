@@ -177,7 +177,7 @@ recover() {
     fnm i --lts
     tldr -u
 
-    git clone https://github.com/roife/emacs.d "$HOME/.emacs.d"
+    git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
 
     mkdir -p "${rime_user_dir:h}"
     git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
