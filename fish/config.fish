@@ -1,11 +1,4 @@
 # Platform and environment
-if test (uname -s) = Darwin
-    set -g is_macos 1
-    set -g rime_user_dir "$HOME/Library/Rime"
-else
-    set -g is_macos 0
-    set -g rime_user_dir "$HOME/.local/share/fcitx5/rime"
-end
 fish_add_path --global "$HOME/.cargo/bin" "$HOME/.local/bin"
 
 if command -q mise
@@ -63,37 +56,6 @@ function install_fish_plugins --description 'Install or update Fish plugins'
     end
 
     fisher update
-end
-
-function recover --description 'Restore this user environment'
-    install_fish_plugins
-
-    if test "$is_macos" -eq 1
-        ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
-        brew bundle --file="$HOME/.config/Brewfile"
-    end
-
-    mise install
-    or return $status
-
-    ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
-    ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
-
-    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
-
-    tldr -u
-
-    mkdir -p (path dirname "$rime_user_dir")
-    git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
-    for rime_file in "$HOME/.config/rime/"*
-        ln -sfn "$rime_file" "$rime_user_dir/"
-    end
-    curl -fL \
-        -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" \
-        https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
-
-    git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
-    emacs --batch -Q --load "$HOME/.emacs.d/init.el"
 end
 
 # Interactive shell
