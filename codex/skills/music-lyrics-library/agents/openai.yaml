@@ -1,0 +1,7 @@
+interface:
+  display_name: "Music Lyrics Library"
+  short_description: "Clean, sync, embed, and audit local lyrics"
+  default_prompt: "Use $music-lyrics-library to process this music library and verify every lyric tag."
+
+policy:
+  allow_implicit_invocation: true

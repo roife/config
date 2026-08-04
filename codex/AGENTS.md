@@ -1,0 +1,1 @@
+Do not use cargo fmt in rust projects. Do not add meaningless tests.

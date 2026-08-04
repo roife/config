@@ -40,6 +40,12 @@ recover() {
     ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
     ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
 
+    mkdir -p "$HOME/.codex/skills"
+    ln -sfn "$HOME/.config/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+    for skill_dir in "$HOME/.config/codex/skills"/*/; do
+        ln -sfn "$skill_dir" "$HOME/.codex/skills/$(basename "$skill_dir")"
+    done
+
     tldr -u
 
     mkdir -p "$(dirname "$rime_user_dir")"

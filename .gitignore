@@ -28,3 +28,8 @@
 
 !mpv/
 !mpv/mpv.conf
+
+!codex/
+!codex/AGENTS.md
+!codex/**
+
