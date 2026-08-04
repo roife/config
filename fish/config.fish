@@ -14,10 +14,6 @@ end
 
 status is-interactive; or return
 
-if functions -q theme_gruvbox
-    theme_gruvbox dark medium
-end
-
 set -gx EDITOR 'emacsclient --alternate-editor=""'
 set -gx GIT_EDITOR "$EDITOR"
 
@@ -77,3 +73,5 @@ for hook in $hooks
     command -q $parts[1]; or continue
     $parts 2>/dev/null | source
 end
+
+source "$HOME/.emacs.d/scripts/ezf.fish"
