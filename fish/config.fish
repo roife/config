@@ -66,7 +66,6 @@ abbr --add brewdump 'brew bundle dump --file="$HOME/.config/Brewfile"'
 abbr --add brewrestore 'brew bundle --file="$HOME/.config/Brewfile"'
 
 set -l hooks \
-    'fzf --fish' \
     'direnv hook fish'
 for hook in $hooks
     set -l parts (string split ' ' -- $hook)
@@ -74,4 +73,13 @@ for hook in $hooks
     $parts 2>/dev/null | source
 end
 
-source "$HOME/.emacs.d/scripts/ezf.fish"
+source "$HOME/.emacs.d/straight/repos/ezf/scripts/ezf.fish"
+
+bind \ct ezf-file-widget
+bind -M insert \ct ezf-file-widget
+bind \cr ezf-history-widget
+bind -M insert \cr ezf-history-widget
+bind \ec ezf-cd-widget
+bind -M insert \ec ezf-cd-widget
+bind \ex ezf-dispatch-widget
+bind -M insert \ex ezf-dispatch-widget
