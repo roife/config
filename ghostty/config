@@ -13,7 +13,6 @@ window-padding-x = 1
 window-padding-y = 0
 
 macos-option-as-alt = true
-macos-titlebar-style = tabs
 
 quick-terminal-position = top
 quick-terminal-autohide = true
