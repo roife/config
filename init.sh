@@ -19,21 +19,18 @@ install_fish_plugins() {
 
 # Restore this user environment.
 recover() {
-    local is_macos=0
     local rime_user_dir="$HOME/.local/share/fcitx5/rime"
 
     if [[ "$(uname -s)" == "Darwin" ]]; then
-        is_macos=1
         rime_user_dir="$HOME/Library/Rime"
-    fi
 
-    if (( is_macos )); then
         ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
         brew bundle --file="$HOME/.config/Brewfile"
     fi
 
     mise install || return $?
 
+    chsh -s "$(command -v fish)"
     install_fish_plugins || return $?
 
     ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
