@@ -5,7 +5,6 @@
 	hooksPath = ~/.git-hooks
 	quotepath = false
 	excludesfile = ~/.gitignore_global
-	fsmonitor = true
 	preloadindex = true
 	untrackedCache = true
 [fetch]
