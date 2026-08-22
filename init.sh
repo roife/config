@@ -28,6 +28,7 @@ recover() {
         brew bundle --file="$HOME/.config/Brewfile"
     fi
 
+    curl https://mise.run | sh
     mise install || return $?
 
     chsh -s "$(command -v fish)"
