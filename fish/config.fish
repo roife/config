@@ -1,6 +1,4 @@
 # Platform and environment
-fish_add_path --global "$HOME/.cargo/bin" "$HOME/.local/bin"
-
 if command -q mise
     mise activate fish | source
 
@@ -11,6 +9,8 @@ if command -q mise
         set -gx JDTLS_JAVA_HOME (mise where java@21)
     end
 end
+
+fish_add_path --global --move "$HOME/.cargo/bin" "$HOME/.local/bin"
 
 status is-interactive; or return
 
