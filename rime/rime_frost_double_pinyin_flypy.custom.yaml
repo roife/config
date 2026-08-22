@@ -15,3 +15,7 @@ patch:
   translator/max_homographs: 2
   radical_reverse_lookup/dictionary: rime_frost_simplified.custom
   custom_phrase/user_dict: private_phrase
+  # 中文半角模式下直接上屏 /，不再显示 /、÷ 候选菜单
+  "punctuator/half_shape":
+    __include: default:/punctuator/half_shape
+    "/": "/"
