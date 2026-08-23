@@ -1,62 +1,71 @@
 #!/usr/bin/env bash
 
-# Install or update Fish plugins from a Bash shell.
-install_fish_plugins() {
-    command -v fish >/dev/null 2>&1 || return 127
+set -euo pipefail
 
-    fish -c '
-        if not functions -q fisher
-            curl -fsSL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
-            or exit $status
+config="$HOME/.config"
 
-            fisher install jorgebucaran/fisher
-            or exit $status
-        end
-
-        fisher update
-    '
+link_config() {
+    [[ ! -e "$2" || -L "$2" ]] || {
+        printf '%s already exists\n' "$2" >&2
+        return 1
+    }
+    mkdir -p "$(dirname "$2")"
+    ln -sfn "$1" "$2"
 }
 
-# Restore this user environment.
-recover() {
-    local rime_user_dir="$HOME/.local/share/fcitx5/rime"
+main() {
+    local rime="$HOME/.local/share/fcitx5/rime"
+    local fish_path rime_file
 
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        rime_user_dir="$HOME/Library/Rime"
+    link_config "$config/.gitconfig" "$HOME/.gitconfig"
+    link_config "$config/.gitignore_global" "$HOME/.gitignore_global"
+    link_config "$config/.mbsyncrc" "$HOME/.mbsyncrc"
+    link_config "$config/.agents" "$HOME/.agents"
 
-        ln -sfn "$HOME/.config/Brewfile" "$HOME/Brewfile"
-        brew bundle --file="$HOME/.config/Brewfile"
+    export PATH="$HOME/.local/bin:$PATH"
+
+    command -v mise >/dev/null || curl -fsSL https://mise.run | sh
+    mise install
+    eval "$(mise activate bash)"
+
+    if [[ "$(uname)" == Darwin ]]; then
+        rime="$HOME/Library/Rime"
+        if ! command -v brew >/dev/null; then
+            /bin/bash -c "$(curl -fsSL \
+                https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+            eval "$(brew shellenv)"
+        fi
+        link_config "$config/Brewfile" "$HOME/Brewfile"
+        brew bundle --file="$config/Brewfile"
     fi
 
-    curl https://mise.run | sh
-    mise install || return $?
-
-    chsh -s "$(command -v fish)"
-    install_fish_plugins || return $?
-
-    ln -sfn "$HOME/.config/.gitconfig" "$HOME/.gitconfig"
-    ln -sfn "$HOME/.config/.gitignore_global" "$HOME/.gitignore_global"
-    ln -sfn "$HOME/.config/.mbsyncrc" "$HOME/.mbsyncrc"
-
-    mkdir -p "$HOME/.codex"
-    ln -sfn "$HOME/.config/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
-    ln -sfn "$HOME/.config/codex/skills" "$HOME/.codex/skills"
+    fish_path="$(command -v fish)"
+    grep -Fqx "$fish_path" /etc/shells || \
+        printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
+    [[ "${SHELL:-}" == "$fish_path" ]] || chsh -s "$fish_path"
+    fish -c '
+        functions -q fisher
+        or curl -fsSL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+        or exit $status
+        fisher update
+    '
 
     tldr -u
 
-    mkdir -p "$(dirname "$rime_user_dir")"
-    git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_user_dir"
-    for rime_file in "$HOME/.config/rime/"*; do
-        ln -sfn "$rime_file" "$rime_user_dir/"
+    [[ -d "$rime/.git" ]] || \
+        git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime"
+    for rime_file in "$config"/rime/*; do
+        [[ -e "$rime_file" ]] && ln -sfn "$rime_file" "$rime/"
     done
-    curl -fL \
-        -o "$rime_user_dir/wanxiang-lts-zh-hans.gram" \
+    curl -fL -o "$rime/wanxiang-lts-zh-hans.gram" \
         https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
 
-    git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
+    [[ -d "$HOME/.emacs.d/.git" ]] || \
+        git clone git@github.com:roife/.emacs.d.git "$HOME/.emacs.d"
     emacs --batch \
-      --load ~/.emacs.d/early-init.el \
-      --load ~/.emacs.d/init.el
+        --load "$HOME/.emacs.d/early-init.el" \
+        --load "$HOME/.emacs.d/init.el"
 }
 
-recover
+main "$@"

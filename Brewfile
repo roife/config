@@ -1,5 +1,6 @@
 brew "enchant"
 brew "exiftool"
+brew "fish"
 brew "gnupg"
 brew "graphviz"
 brew "isync"
@@ -14,8 +15,6 @@ cargo "emacs-lsp-booster"
 brew "llvm"
 brew "universal-ctags"
 
-brew "pyrefly"
-
 brew "jdtls"
 
 tap "d12frosted/emacs-plus", trusted: true
@@ -24,7 +23,6 @@ brew "mupdf"
 brew "librime"
 
 cask "bettertouchtool"
-cask "codex"
 cask "mactex-no-gui"
 cask "font-sarasa-gothic"
 cask "ghostty"

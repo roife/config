@@ -56,7 +56,7 @@ find "$TARGET" -mindepth 1 -type d
 find "$TARGET" -maxdepth 1 -type f \( -name '*.json' -o -name '*.md' \)
 ```
 
-Require both reports to be complete, no missing/empty media, no target subdirectories, and no JSON/Markdown in `TARGET`.
+Require both reports to be complete, no missing/empty media, no target subdirectories, and no JSON/Markdown in `TARGET`. A `--metadata-only` run is deliberately marked incomplete when bookmarks contain media and is never sufficient for clearing online bookmarks.
 
 ## Clear all bookmarks
 
@@ -70,12 +70,14 @@ Run directly through Codex:
 
 The clear script must:
 
-1. Fetch the live bookmark list.
-2. Save `pre-clear-bookmarks.json` before the first mutation.
-3. Compare every live ID with the local `bookmarks.json`.
-4. Stop with exit code 3 if any live bookmark is unarchived.
-5. Remove bookmarks one at a time with twitter-cli write delays.
-6. Re-fetch and require `remaining: 0`.
+1. Require `manifest.json` to describe a complete cursor fetch and complete media download.
+2. Verify every declared media file exists, is non-empty, and stays in the flat target directory.
+3. For archives containing video, require a complete highest-resolution report with matching counts.
+4. Fetch the live bookmark list and save `pre-clear-bookmarks.json` before the first mutation.
+5. Compare every live ID with the local `bookmarks.json`.
+6. Stop with exit code 3 if any live bookmark is unarchived.
+7. Remove bookmarks one at a time with twitter-cli write delays.
+8. Re-fetch and require `remaining: 0`.
 
 If exit code 3 occurs, rerun the complete archive workflow, then retry clear. Do not pass `--allow-unarchived` unless the user explicitly authorizes deleting content absent from the local archive.
 

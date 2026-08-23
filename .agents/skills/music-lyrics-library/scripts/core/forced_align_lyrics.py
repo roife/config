@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
@@ -22,8 +23,10 @@ import mlx_whisper
 from langdetect import DetectorFactory, detect
 
 
-ROOT = Path("/Users/roifewu/Music")
-MEDIA_ROOT = ROOT / "Music/Media.localized/Music"
+ROOT = Path(os.environ.get("LYRICS_LIBRARY_ROOT", Path.cwd())).expanduser().resolve()
+MEDIA_ROOT = Path(
+    os.environ.get("LYRICS_MEDIA_ROOT", ROOT / "Music/Media.localized/Music")
+).expanduser().resolve()
 PROPOSALS_PATH = ROOT / ".timed-lyrics-work/proposals.jsonl"
 CACHE_ROOT = ROOT / ".timed-lyrics-work/whisper"
 DEFAULT_MODEL = "mlx-community/whisper-large-v3-turbo"

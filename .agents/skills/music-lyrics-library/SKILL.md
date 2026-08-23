@@ -1,6 +1,6 @@
 ---
 name: music-lyrics-library
-description: Manage a local music library's lyrics: identify reliable lyric sources, compare title and artist metadata, clean and segment lyric text, add or repair timestamps, embed lyrics in M4A/MP3 files, and produce auditable verification reports. Use for requests to find, clean, synchronize, write, update, classify, or validate lyrics in a folder of audio files.
+description: "Manage a local music library's lyrics: identify reliable lyric sources, compare title and artist metadata, clean and segment lyric text, add or repair timestamps, embed lyrics in M4A/MP3 files, and produce auditable verification reports. Use for requests to find, clean, synchronize, write, update, classify, or validate lyrics in a folder of audio files."
 ---
 
 # Music Lyrics Library
@@ -16,17 +16,28 @@ Expose only these phases:
 3. **Review** — refresh candidate lists after the user edits files or metadata. Never overwrite a user-edited lyric without checking its current content.
 4. **Verify** — reread every audio file, compare audit status, scan for residual timestamps/credits/advertising/placeholder text, and verify audio streams, artwork, and non-lyric metadata were not changed.
 
-Use the bundled launcher when the library already contains `music_lyrics.py`; otherwise locate the equivalent pipeline scripts in the target folder before acting. Prefer the existing local pipeline over rewriting one-off code.
+Resolve `SKILL_DIR` to the directory containing this file. Use the bundled launcher. It prefers `<LIBRARY>/music_lyrics.py` when present and otherwise runs the portable `scripts/core/lyrics_pipeline.py` under Python 3.12 with Mutagen. The launcher recognizes an Apple Music library at `<LIBRARY>/Music/Media.localized/Music`; pass `--media-root` for another layout.
 
-The session's core implementations are bundled under `scripts/core/` (`lyrics_pipeline.py`, `add_timed_lyrics.py`, source/candidate helpers, and alignment support). They preserve the original workflow for audit/replay; use the launcher or a target library's consolidated entry point for normal operations. These historical modules may contain library-specific absolute paths and should be adapted before using them on a different machine.
+The synchronized-lyrics helpers under `scripts/core/` preserve a historical, library-specific workflow and are audit/replay material. Do not run them as a generic pipeline. For timed lyrics, prefer a library's own `music_lyrics.py`; otherwise inspect and adapt the helpers' source maps, expected counts, backup path, and ML dependencies before use.
 
 ```bash
-python3 music_lyrics.py prepare
-python3 music_lyrics.py review
-python3 music_lyrics.py write --timed
-python3 music_lyrics.py timing verify
-python3 music_lyrics.py verify
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" --library "$LIBRARY" inventory --hash
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" --library "$LIBRARY" fetch
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" --library "$LIBRARY" prepare
 ```
+
+Review `$LIBRARY/.lyrics-work/review.md` and the prepared JSONL before asking for write confirmation. After confirmation, create and retain a separate APFS clone (or equivalent byte-preserving copy) of the media tree, then pass it explicitly:
+
+```bash
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" --library "$LIBRARY" approve
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" \
+  --library "$LIBRARY" --backup-root "$BACKUP" write
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" --library "$LIBRARY" verify --hash
+python3 "$SKILL_DIR/scripts/music_lyrics_skill.py" \
+  --library "$LIBRARY" --backup-root "$BACKUP" report
+```
+
+The bundled `write` command refuses to run without a separate backup whose audio path set and sizes match the baseline and whose files are not symlinks or hard links to the live library. Require `uv` and `ffmpeg`; the launcher provisions only the Python/Mutagen runtime.
 
 Do not write a candidate when title, artist, version, and duration do not support the same recording. Small duration differences are acceptable; remix, live, cover, TV-size, instrumental, and accompaniment variants must remain distinct. Preserve artist aliases and collaboration differences in the audit log rather than silently normalizing them away. Do not use machine transcription to invent missing lyrics.
 

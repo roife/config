@@ -12,6 +12,7 @@ import argparse
 import concurrent.futures
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -33,8 +34,10 @@ from mutagen.mp3 import MP3
 import lyrics_pipeline as legacy
 
 
-ROOT = Path("/Users/roifewu/Music")
-MEDIA_ROOT = ROOT / "Music/Media.localized/Music"
+ROOT = Path(os.environ.get("LYRICS_LIBRARY_ROOT", Path.cwd())).expanduser().resolve()
+MEDIA_ROOT = Path(
+    os.environ.get("LYRICS_MEDIA_ROOT", ROOT / "Music/Media.localized/Music")
+).expanduser().resolve()
 WORK_ROOT = ROOT / ".timed-lyrics-work"
 INVENTORY_PATH = WORK_ROOT / "current-inventory.jsonl"
 SOURCE_MAP_PATH = WORK_ROOT / "source-map.jsonl"
@@ -49,7 +52,9 @@ AUDIT_PATH = ROOT / "timed-lyrics-audit.jsonl"
 AUDIT_MD_PATH = ROOT / "timed-lyrics-audit.md"
 WRITE_BASELINE_PATH = WORK_ROOT / "write-baseline.jsonl"
 BACKUP_INTEGRITY_PATH = WORK_ROOT / "backup-integrity.jsonl"
-BACKUP_ROOT = ROOT / "Music-timed-lyrics-backup-20260730"
+BACKUP_ROOT = Path(
+    os.environ.get("LYRICS_TIMED_BACKUP_ROOT", ROOT / "Music-timed-lyrics-backup-20260730")
+).expanduser().resolve()
 
 OLD_AUDIT_PATH = ROOT / "lyrics-audit.jsonl"
 NEW_PREPARED_PATH = ROOT / "M4A-lyrics-backup-20260729/.lyrics-work/prepared.jsonl"

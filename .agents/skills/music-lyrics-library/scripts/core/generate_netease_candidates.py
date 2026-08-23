@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import unicodedata
 from collections import Counter
@@ -17,7 +18,7 @@ from mutagen.mp4 import MP4
 from mutagen.mp3 import MP3
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(os.environ.get("LYRICS_LIBRARY_ROOT", Path.cwd())).expanduser().resolve()
 AUDIT_PATH = ROOT / "lyrics-audit.jsonl"
 FETCHED_PATH = ROOT / ".lyrics-work/fetched.jsonl"
 OUTPUT_PATH = ROOT / "网易云近似候选-未解决曲目.md"

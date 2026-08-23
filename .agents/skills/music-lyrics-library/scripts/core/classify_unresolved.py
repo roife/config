@@ -4,13 +4,16 @@
 from __future__ import annotations
 
 import json
+import os
 from collections import OrderedDict
 from datetime import datetime
 from pathlib import Path
 
 
-ROOT = Path("/Users/roifewu/Music")
-MEDIA_ROOT = ROOT / "Music/Media.localized/Music"
+ROOT = Path(os.environ.get("LYRICS_LIBRARY_ROOT", Path.cwd())).expanduser().resolve()
+MEDIA_ROOT = Path(
+    os.environ.get("LYRICS_MEDIA_ROOT", ROOT / "Music/Media.localized/Music")
+).expanduser().resolve()
 AUDIT_PATH = ROOT / "lyrics-audit.jsonl"
 INSTRUMENTAL_REPORT = ROOT / "纯音乐曲目.md"
 UNRESOLVED_REPORT = ROOT / "未解决曲目.md"

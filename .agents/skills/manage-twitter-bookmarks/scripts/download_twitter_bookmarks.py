@@ -549,13 +549,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     fetched_at = datetime.now(timezone.utc).isoformat()
     reached_limit = len(records) >= args.max_bookmarks
     manifest = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "fetchedAt": fetched_at,
         "twitterCliVersion": twitter_cli_version,
         "bookmarkCount": len(records),
         "mediaCount": len(jobs),
+        "mediaRoot": os.path.relpath(archive_root, metadata_root),
         "layout": "flat",
-        "complete": not reached_limit,
+        "bookmarkFetchComplete": not reached_limit,
+        "mediaDownloadRequested": not args.metadata_only,
+        "mediaComplete": False,
+        "mediaDownloaded": 0,
+        "mediaSkipped": 0,
+        "mediaFailed": 0,
+        "complete": False,
         "warning": (
             "已达到 --max-bookmarks 安全上限；请提高上限后重试。" if reached_limit else None
         ),
@@ -566,8 +573,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     LOG.info("已保存 %d 条 bookmark 的 JSON/Markdown", len(records))
 
     failures: List[Tuple[MediaJob, str]] = []
+    counts = {"downloaded": 0, "skipped": 0}
     if not args.metadata_only and jobs:
-        counts = {"downloaded": 0, "skipped": 0}
         LOG.info("准备处理 %d 个媒体文件（%d 路并发）", len(jobs), args.jobs)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as executor:
             futures = [
@@ -581,19 +588,26 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     LOG.warning("媒体下载失败（bookmark %s）：%s — %s", job.bookmark_id, job.url, status)
                 else:
                     counts[status] += 1
-        manifest["mediaDownloaded"] = counts["downloaded"]
-        manifest["mediaSkipped"] = counts["skipped"]
-        manifest["mediaFailed"] = len(failures)
-        atomic_write_text(metadata_root / "manifest.json", json_text(manifest))
         LOG.info("媒体完成：新下载 %d，已存在 %d，失败 %d", counts["downloaded"], counts["skipped"], len(failures))
     elif args.metadata_only:
         LOG.info("--metadata-only：已跳过媒体下载")
+
+    manifest["mediaDownloaded"] = counts["downloaded"]
+    manifest["mediaSkipped"] = counts["skipped"]
+    manifest["mediaFailed"] = len(failures)
+    manifest["mediaComplete"] = not jobs or (not args.metadata_only and not failures)
+    manifest["complete"] = manifest["bookmarkFetchComplete"] and manifest["mediaComplete"]
+    if args.metadata_only and jobs:
+        manifest["warning"] = "--metadata-only 跳过了媒体，不能视为完整归档。"
+    elif failures:
+        manifest["warning"] = "有媒体下载失败；重新运行归档命令以继续。"
+    atomic_write_text(metadata_root / "manifest.json", json_text(manifest))
 
     LOG.info("媒体 target：%s", archive_root)
     LOG.info("JSON/Markdown：%s", metadata_root)
     if reached_limit:
         LOG.warning("已碰到安全上限，不能确认归档完整；请提高 --max-bookmarks 后重跑。")
-    return 2 if failures or reached_limit else 0
+    return 0 if manifest["complete"] else 2
 
 
 if __name__ == "__main__":

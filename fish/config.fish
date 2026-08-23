@@ -62,7 +62,6 @@ abbr --add la 'll -a'
 abbr --add rm 'rm -i'
 abbr --add codex 'codex --disable apps --disable plugins'
 
-abbr --add brewdump 'brew bundle dump --file="$HOME/.config/Brewfile"'
 abbr --add brewrestore 'brew bundle --file="$HOME/.config/Brewfile"'
 
 set -l hooks \

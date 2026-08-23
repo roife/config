@@ -2,7 +2,6 @@
     email = roifewu@gmail.com
     name = roife
 [core]
-	hooksPath = ~/.git-hooks
 	quotepath = false
 	excludesfile = ~/.gitignore_global
 	preloadindex = true

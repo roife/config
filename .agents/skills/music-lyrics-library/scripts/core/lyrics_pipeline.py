@@ -30,14 +30,21 @@ from mutagen.mp4 import MP4, MP4Cover
 from mutagen.mp3 import MP3
 
 
-ROOT = Path("/Users/roifewu/Music")
-MEDIA_ROOT = ROOT / "Music/Media.localized/Music"
+ROOT = Path(os.environ.get("LYRICS_LIBRARY_ROOT", Path.cwd())).expanduser().resolve()
+MEDIA_ROOT = Path(
+    os.environ.get("LYRICS_MEDIA_ROOT", ROOT / "Music/Media.localized/Music")
+).expanduser().resolve()
 WORK_ROOT = ROOT / ".lyrics-work"
 BASELINE_PATH = WORK_ROOT / "baseline.jsonl"
 FETCH_PATH = WORK_ROOT / "fetched.jsonl"
 PREPARED_PATH = WORK_ROOT / "prepared.jsonl"
 AUDIT_JSONL = ROOT / "lyrics-audit.jsonl"
 AUDIT_MD = ROOT / "lyrics-audit.md"
+BACKUP_ROOT = (
+    Path(os.environ["LYRICS_BACKUP_ROOT"]).expanduser().resolve()
+    if os.environ.get("LYRICS_BACKUP_ROOT")
+    else None
+)
 USER_AGENT = "CodexMusicLyricsAudit/1.0 (personal local library)"
 
 # The first version of this pipeline was built for an 809-track snapshot.
@@ -1382,12 +1389,39 @@ def command_approve(args: argparse.Namespace) -> None:
     print(f"approved writes={approved}; pending={sum(r['manual_review'] == 'pending' for r in rows)}")
 
 
+def verify_backup(baseline: dict[str, dict[str, Any]]) -> None:
+    if BACKUP_ROOT is None:
+        raise RuntimeError("Refusing to write: pass --backup-root pointing to a retained clone backup")
+    if (
+        BACKUP_ROOT == MEDIA_ROOT
+        or BACKUP_ROOT in MEDIA_ROOT.parents
+        or MEDIA_ROOT in BACKUP_ROOT.parents
+    ):
+        raise RuntimeError("Backup must be separate from, and not contain, the live media directory")
+    expected_paths = {row["relative_path"] for row in baseline.values()}
+    backup_paths = {
+        str(path.relative_to(BACKUP_ROOT))
+        for path in BACKUP_ROOT.rglob("*")
+        if path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES
+    }
+    if backup_paths != expected_paths:
+        raise RuntimeError("Backup and baseline audio path sets differ")
+    for row in baseline.values():
+        live = MEDIA_ROOT / row["relative_path"]
+        backup = BACKUP_ROOT / row["relative_path"]
+        if backup.is_symlink() or backup.stat().st_size != row["size"]:
+            raise RuntimeError(f"Backup is not an independent same-size copy: {row['relative_path']}")
+        if live.stat().st_ino == backup.stat().st_ino:
+            raise RuntimeError(f"Backup is a hard link to the live file: {row['relative_path']}")
+
+
 def command_write(args: argparse.Namespace) -> None:
     rows = read_jsonl(PREPARED_PATH)
     baseline = {r["key"]: r for r in read_jsonl(BASELINE_PATH)}
     expected = expected_count(rows, baseline)
     if len(rows) != expected or len(baseline) != expected:
         raise RuntimeError("prepared and baseline files must have the same row count")
+    verify_backup(baseline)
     pending = [r for r in rows if r["decision"] in {"write", "review_existing"} and not str(r["manual_review"]).startswith("approved")]
     if pending and not args.allow_pending:
         raise RuntimeError(f"Refusing to write: {len(pending)} lyric-bearing rows still need manual approval")
@@ -1413,6 +1447,10 @@ def command_write(args: argparse.Namespace) -> None:
         action = "unchanged"
         target: str | None
         in_write_scope = not args.refetch_only or row["relative_path"] in refetch_targets
+        if in_write_scope and before["existing_lyrics"] != base["existing_lyrics"]:
+            raise RuntimeError(
+                f"Lyrics changed since the baseline; review and prepare again: {path}"
+            )
         if in_write_scope and row["decision"] in {"write", "review_existing"} and str(row["manual_review"]).startswith("approved"):
             target = row["cleaned_lyrics"]
             if before["existing_lyrics"] != target:
@@ -1533,10 +1571,11 @@ def command_report(args: argparse.Namespace) -> None:
         bool(row.get("final_verification", {}).get("lyrics_present")) for row in rows
     )
     preserved_external = actions["preserved_external"]
+    formats = Counter((row.get("metadata") or {}).get("kind", "unknown") for row in rows)
     lines = [
         "# 歌词写入审计报告", "", f"生成时间：{now_iso()}", "",
         "## 总览", "",
-        f"- 音频文件：{len(rows)}（M4A 735、MP3 74）",
+        f"- 音频文件：{len(rows)}（{dict(formats)}）",
         f"- 最终带歌词：{final_with_lyrics}",
         f"- 最终无歌词：{len(rows) - final_with_lyrics}",
         f"- 本轮写入或替换歌词：{actions['written'] + actions['replaced']}",
@@ -1592,8 +1631,9 @@ def command_report(args: argparse.Namespace) -> None:
         f"- 删除行分类：{dict(category_counts)}", "",
         "逐首来源、删除原文、角色修改、分段原因与校验结果见 `lyrics-audit.jsonl`。", "",
         "## 备份", "",
-        "- `/Users/roifewu/Music-lyrics-backup-20260715/`（保留，不自动删除）",
-        f"- 备份路径、字节数和音频 payload SHA-256：{len(rows)}/{len(rows)} 校验通过。", "",
+        f"- `{BACKUP_ROOT}`（写入前校验路径集合、文件大小及独立 inode）"
+        if BACKUP_ROOT is not None else "- 本次报告未提供备份路径。",
+        "",
     ])
     AUDIT_MD.write_text("\n".join(lines), encoding="utf-8")
     print(f"wrote {AUDIT_MD}")

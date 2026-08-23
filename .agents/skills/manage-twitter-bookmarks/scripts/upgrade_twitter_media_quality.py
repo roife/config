@@ -319,7 +319,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 1
 
     try:
-        yt_dlp, ffprobe = ensure_runtime()
         records = json.loads(bookmarks_path.read_text(encoding="utf-8"))
         if not isinstance(records, list):
             raise ValueError("bookmarks.json 顶层不是数组")
@@ -333,7 +332,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         % (sum(len(values) for values in targets.values()), len(targets)),
         flush=True,
     )
-    yt_dlp_status = run_ytdlp(yt_dlp, root, args.browser, args.retries, args.fragments, tweet_urls)
+    if targets:
+        try:
+            yt_dlp, ffprobe = ensure_runtime()
+        except RuntimeError as exc:
+            print("错误：%s" % exc, file=sys.stderr)
+            return 1
+        yt_dlp_status = run_ytdlp(
+            yt_dlp, root, args.browser, args.retries, args.fragments, tweet_urls
+        )
+    else:
+        ffprobe = ""
+        yt_dlp_status = 0
 
     report: Dict[str, Any] = {
         "schemaVersion": 1,
@@ -371,9 +381,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print("[%d/%d] %s：失败 — %s" % (index, len(targets), media_id, exc), flush=True)
         report["items"].append(item)
 
+    complete = yt_dlp_status == 0 and failures == 0 and replaced == report["videoReferences"]
     report["replacedReferences"] = replaced
     report["failedReferences"] = failures
-    report["complete"] = failures == 0
+    report["complete"] = complete
     metadata_root.mkdir(parents=True, exist_ok=True)
     atomic_write_json(metadata_root / "highest-resolution-report.json", report)
 
@@ -388,17 +399,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     "videoReferences": report["videoReferences"],
                     "replacedReferences": replaced,
                     "failedReferences": failures,
-                    "complete": failures == 0,
+                    "complete": complete,
                 }
                 atomic_write_json(manifest_path, manifest)
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print("警告：无法更新 manifest.json：%s" % exc, file=sys.stderr)
 
-    if failures == 0 or not args.keep_temporary:
+    if complete or not args.keep_temporary:
         removed = cleanup_temporary(root)
         print("已清理 %d 个临时文件。" % removed, flush=True)
     print("最高分辨率升级：成功 %d，失败 %d。" % (replaced, failures), flush=True)
-    return 0 if failures == 0 else 2
+    return 0 if complete else 2
 
 
 if __name__ == "__main__":
