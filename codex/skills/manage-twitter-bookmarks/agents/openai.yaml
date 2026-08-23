@@ -1,0 +1,4 @@
+interface:
+  display_name: "Twitter Bookmarks"
+  short_description: "Archive and safely clear Twitter/X bookmarks"
+  default_prompt: "Use $manage-twitter-bookmarks to archive all my Twitter/X bookmarks at the highest available quality or safely clear them after backup."

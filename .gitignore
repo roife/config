@@ -30,6 +30,5 @@
 !mpv/mpv.conf
 
 !codex/
-!codex/AGENTS.md
 !codex/**
-
+codex/skills/.system/
