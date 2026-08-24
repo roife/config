@@ -7,7 +7,6 @@ brew "isync"
 brew "mermaid-cli"
 brew "mpv"
 brew "wget"
-brew "zstd"
 
 cargo "pest-language-server"
 cargo "emacs-lsp-booster"
