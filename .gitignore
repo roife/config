@@ -14,7 +14,7 @@
 !fish/fish_plugins
 
 !mise/
-!mise/**
+!mise/config.toml
 
 !ghostty/
 !ghostty/**
@@ -32,3 +32,8 @@
 !.agents/
 !.agents/**
 
+!enchant/
+!enchant/enchant.ordering
+
+!secrets/
+!secrets/authinfo.gpg

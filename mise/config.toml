@@ -15,6 +15,7 @@ imagemagick = "latest"
 ninja = "latest"
 pandoc = "latest"
 tokei = "latest"
+yt-dlp = "latest"
 
 cmake = "latest"
 tree-sitter = "latest"

@@ -21,6 +21,12 @@ main() {
     link_config "$config/.gitignore_global" "$HOME/.gitignore_global"
     link_config "$config/.mbsyncrc" "$HOME/.mbsyncrc"
     link_config "$config/.agents" "$HOME/.agents"
+    link_config "$config/secrets/authinfo.gpg" "$HOME/.authinfo.gpg"
+
+    mkdir -p "$HOME/.gnupg"
+    chmod 700 "$HOME/.gnupg"
+    link_config "$config/gnupg/common.conf" "$HOME/.gnupg/common.conf"
+    link_config "$config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
 
     export PATH="$HOME/.local/bin:$PATH"
 
