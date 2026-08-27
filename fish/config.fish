@@ -1,13 +1,6 @@
 # Platform and environment
 if command -q mise
     mise activate fish | source
-
-    if mise where java@latest >/dev/null 2>&1
-        set -gx JAVA_HOME (mise where java@latest)
-    end
-    if mise where java@21 >/dev/null 2>&1
-        set -gx JDTLS_JAVA_HOME (mise where java@21)
-    end
 end
 
 fish_add_path --global --move "$HOME/.cargo/bin" "$HOME/.local/bin"
@@ -61,8 +54,6 @@ abbr --add l 'll -a'
 abbr --add la 'll -a'
 abbr --add rm 'rm -i'
 abbr --add codex 'codex --disable apps --disable plugins'
-
-abbr --add brewrestore 'brew bundle --file="$HOME/.config/Brewfile"'
 
 set -l hooks \
     'direnv hook fish'
