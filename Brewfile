@@ -1,25 +1,19 @@
+# macOS only
+brew "mas"
+brew "gnupg"
+brew "coreutils"
+
 brew "enchant"
 brew "exiftool"
-brew "fish"
-brew "gnupg"
-brew "graphviz"
 brew "isync"
-brew "mermaid-cli"
 brew "mpv"
-brew "wget"
-
-cargo "pest-language-server"
+brew "tokei"
+brew "mupdf"
+brew "librime"
 cargo "emacs-lsp-booster"
-
-brew "llvm"
-brew "universal-ctags"
-
-brew "jdtls"
 
 tap "d12frosted/emacs-plus", trusted: true
 brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
-brew "mupdf"
-brew "librime"
 
 cask "bettertouchtool"
 cask "mactex-no-gui"

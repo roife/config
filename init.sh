@@ -46,7 +46,11 @@ main() {
         brew bundle --file="$config/Brewfile"
     fi
 
-    fish_path="$(command -v fish)"
+    fish_path="$HOME/.local/share/mise/shims/fish"
+    [[ -x "$fish_path" ]] || {
+        printf '%s is missing or not executable\n' "$fish_path" >&2
+        return 1
+    }
     grep -Fqx "$fish_path" /etc/shells || \
         printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
     [[ "${SHELL:-}" == "$fish_path" ]] || chsh -s "$fish_path"

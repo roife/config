@@ -1,32 +1,58 @@
+[settings]
+lockfile = true
+aqua.registries = [".config/mise/aqua-registry.yaml"]
+
 [tools]
+# Languages and toolchains
 node = "lts"
 rust = ["stable", "nightly"]
-java = ["latest", "21"]
+java = ["26", "21"]
+"aqua:llvm/llvm-project" = "22.1.8"
 
-coreutils = "latest"
-direnv = "latest"
-difftastic = "latest"
-ripgrep = "latest"
-fd = "latest"
-ffmpeg = "latest"
-gh = "latest"
-git-lfs = "latest"
-imagemagick = "latest"
-ninja = "latest"
-pandoc = "latest"
-tokei = "latest"
-yt-dlp = "latest"
+# Build and code intelligence
+"aqua:Kitware/CMake" = "latest"
+"github:ninja-build/ninja" = "latest"
+"github:tree-sitter/tree-sitter" = "latest"
+"conda:universal-ctags" = "latest"
+"conda:jdtls" = "latest"
+"github:pest-parser/pest-ide-tools" = "latest"
 
-cmake = "latest"
-tree-sitter = "latest"
+# Python tooling
+"github:astral-sh/uv" = "latest"
+"pipx:ruff" = { version = "latest", uvx_args = "--no-build", depends = "github:astral-sh/uv" }
+"pipx:pyrefly" = { version = "latest", uvx_args = "--no-build", depends = "github:astral-sh/uv" }
 
-uv = "latest"
-ruff = "latest"
-"ubi:facebook/pyrefly" = "latest"
+# Version control
+"github:cli/cli" = "latest"
+"github:git-lfs/git-lfs" = "latest"
+"github:Wilfred/difftastic" = "latest"
 
-typst = "latest"
-tinymist = "latest"
+# Shell and command-line utilities
+"aqua:fish-shell/fish-shell" = "latest"
+"github:direnv/direnv" = { version = "latest", bin = "direnv" }
+"github:BurntSushi/ripgrep" = "latest"
+"github:sharkdp/fd" = "latest"
+"conda:wget" = "latest"
+"github:tealdeer-rs/tealdeer" = { version = "latest", bin = "tldr" }
 
-mas = "latest"
-codex = "latest"
-tealdeer = "latest"
+# Documents and diagrams
+"github:jgm/pandoc" = "latest"
+"conda:graphviz" = "latest"
+"npm:@mermaid-js/mermaid-cli" = "latest"
+
+# Typst
+"github:typst/typst" = "latest"
+"github:Myriad-Dreamin/tinymist" = "latest"
+
+# Media
+"conda:ffmpeg" = "latest"
+"conda:imagemagick" = "latest"
+"pipx:yt-dlp" = { version = "latest", extras = "default", uvx_args = "--no-build", depends = "github:astral-sh/uv" }
+
+# AI
+"npm:@openai/codex" = "latest"
+
+[env]
+JAVA21_HOME = { value = "{{ [java.path for java in tools.java if java.version is starting_with(pat='21.')] | first }}", tools = true }
+JAVA26_HOME = { value = "{{ [java.path for java in tools.java if java.version is starting_with(pat='26.')] | first }}", tools = true }
+JDTLS_JAVA_HOME = { value = "{{ env.JAVA21_HOME }}", tools = true }

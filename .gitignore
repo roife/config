@@ -14,6 +14,7 @@
 !fish/fish_plugins
 
 !mise/
+!mise/aqua-registry.yaml
 !mise/config.toml
 
 !ghostty/
