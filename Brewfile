@@ -5,6 +5,7 @@ brew "coreutils"
 
 brew "enchant"
 brew "exiftool"
+brew "fish"
 brew "isync"
 brew "mpv"
 brew "tokei"

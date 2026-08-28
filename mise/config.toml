@@ -26,9 +26,6 @@ java = ["26", "21"]
 "github:cli/cli" = "latest"
 "github:git-lfs/git-lfs" = "latest"
 "github:Wilfred/difftastic" = "latest"
-
-# Shell and command-line utilities
-"aqua:fish-shell/fish-shell" = "latest"
 "github:direnv/direnv" = { version = "latest", bin = "direnv" }
 "github:BurntSushi/ripgrep" = "latest"
 "github:sharkdp/fd" = "latest"
