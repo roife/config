@@ -3,10 +3,8 @@ brew "mas"
 brew "gnupg"
 brew "coreutils"
 
-brew "enchant"
 brew "fish"
 brew "isync"
-brew "mupdf"
 brew "librime"
 
 tap "d12frosted/emacs-plus", trusted: true

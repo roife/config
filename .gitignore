@@ -33,8 +33,5 @@
 !.agents/
 !.agents/**
 
-!enchant/
-!enchant/enchant.ordering
-
 !secrets/
 !secrets/authinfo.gpg

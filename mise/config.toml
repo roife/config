@@ -7,7 +7,7 @@ aqua.registries = [".config/mise/aqua-registry.yaml"]
 node = "lts"
 rust = ["stable", "nightly"]
 java = ["26", "21"]
-"aqua:llvm/llvm-project" = "22.1.8"
+"aqua:llvm/llvm-project" = "latest"
 
 # Build and code intelligence
 "aqua:Kitware/CMake" = "latest"
@@ -33,7 +33,9 @@ java = ["26", "21"]
 "conda:wget" = "latest"
 "github:tealdeer-rs/tealdeer" = { version = "latest", bin = "tldr" }
 
-# Documents and diagrams
+# Writing, documents, and diagrams
+"conda:aspell" = "latest"
+"conda:mupdf" = "latest"
 "github:jgm/pandoc" = "latest"
 "conda:graphviz" = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
