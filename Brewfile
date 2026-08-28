@@ -4,11 +4,8 @@ brew "gnupg"
 brew "coreutils"
 
 brew "enchant"
-brew "exiftool"
 brew "fish"
 brew "isync"
-brew "mpv"
-brew "tokei"
 brew "mupdf"
 brew "librime"
 
