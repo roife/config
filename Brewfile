@@ -11,7 +11,6 @@ brew "mpv"
 brew "tokei"
 brew "mupdf"
 brew "librime"
-cargo "emacs-lsp-booster"
 
 tap "d12frosted/emacs-plus", trusted: true
 brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
