@@ -37,6 +37,7 @@ java = ["26", "21"]
 "conda:aspell" = "latest"
 "conda:mupdf" = "latest"
 "github:jgm/pandoc" = "latest"
+"github:tectonic-typesetting/tectonic" = { version = "latest", version_prefix = "tectonic@" }
 "conda:graphviz" = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 

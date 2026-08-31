@@ -11,7 +11,6 @@ tap "d12frosted/emacs-plus", trusted: true
 brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
 
 cask "bettertouchtool"
-cask "mactex-no-gui"
 cask "font-sarasa-gothic"
 cask "ghostty"
 cask "squirrel-app"
