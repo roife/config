@@ -27,7 +27,7 @@ end
 # Commands
 function e --wraps emacsclient --description 'Open files in Emacs'
     set -q argv[1]; or set argv .
-    command emacsclient $argv
+    command emacsclient -t $argv
 end
 
 function ec --wraps emacsclient --description 'Open files in a new Emacs frame'
