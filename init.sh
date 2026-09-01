@@ -13,6 +13,36 @@ link_config() {
     ln -sfn "$1" "$2"
 }
 
+configure_gpg_ssh() {
+    local auth_fingerprint="A63DE4903F5E1486A4FBB656E09D9EE312C4C223"
+    local auth_keygrip
+
+    command -v gpg >/dev/null || return
+
+    auth_keygrip="$(
+        gpg --with-colons --with-keygrip --with-subkey-fingerprint \
+            --list-secret-keys "$auth_fingerprint" 2>/dev/null |
+            awk -F: -v fingerprint="$auth_fingerprint" '
+                $1 == "fpr" { selected = ($10 == fingerprint); next }
+                selected && $1 == "grp" { print $10; exit }
+            '
+    )"
+    if [[ -z "$auth_keygrip" ]]; then
+        printf '%s\n' 'Import the GPG secret key and rerun init.sh.' >&2
+        return
+    fi
+
+    gpg-connect-agent "KEYATTR $auth_keygrip Use-for-ssh: true" /bye >/dev/null
+
+    mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+    gpg --export-ssh-key "${auth_fingerprint}!" >"$HOME/.ssh/gpg-auth.pub"
+    chmod 644 "$HOME/.ssh/gpg-auth.pub"
+
+    gpgconf --kill gpg-agent
+    gpg-connect-agent /bye >/dev/null
+    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+}
+
 main() {
     local rime="$HOME/.local/share/fcitx5/rime"
     local fish_path rime_file
@@ -57,7 +87,7 @@ main() {
         fisher update
     '
 
-    tldr -u
+    configure_gpg_ssh
 
     [[ -d "$rime/.git" ]] || \
         git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime"
@@ -72,6 +102,8 @@ main() {
     emacs --batch \
         --load "$HOME/.emacs.d/early-init.el" \
         --load "$HOME/.emacs.d/init.el"
+
+    tldr -u
 }
 
 main "$@"

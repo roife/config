@@ -5,6 +5,17 @@ end
 
 fish_add_path --global --move "$HOME/.cargo/bin" "$HOME/.local/bin"
 
+# Use gpg-agent as the SSH agent.
+if command -q gpgconf
+    gpg-connect-agent /bye >/dev/null 2>&1
+    set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
+
+    if status is-interactive
+        set -gx GPG_TTY (tty)
+        gpg-connect-agent UPDATESTARTUPTTY /bye >/dev/null 2>&1
+    end
+end
+
 status is-interactive; or return
 
 set -gx EDITOR 'emacsclient --alternate-editor=""'

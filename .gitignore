@@ -34,4 +34,4 @@
 !.agents/**
 
 !secrets/
-!secrets/authinfo.gpg
+!secrets/.authinfo.gpg
