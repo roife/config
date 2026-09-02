@@ -54,6 +54,9 @@ java = ["26", "21"]
 # AI
 "npm:@openai/codex" = "latest"
 
+# Password management
+"npm:@bitwarden/cli" = "latest"
+
 [env]
 JAVA21_HOME = { value = "{{ [java.path for java in tools.java if java.version is starting_with(pat='21.')] | first }}", tools = true }
 JAVA26_HOME = { value = "{{ [java.path for java in tools.java if java.version is starting_with(pat='26.')] | first }}", tools = true }
