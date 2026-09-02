@@ -46,29 +46,25 @@ function ec --wraps emacsclient --description 'Open files in a new Emacs frame'
     command emacsclient -c $argv
 end
 
-function __gcg_generate --argument-names mode
+function __gcg_generate --argument-names insertp
     set -l wait_dir (mktemp -d); or return
     set -l wait_fifo "$wait_dir/result"
     command mkfifo "$wait_fifo"; or begin
-        set -l create_status $status
         command rmdir "$wait_dir"
-        return $create_status
+        return 1
     end
 
-    set -l insertp (test "$mode" = insert; and echo t; or echo nil)
     command emacsclient -a "" -u -e "(progn (require 'gptel-magit) (+gptel-magit-fish \"$wait_fifo\" $insertp))"
-    set -l client_status $status
-    set -l read_status 1
+    set -l command_status $status
     set -l result
-    if test $client_status -eq 0
+    if test $command_status -eq 0
         read -z result <"$wait_fifo"
-        set read_status $status
+        set command_status $status
     end
 
     command rm "$wait_fifo"
     command rmdir "$wait_dir"
-    test $client_status -eq 0; or return $client_status
-    test $read_status -eq 0; or return $read_status
+    test $command_status -eq 0; or return $command_status
 
     if test (string sub -s 1 -l 1 -- "$result") = 0
         string sub -s 2 -- "$result"
@@ -81,15 +77,13 @@ end
 
 function gcg --description 'Generate into the current commit buffer'
     echo 'Generating commit message...'
-    __gcg_generate insert >/dev/null; or return
+    __gcg_generate t >/dev/null; or return
     echo 'Commit message generated.'
 end
 
 function gcgf --description 'Generate and commit immediately'
     echo 'Generating commit message...'
-    set -l message (__gcg_generate return | string collect)
-    set -l generate_status $status
-    test $generate_status -eq 0; or return $generate_status
+    set -l message (__gcg_generate nil | string collect); or return
     printf '%s\n' "$message" | command git commit -F -
 end
 
