@@ -5,6 +5,7 @@ aqua.registries = [".config/mise/aqua-registry.yaml"]
 [tools]
 # Languages and toolchains
 node = "lts"
+pnpm = "latest"
 rust = ["stable", "nightly"]
 java = ["26", "21"]
 "aqua:llvm/llvm-project" = "latest"
@@ -36,9 +37,12 @@ java = ["26", "21"]
 # Writing, documents, and diagrams
 "conda:aspell" = "latest"
 "conda:mupdf" = "latest"
+"conda:gnuplot" = "latest"
+"conda:plantuml" = "latest"
 "github:jgm/pandoc" = "latest"
 "github:tectonic-typesetting/tectonic" = { version = "latest", version_prefix = "tectonic@" }
 "conda:graphviz" = "latest"
+"aqua:d2lang/d2" = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 
 # Typst
@@ -53,6 +57,7 @@ java = ["26", "21"]
 
 # AI
 "npm:@openai/codex" = "latest"
+"npm:@agentclientprotocol/codex-acp" = "latest"
 
 # Password management
 "npm:@bitwarden/cli" = "latest"
