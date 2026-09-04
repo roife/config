@@ -16,7 +16,6 @@ cask "ghostty"
 cask "squirrel-app"
 
 mas "AdGuard for Safari", id: 1440147259
-mas "Bitwarden", id: 1352778147
 mas "Bob", id: 1630034110
 mas "QQ", id: 451108668
 mas "Quantumult X", id: 1443988620
