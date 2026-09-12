@@ -1,0 +1,4 @@
+interface:
+  display_name: "Music Track Lyrics"
+  short_description: "Process, synchronize, embed, and verify one track"
+  default_prompt: "Use $music-track-lyrics to process the lyrics for this single audio file."
