@@ -1,92 +1,69 @@
 ---
 name: manage-twitter-bookmarks
-description: Archive, download, verify, and safely clear all Twitter/X bookmarks using twitter-cli. Use when Codex needs to back up bookmarks, download bookmark images and videos at the highest resolution X actually provides, keep a media-only target directory with separate metadata, resume an interrupted archive, validate media integrity, or remove/unbookmark every saved post after confirming it is archived.
+description: Archive, resume, or verify Twitter/X bookmark archives using the bundled scripts, or clear online bookmarks after verifying their archive.
 ---
 
 # Manage Twitter Bookmarks
 
 Resolve `SKILL_DIR` to the directory containing this file. Use the bundled scripts; do not reimplement pagination or destructive safety checks.
 
-## Preconditions
+## Choose the operation
 
-Require these commands:
+- **Archive/refresh:** run download, then quality upgrade.
+- **Resume:** reuse files and run the unfinished stage; quality recovery alone needs no new bookmark fetch.
+- **Verify:** use local validation below. Fetch/download only for requested repair or refresh.
+- **Metadata export:** add `--metadata-only` to download. `bookmarkFetchComplete: true` finishes this request even if skipped media cause exit code 2 and `complete: false`. This does not qualify the archive for clearing.
 
-```bash
-twitter --version
-yt-dlp --version
-ffprobe -version
-```
+## Setup when needed
 
-Install missing Python tools from the package registry with `uv tool install twitter-cli` and `uv tool install yt-dlp`. Install FFmpeg from the platform's trusted package manager.
+Download/clear need `twitter-cli`; video upgrade needs `yt-dlp` and FFmpeg/FFprobe; local validation needs Python only. Check dependencies once per unchanged environment. Install missing tools only for the selected operation: `uv tool install twitter-cli`, `uv tool install yt-dlp`, or FFmpeg through the platform package manager.
 
-Execute all scripts directly through Codex. Authenticate through an existing X browser session or `TWITTER_AUTH_TOKEN` plus `TWITTER_CT0`. If macOS blocks browser-cookie access, grant Full Disk Access to Codex and restart it, or provide the two environment variables securely.
+Use the authenticated browser for `X_BROWSER` and `TWITTER_BROWSER`. Download/clear also accept securely supplied `TWITTER_AUTH_TOKEN` and `TWITTER_CT0`; video upgrade currently requires browser cookies. For blocked macOS cookie access, Full Disk Access and restarting Codex are optional user-controlled remedies. Keep secrets out of commands, logs, and reports.
 
-Choose two different sibling paths:
+Choose sibling directories, defaulting `METADATA` to `${TARGET}-metadata`:
 
-- `TARGET`: media only (`.mp4`, `.jpg`, `.png`, `.webp`); no JSON, Markdown, logs, or subdirectories.
-- `METADATA`: `bookmarks.json`, per-post JSON/Markdown, manifests, and audit reports.
-
-Default `METADATA` to `${TARGET}-metadata`.
+- `TARGET`: flat media only (`.mp4`, `.jpg`, `.png`, `.webp`).
+- `METADATA`: bookmark JSON/Markdown, manifests, and reports.
 
 ## Archive and download
-
-Run both stages in order:
 
 ```bash
 "$SKILL_DIR/scripts/download_twitter_bookmarks.py" \
   --output "$TARGET" \
   --metadata-output "$METADATA" \
-  --browser chrome
+  --browser "$X_BROWSER"
 
 "$SKILL_DIR/scripts/upgrade_twitter_media_quality.py" \
   --output "$TARGET" \
   --metadata-output "$METADATA" \
-  --browser chrome
+  --browser "$X_BROWSER"
 ```
 
-The first script uses twitter-cli cursor pagination, saves original images, downloads the best direct MP4 variant, and resumes existing files. The second asks yt-dlp for every available HTTP/HLS format, chooses by resolution then bitrate, validates with FFprobe, and atomically replaces old videos. Treat “highest resolution” as the highest stream X currently exposes; never upscale lower-resolution sources.
+Download preserves original images; upgrade selects videos by resolution then bitrate and replaces them atomically. Highest resolution means what X exposes; never upscale. Upgrade probes candidates and installed files with FFprobe; repeat probing only if files changed or those results no longer apply.
 
-Verify before reporting completion:
+## Validate a full archive
 
 ```bash
-jq '{complete,bookmarkCount,mediaCount}' "$METADATA/manifest.json"
-jq '{complete,videoReferences,replacedReferences,failedReferences}' \
-  "$METADATA/highest-resolution-report.json"
-find "$TARGET" -mindepth 1 -type d
-find "$TARGET" -maxdepth 1 -type f \( -name '*.json' -o -name '*.md' \)
+"$SKILL_DIR/scripts/clear_twitter_bookmarks.py" \
+  --metadata "$METADATA" --validate-only
 ```
 
-Require both reports to be complete, no missing/empty media, no target subdirectories, and no JSON/Markdown in `TARGET`. A `--metadata-only` run is deliberately marked incomplete when bookmarks contain media and is never sufficient for clearing online bookmarks.
+This locally checks completeness, media paths/counts, nonempty files, flat layout, and matching video-quality results. It neither authenticates nor contacts X. Run before reporting a full archive complete; clear performs these checks itself.
 
 ## Clear all bookmarks
 
-Only run this workflow when the user explicitly asks to remove, clear, or unbookmark the online X bookmarks. Never infer deletion from an archive/download request. Explain that online bookmark state is removed and not automatically recoverable, while the local archive remains.
-
-Run directly through Codex:
+Require an explicit request to clear online bookmarks; it also authorizes recovery within that scope without repeated confirmation. Explain that online bookmark state is removed and not automatically recoverable. Preserve the local archive.
 
 ```bash
 "$SKILL_DIR/scripts/clear_twitter_bookmarks.py" --metadata "$METADATA"
 ```
 
-The clear script must:
+The script validates the archive, snapshots live bookmarks, checks ID coverage, paces removals, and verifies the remaining count.
 
-1. Require `manifest.json` to describe a complete cursor fetch and complete media download.
-2. Verify every declared media file exists, is non-empty, and stays in the flat target directory.
-3. For archives containing video, require a complete highest-resolution report with matching counts.
-4. Fetch the live bookmark list and save `pre-clear-bookmarks.json` before the first mutation.
-5. Compare every live ID with the local `bookmarks.json`.
-6. Stop with exit code 3 if any live bookmark is unarchived.
-7. Remove bookmarks one at a time with twitter-cli write delays.
-8. Re-fetch and require `remaining: 0`.
-
-If exit code 3 occurs, rerun the complete archive workflow, then retry clear. Do not pass `--allow-unarchived` unless the user explicitly authorizes deleting content absent from the local archive.
+For exit code 3, follow the diagnostic: archive missing IDs, or increase the fetch's `--max-bookmarks` cap and retry. Never bypass an incomplete fetch. Retry while making progress; report persistent blockers. Use `--allow-unarchived` only with explicit authorization to delete unarchived content.
 
 Report from `$METADATA/clear-bookmarks-report.json`. Require `complete: true`, `failed` length 0, and `remaining: 0`.
 
-## Safety and handoff
+## Report
 
-- Preserve local media when clearing online bookmarks.
-- Keep secrets out of commands, logs, Markdown, and reports.
-- Do not trust nonzero files as valid video; use FFprobe.
-- Resume after interruption instead of deleting the archive.
-- State exact downloaded, failed, and remaining counts in the final response.
+Report applicable downloaded, reused, upgraded, failed, and removed counts from the manifest and reports. Online remaining counts require a successful live fetch; otherwise say unverified. Resume after interruption instead of deleting the archive.

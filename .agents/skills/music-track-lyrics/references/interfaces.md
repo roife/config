@@ -15,7 +15,7 @@ Every record contains the absolute `audio_path` and a versioned `schema`. Downst
 2. `search --audio AUDIO_FILE --provider PROVIDER --endpoint SEARCH_ENDPOINT --output SEARCH_JSON`
    - Supported provider response shapes are `lrclib` and `netease`.
    - The endpoint is mandatory; the script contains no provider URL or source selection.
-   - Use `--query` only when the track metadata is insufficient.
+   - Use `--query` when metadata is insufficient or the metadata-derived search produces inadequate results. Recording-match requirements still apply.
 
 3. `fetch --audio AUDIO_FILE --search-record SEARCH_JSON --candidate-index INDEX --endpoint FETCH_ENDPOINT --output SOURCE_JSON`
    - Fetches only the explicitly indexed candidate.
@@ -29,6 +29,7 @@ Every record contains the absolute `audio_path` and a versioned `schema`. Downst
    - `INPUT` can be plain text, a compatible JSON record, or `-` for stdin.
    - The output is a proposal with `lyrics`, hashes, transformations, and residual flags.
    - Title-matching lines are preserved by default. Repeat `--heading-line LINE_NUMBER` for one-based source lines confirmed to be headings; only matching title or title-plus-artist text on those lines is removed.
+   - Use `--lyric-exceptions EXCEPTIONS_JSON` for reviewed false positives: a JSON object mapping exact plain lyric lines (NFC, trimmed, without timestamps) to nonempty review reasons. Cleanup preserves these lines; residual checks exempt only these exact lines. The proposal records the exceptions, and `clean`, `segment`, and `align` carry them forward from JSON lyric inputs. Plain-text inputs carry no exceptions.
 
 6. `segment --audio AUDIO_FILE --lyrics INPUT --gap-seconds SECONDS --output SEGMENT_JSON`
    - Repeat `--break-before LINE_NUMBER` for reviewed, one-based lyric-line boundaries.
@@ -46,7 +47,7 @@ Every record contains the absolute `audio_path` and a versioned `schema`. Downst
 
 9. `approve --audio AUDIO_FILE --proposal PROPOSAL_JSON --decision accept|reject --reviewer REVIEWER --reason REASON --output APPROVAL_JSON`
    - Add `--match-record MATCH_JSON` when the proposal came from a remote source.
-   - `--manual-match-override` is valid only after explicit review of a non-accepted match.
+   - `--manual-match-override` requires documented evidence in `--reason` that both sources represent the same recording; it cannot waive a known recording or version mismatch.
    - Approval binds the exact proposal and the current whole-file and lyric hashes.
    - Record the authorization already present in the user's request in `--reason`; `--reviewer` identifies who performed the review. Creating this record does not imply a second user confirmation or authorize a different change.
 

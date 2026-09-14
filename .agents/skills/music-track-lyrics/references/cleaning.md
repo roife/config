@@ -1,6 +1,6 @@
 # Lyric cleaning and classification contract
 
-Apply transformations conservatively and retain the logged category, original line, and replacement when applicable.
+Apply transformations conservatively and retain the logged category, original line, and replacement when applicable. Remove suspected credits, notices, and labels only when context establishes that they are non-lyric. Review heuristic removals before approval; preserve confirmed lyric lines with `clean --lyric-exceptions` (see [interfaces.md](interfaces.md)). Exceptions and their review reasons are bound to the approved proposal.
 
 - Remove production, performance-credit, studio, label, copyright, ISRC, OP/SP, and similar credit lines.
 - Remove platform watermarks, advertising, links, payment prompts, source notices, and authorization boilerplate.

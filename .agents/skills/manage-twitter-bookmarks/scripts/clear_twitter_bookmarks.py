@@ -69,6 +69,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="读取当前 bookmarks 的安全上限（默认：100000）",
     )
     parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        help="仅校验本地完整归档；不认证、不联网、不修改 bookmarks",
+    )
+    parser.add_argument(
         "--allow-unarchived",
         action="store_true",
         help="即使发现不在本地归档中的 bookmark 也继续删除",
@@ -137,6 +142,16 @@ def validate_archive(metadata: Path) -> Tuple[List[Any], set[str]]:
     media_root = (metadata / media_root_value).resolve()
     if media_root == metadata or media_root in metadata.parents or metadata in media_root.parents:
         raise ValueError("mediaRoot 与 metadata 目录不能相同或互相嵌套")
+    if not media_root.is_dir():
+        raise ValueError("媒体目录不存在：%s" % media_root)
+    for entry in media_root.iterdir():
+        if (
+            entry.suffix.lower() not in {".mp4", ".jpg", ".png", ".webp"}
+            or not entry.is_file()
+            or entry.resolve().parent != media_root
+            or entry.stat().st_size <= 0
+        ):
+            raise ValueError("媒体目录含非媒体、非扁平、越界或空文件：%s" % entry.name)
 
     media_paths: List[str] = []
     video_paths: List[str] = []
@@ -194,6 +209,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     try:
         _archived, archived_ids = validate_archive(metadata)
         LOG.info("本地归档完整性校验通过：%d 条", len(archived_ids))
+        if args.validate_only:
+            print(json.dumps({"scope": "local-archive", "complete": True, "bookmarkCount": len(archived_ids)}))
+            return 0
         get_cookies, TwitterClient, load_config, tweet_to_dict, version = load_twitter_cli()
         cookies = get_cookies()
         config = load_config()
@@ -235,13 +253,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "requested": len(live_ids),
         "removed": [],
         "failed": [],
+        "remaining": None,
+        "remainingIds": None,
         "complete": False,
     }
     report_path = metadata / "clear-bookmarks-report.json"
     atomic_write_json(report_path, report)
 
     if not live_ids:
-        report.update({"finishedAt": datetime.now(timezone.utc).isoformat(), "remaining": 0, "complete": True})
+        report.update({"finishedAt": datetime.now(timezone.utc).isoformat(), "remaining": 0, "remainingIds": [], "complete": True})
         atomic_write_json(report_path, report)
         LOG.info("当前 bookmarks 已经是 0。")
         return 0
@@ -263,19 +283,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         remaining_ids = [str(tweet.id) for tweet in remaining]
     except Exception as exc:
         report["verificationError"] = str(exc)
-        remaining_ids = []
+        remaining_ids = None
         LOG.error("删除后验证失败：%s", exc)
 
     report["finishedAt"] = datetime.now(timezone.utc).isoformat()
-    report["remaining"] = len(remaining_ids)
+    report["remaining"] = len(remaining_ids) if remaining_ids is not None else None
     report["remainingIds"] = remaining_ids
-    report["complete"] = not report.get("verificationError") and len(remaining_ids) == 0
+    report["complete"] = not report.get("verificationError") and not report["failed"] and remaining_ids == []
     atomic_write_json(report_path, report)
 
     if report["complete"]:
         LOG.info("验证完成：当前 bookmarks = 0。")
         return 0
-    LOG.error("尚有 %d 个 bookmarks；可重新运行脚本继续清理。", len(remaining_ids))
+    if remaining_ids is None:
+        LOG.error("剩余 bookmark 数量未验证；本次清理未完成。")
+    elif report["failed"]:
+        LOG.error("%d 次取消操作失败，验证剩余 %d 条；本次清理未完成。", len(report["failed"]), len(remaining_ids))
+    else:
+        LOG.error("尚有 %d 个 bookmarks；可重新运行脚本继续清理。", len(remaining_ids))
     return 2
 
 

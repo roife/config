@@ -1,11 +1,11 @@
 ---
 name: music-track-lyrics
-description: "Inspect, find, clean, synchronize, or embed lyrics for one local M4A or MP3 file, with per-track verification and optional audit output. Use for a specific audio file, not a folder or music-library batch."
+description: "Inspect, find, clean, synchronize, or embed lyrics for one local M4A or MP3 file. Use for a specific audio file, not a folder or music-library batch."
 ---
 
 # Music Track Lyrics
 
-Operate on exactly one audio file and compose only the operations needed for the request. Never scan a directory, infer a media root, call a library-local pipeline, or aggregate multiple tracks. Pass task-specific paths, source endpoints, candidate choices, thresholds, backup destinations, and approvals explicitly. Results may be returned through stdout.
+Operate on exactly one audio file and compose only the operations needed for the request. Never scan a directory, infer a media root, call a library-local pipeline, or aggregate multiple tracks. Supply task-specific paths, source endpoints, candidate choices, thresholds, backup destinations, and approval records as command arguments. Choose routine values within the authorized scope. Results may be returned through stdout.
 
 Resolve `SKILL_DIR` to this skill directory. All implementation lives in `scripts/music_track_lyrics.py`. Each capability is an independent top-level function and an independent CLI subcommand. Run it with `uv run`; every subcommand requires `--audio` and emits one JSON object unless it is the final report writer.
 

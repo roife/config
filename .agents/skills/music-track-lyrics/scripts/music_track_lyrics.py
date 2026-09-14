@@ -350,12 +350,14 @@ def read_text(path_text: str) -> str:
     return Path(path_text).expanduser().resolve().read_text(encoding="utf-8")
 
 
-def read_lyrics_value(path_text: str, keys: tuple[str, ...], audio_path: Path) -> str:
+def read_lyrics_input(
+    path_text: str, keys: tuple[str, ...], audio_path: Path
+) -> tuple[str, dict[str, str]]:
     raw = read_text(path_text)
     try:
         value: Any = json.loads(raw)
     except json.JSONDecodeError:
-        return raw
+        return raw, {}
     candidates: list[Any] = [value]
     if isinstance(value, dict):
         require_record_audio(value, audio_path)
@@ -371,8 +373,15 @@ def read_lyrics_value(path_text: str, keys: tuple[str, ...], audio_path: Path) -
         for key in keys:
             found = candidate.get(key)
             if isinstance(found, str):
-                return found
+                exceptions = candidate.get(
+                    "lyric_exceptions", value.get("lyric_exceptions")
+                )
+                return found, validate_lyric_exceptions(found, exceptions)
     raise ValueError(f"JSON input has none of the requested lyric fields: {keys}")
+
+
+def read_lyrics_value(path_text: str, keys: tuple[str, ...], audio_path: Path) -> str:
+    return read_lyrics_input(path_text, keys, audio_path)[0]
 
 
 def write_json(value: Any, output: str | None) -> None:
@@ -418,15 +427,20 @@ def artist_atoms(value: str, aliases: dict[str, str]) -> set[str]:
 
 
 def clean_lyrics(
-    raw: str, title: str, artist: str, heading_lines: set[int] | None = None
+    raw: str,
+    title: str,
+    artist: str,
+    heading_lines: set[int] | None = None,
+    lyric_exceptions: dict[str, str] | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
+    exceptions = validate_lyric_exceptions(raw, lyric_exceptions)
     transformations: list[dict[str, Any]] = []
     output: list[str] = []
     normalized = raw.replace("\r\n", "\n").replace("\r", "\n")
     for line_number, raw_line in enumerate(normalized.split("\n"), 1):
         original = raw_line
         timestamp_count = len(TIME_TAG_RE.findall(raw_line))
-        line = TIME_TAG_RE.sub("", raw_line).strip()
+        line = unicodedata.normalize("NFC", TIME_TAG_RE.sub("", raw_line).strip())
         if timestamp_count:
             transformations.append(
                 {
@@ -438,6 +452,18 @@ def clean_lyrics(
             )
         if not line:
             output.append("")
+            continue
+        if line in exceptions:
+            transformations.append(
+                {
+                    "line": line_number,
+                    "category": "preserved_lyric",
+                    "original": original,
+                    "replacement": line,
+                    "reason": exceptions[line],
+                }
+            )
+            output.append(line)
             continue
         category = ""
         if META_TAG_RE.match(line):
@@ -480,7 +506,7 @@ def clean_lyrics(
                 }
             )
             line = replacement
-        output.append(unicodedata.normalize("NFC", line))
+        output.append(line)
 
     collapsed: list[str] = []
     for line in output:
@@ -491,11 +517,40 @@ def clean_lyrics(
     return "\n".join(collapsed), transformations
 
 
-def residual_flags(lyrics: str) -> list[str]:
+def validate_lyric_exceptions(
+    lyrics: str, exceptions: Any
+) -> dict[str, str]:
+    """Require exact lyric lines and recorded review reasons for content exceptions."""
+
+    if exceptions is None:
+        return {}
+    if not isinstance(exceptions, dict):
+        raise TypeError("lyric_exceptions must map exact lyric lines to review reasons")
+    lines = {
+        unicodedata.normalize("NFC", line.strip())
+        for line in strip_lrc(lyrics).splitlines()
+    }
+    for line, reason in exceptions.items():
+        if (
+            not isinstance(line, str)
+            or not line
+            or line != unicodedata.normalize("NFC", line.strip())
+            or len(line.splitlines()) != 1
+            or line not in lines
+        ):
+            raise ValueError("each lyric exception must name an exact plain lyric line")
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("each lyric exception requires a review reason")
+    return dict(exceptions)
+
+
+def residual_flags(
+    lyrics: str, lyric_exceptions: dict[str, str] | None = None
+) -> list[str]:
     flags: set[str] = set()
     for line in lyrics.splitlines():
         stripped = line.strip()
-        if not stripped:
+        if not stripped or stripped in (lyric_exceptions or {}):
             continue
         if TIME_TAG_RE.search(stripped):
             flags.add("timestamp")
@@ -1155,13 +1210,20 @@ def match_source(
 
 
 def clean_track_lyrics(
-    audio_path: Path, raw_lyrics: str, heading_lines: set[int] | None = None
+    audio_path: Path,
+    raw_lyrics: str,
+    heading_lines: set[int] | None = None,
+    lyric_exceptions: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Clean one lyric text using metadata from one track."""
 
     local = metadata(load_audio(audio_path))
     cleaned, transformations = clean_lyrics(
-        raw_lyrics, local.get("title", ""), local.get("artist", ""), heading_lines
+        raw_lyrics,
+        local.get("title", ""),
+        local.get("artist", ""),
+        heading_lines,
+        lyric_exceptions,
     )
     return {
         "schema": "music-lyrics/cleaned-proposal/v1",
@@ -1170,7 +1232,8 @@ def clean_track_lyrics(
         "lyrics_sha256": text_sha256(cleaned),
         "input_lyrics_sha256": text_sha256(raw_lyrics),
         "transformations": transformations,
-        "residual_flags": residual_flags(cleaned),
+        "lyric_exceptions": dict(lyric_exceptions or {}),
+        "residual_flags": residual_flags(cleaned, lyric_exceptions),
         "created_at": now_iso(),
     }
 
@@ -1180,10 +1243,12 @@ def segment_track_lyrics(
     lyrics: str,
     gap_seconds: float,
     explicit_breaks: set[int],
+    lyric_exceptions: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Add reviewed paragraph boundaries to one lyric text."""
 
     segmented, changes = segment_lyrics(lyrics, gap_seconds, explicit_breaks)
+    exceptions = validate_lyric_exceptions(segmented, lyric_exceptions)
     return {
         "schema": "music-lyrics/segmented-proposal/v1",
         "audio_path": str(audio_path),
@@ -1191,6 +1256,7 @@ def segment_track_lyrics(
         "lyrics_sha256": text_sha256(segmented),
         "input_lyrics_sha256": text_sha256(lyrics),
         "paragraph_changes": changes,
+        "lyric_exceptions": exceptions,
         "created_at": now_iso(),
     }
 
@@ -1202,10 +1268,12 @@ def align_track_lyrics(
     minimum_similarity: float,
     split_window_seconds: float,
     overrides: dict[str, float],
+    lyric_exceptions: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Align one track's plain lyrics to one existing synchronized source."""
 
     plain = strip_lrc(plain_lyrics).strip()
+    exceptions = validate_lyric_exceptions(plain, lyric_exceptions)
     events = parse_lrc(timed_source)
     if not events:
         raise ValueError("timed source contains no lyric events")
@@ -1256,6 +1324,7 @@ def align_track_lyrics(
         "lyrics_sha256": text_sha256(rendered),
         "plain_lyrics": plain,
         "plain_lyrics_sha256": text_sha256(plain),
+        "lyric_exceptions": exceptions,
         "status": status,
         "source_event_count": len(events),
         "target_line_count": len(target_lines),
@@ -1327,6 +1396,8 @@ def approve_change(
 
     require_record_audio(proposal, audio_path)
     lyrics = proposal_lyrics(proposal)
+    if decision == "accept":
+        validate_lyric_exceptions(lyrics, proposal.get("lyric_exceptions"))
     if match_record:
         require_record_audio(match_record, audio_path)
         if (
@@ -1366,6 +1437,8 @@ def backup_track(audio_path: Path, backup_path: Path) -> dict[str, Any]:
         raise FileExistsError(backup_path)
     backup_path.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(audio_path, backup_path)
+    original_hash = file_sha256(audio_path)
+    backup_hash = file_sha256(backup_path)
     checks = {
         "present": backup_path.is_file(),
         "not_symlink": not backup_path.is_symlink(),
@@ -1373,7 +1446,7 @@ def backup_track(audio_path: Path, backup_path: Path) -> dict[str, Any]:
             os.stat(audio_path), os.stat(backup_path)
         ),
         "size_exact": audio_path.stat().st_size == backup_path.stat().st_size,
-        "whole_file_sha256_exact": file_sha256(audio_path) == file_sha256(backup_path),
+        "whole_file_sha256_exact": original_hash == backup_hash,
     }
     if not all(checks.values()):
         backup_path.unlink(missing_ok=True)
@@ -1382,7 +1455,7 @@ def backup_track(audio_path: Path, backup_path: Path) -> dict[str, Any]:
         "schema": "music-lyrics/track-backup/v1",
         "audio_path": str(audio_path),
         "backup_path": str(backup_path),
-        "whole_file_sha256": file_sha256(backup_path),
+        "whole_file_sha256": backup_hash,
         "size": backup_path.stat().st_size,
         "checks": checks,
         "created_at": now_iso(),
@@ -1491,7 +1564,8 @@ def _verification_result(
             current["lyrics"], plain, float(current["duration"])
         )
         checks["timed_lyrics_valid"] = bool(timed_validation.get("valid"))
-    flags = residual_flags(strip_lrc(current["lyrics"]))
+    exceptions = validate_lyric_exceptions(expected, proposal.get("lyric_exceptions"))
+    flags = residual_flags(strip_lrc(current["lyrics"]), exceptions)
     checks["no_residual_non_lyric_content"] = not flags
     return {
         "schema": "music-lyrics/verification/v1",
@@ -1614,6 +1688,10 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="One-based source line confirmed to be a title heading (repeatable).",
     )
+    clean_parser.add_argument(
+        "--lyric-exceptions",
+        help="JSON object mapping exact plain lyric lines to review reasons.",
+    )
     clean_parser.add_argument("--output")
 
     segment_parser = subparsers.add_parser("segment")
@@ -1717,33 +1795,44 @@ def main() -> None:
             args.duration_tolerance,
         )
     elif args.command == "clean":
+        lyrics, exceptions = read_lyrics_input(
+            args.lyrics,
+            ("lyrics", "plain_lyrics", "raw_lyrics", "synchronized_lyrics"),
+            audio_path,
+        )
+        if args.lyric_exceptions:
+            exceptions.update(
+                validate_lyric_exceptions(lyrics, load_json(args.lyric_exceptions))
+            )
         result = clean_track_lyrics(
             audio_path,
-            read_lyrics_value(
-                args.lyrics,
-                ("lyrics", "plain_lyrics", "raw_lyrics", "synchronized_lyrics"),
-                audio_path,
-            ),
+            lyrics,
             set(args.heading_line),
+            exceptions,
         )
     elif args.command == "segment":
+        lyrics, exceptions = read_lyrics_input(
+            args.lyrics,
+            ("lyrics", "synchronized_lyrics", "plain_lyrics"),
+            audio_path,
+        )
         result = segment_track_lyrics(
             audio_path,
-            read_lyrics_value(
-                args.lyrics,
-                ("lyrics", "synchronized_lyrics", "plain_lyrics"),
-                audio_path,
-            ),
+            lyrics,
             args.gap_seconds,
             set(args.break_before),
+            exceptions,
         )
     elif args.command == "align":
         overrides = load_json(args.overrides) if args.overrides else {}
         if not isinstance(overrides, dict):
             raise TypeError("--overrides must contain one JSON object")
+        lyrics, exceptions = read_lyrics_input(
+            args.lyrics, ("lyrics", "plain_lyrics"), audio_path
+        )
         result = align_track_lyrics(
             audio_path,
-            read_lyrics_value(args.lyrics, ("lyrics", "plain_lyrics"), audio_path),
+            lyrics,
             read_lyrics_value(
                 args.timed_source,
                 ("synchronized_lyrics", "timed_lyrics", "lyrics"),
@@ -1752,6 +1841,7 @@ def main() -> None:
             args.minimum_similarity,
             args.split_window_seconds,
             overrides,
+            exceptions,
         )
     elif args.command == "classify":
         lyrics = (
