@@ -42,7 +42,7 @@ java = ["26", "21"]
 "github:jgm/pandoc" = "latest"
 "github:tectonic-typesetting/tectonic" = { version = "latest", version_prefix = "tectonic@" }
 "conda:graphviz" = "latest"
-"aqua:d2lang/d2" = "latest"
+"github:terrastruct/d2" = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 
 # Typst

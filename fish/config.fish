@@ -3,8 +3,6 @@ if command -q mise
     mise activate fish | source
 end
 
-fish_add_path --global --move "$HOME/.cargo/bin" "$HOME/.local/bin"
-
 # Use gpg-agent as the SSH agent.
 if command -q gpgconf
     gpg-connect-agent /bye >/dev/null 2>&1
