@@ -11,7 +11,6 @@ config_dir="$HOME/.config"
 unset github_token
 github_token="${GITHUB_TOKEN-}"
 unset GITHUB_TOKEN
-trap 'unset github_token' EXIT
 
 configure_gpg_ssh() {
     local key_file="$HOME/private-key.asc"
@@ -22,10 +21,6 @@ configure_gpg_ssh() {
     mkdir -p "$HOME/.gnupg" && chmod 700 "$HOME/.gnupg"
     if [[ -f "$key_file" ]]; then
         gpg --import "$key_file"
-    elif ! gpg --with-colons --list-secret-keys "$gpg_fingerprint" |
-        grep -E '^(sec|ssb):' >/dev/null; then
-        printf 'GPG secret key not imported; place a backup at %s and rerun init.sh.\n' "$key_file" >&2
-        return 1
     fi
 
     # Find the target keygrip only for local private material or a card reference.
@@ -43,7 +38,7 @@ configure_gpg_ssh() {
             '
     )"
     if [[ -z "$keygrip" ]]; then
-        printf '%s\n' 'Target GPG private material or smart-card reference missing. Restore the target secret key and rerun init.sh.' >&2
+        printf 'Target GPG private material or smart-card reference missing. Place a backup at %s or run gpg --card-status, then rerun init.sh.\n' "$key_file" >&2
         return 1
     fi
     # Only delete the supplied backup after import and secret-key verification.
@@ -58,8 +53,6 @@ configure_gpg_ssh() {
 
     # Home Manager already manages the agent; do not replace it with a daemon.
     gpgconf --reload gpg-agent
-    SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-    export SSH_AUTH_SOCK
     if [[ -t 0 ]]; then
         GPG_TTY="$(tty)"
         export GPG_TTY
