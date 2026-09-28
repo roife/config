@@ -1,34 +1,18 @@
 *
-!*/
 
-!.mbsyncrc
-!.gitconfig
 !.gitignore
-!.gitignore_global
 !init.sh
 
 !Brewfile
 
-!fish/
-!fish/config.fish
-!fish/fish_plugins
-
-!mise/
-!mise/aqua-registry.yaml
-!mise/config.toml
-
-!ghostty/
-!ghostty/**
-
-!gnupg/
-!gnupg/common.conf
-!gnupg/gpg-agent.conf
+!flake.nix
+!flake.lock
+!home.nix
+!nix/
+!nix/*.nix
 
 !rime/
 !rime/**
-
-!mpv/
-!mpv/mpv.conf
 
 !.agents/
 !.agents/**

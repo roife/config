@@ -4,11 +4,7 @@ brew "gnupg"
 brew "coreutils"
 
 brew "fish"
-brew "isync"
 brew "librime"
-
-tap "d12frosted/emacs-plus", trusted: true
-brew "d12frosted/emacs-plus/emacs-plus", args: ["with-xwidgets"]
 
 cask "bettertouchtool"
 cask "font-sarasa-gothic"
