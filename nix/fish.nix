@@ -4,12 +4,10 @@
 
   programs.fish = {
     enable = true;
-    plugins = [
-      { name = "plugin-git"; src = pkgs.fishPlugins.plugin-git.src; }
-      { name = "z"; src = pkgs.fishPlugins.z.src; }
-      { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
-      { name = "bass"; src = pkgs.fishPlugins.bass.src; }
-    ];
+    plugins = map (name: {
+      inherit name;
+      src = pkgs.fishPlugins.${name}.src;
+    }) [ "plugin-git" "z" "autopair" "bass" ];
 
     shellAbbrs = {
       l = "ll -a";

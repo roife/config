@@ -11,32 +11,35 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, home-manager, fenix, ... }:
+  outputs = { nixpkgs, home-manager, fenix, flake-utils, ... }:
     let
-      pkgsFor = system: import nixpkgs { inherit system; };
+      systems = [ "aarch64-darwin" "x86_64-linux" ];
       mkHome = system: home-manager.lib.homeManagerConfiguration {
-        pkgs = pkgsFor system;
-        extraSpecialArgs = { inherit fenix system; };
+        pkgs = nixpkgs.legacyPackages.${system};
+        extraSpecialArgs.fenixPackages = fenix.packages.${system};
         modules = [ ./home.nix ];
       };
     in {
-      homeConfigurations = {
-        "roifewu@aarch64-darwin" = mkHome "aarch64-darwin";
-        "roifewu@x86_64-linux" = mkHome "x86_64-linux";
-      };
-
-      devShells = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (system:
-        let pkgs = pkgsFor system;
-        in {
+      homeConfigurations = builtins.listToAttrs (map (system: {
+        name = "roifewu@${system}";
+        value = mkHome system;
+      }) systems);
+    } // flake-utils.lib.eachSystem systems (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        jdk = pkgs.temurin-bin-21;
+      in {
+        devShells = {
           rust-nightly = pkgs.mkShell {
             packages = [ fenix.packages.${system}.minimal.toolchain ];
           };
           java21 = pkgs.mkShell {
-            packages = [ pkgs.temurin-bin-21 ];
-            JAVA_HOME = pkgs.temurin-bin-21.home;
+            packages = [ jdk ];
+            JAVA_HOME = jdk.home;
           };
-        });
-    };
+        };
+      });
 }

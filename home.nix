@@ -1,4 +1,4 @@
-{ config, pkgs, fenix, system, ... }:
+{ config, pkgs, fenixPackages, ... }:
 {
   imports = [ ./nix/dotfiles.nix ./nix/fish.nix ];
 
@@ -14,7 +14,7 @@
     # Default language toolchains. Project-specific versions belong in devShells.
     nodejs_24
     temurin-bin-26
-    fenix.packages.${system}.stable.toolchain
+    fenixPackages.stable.toolchain
     # Keep all LLVM tools on Nixpkgs' default LLVM version.
     llvmPackages.llvm
     llvmPackages.llvm.dev

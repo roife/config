@@ -1,4 +1,8 @@
 { config, pkgs, ... }:
+let
+  name = "roife";
+  email = "roifewu@gmail.com";
+in
 {
   nix.package = pkgs.nix;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -15,8 +19,7 @@
     lfs.enable = true;
     settings = {
       user = {
-        name = "roife";
-        email = "roifewu@gmail.com";
+        inherit name email;
       };
       core = {
         quotepath = false;
@@ -126,9 +129,9 @@
     certificatesFile = null;
     maildirBasePath = "${config.home.homeDirectory}/.local/share/mail";
     accounts.gmail = {
-      address = "roifewu@gmail.com";
-      realName = "roife";
-      userName = "roifewu@gmail.com";
+      address = email;
+      realName = name;
+      userName = email;
       passwordCommand = [
         (toString (pkgs.writeShellScript "gmail-imap-password" ''
           set -euo pipefail
