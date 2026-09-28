@@ -91,7 +91,7 @@ nix --extra-experimental-features 'nix-command flakes' \
     switch --flake "${config_dir}#roifewu@${nix_system}"
 export PATH="$HOME/.nix-profile/bin:$PATH"
 
-# Install macOS packages and locate the managed Fish executable.
+# Install macOS packages. Home Manager installs Fish on both platforms.
 if [[ "$nix_system" == aarch64-darwin ]]; then
     if ! command -v brew >/dev/null; then
         /bin/bash -c "$(curl -fsSL \
@@ -99,12 +99,14 @@ if [[ "$nix_system" == aarch64-darwin ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
     brew bundle --file="$config_dir/Brewfile"
-    fish_path="$(brew --prefix)/bin/fish"
-else
-    fish_path="$(command -v fish)"
 fi
 
 # Register Fish as a login shell and select it for the account.
+fish_path="$HOME/.nix-profile/bin/fish"
+if [[ ! -x "$fish_path" ]]; then
+    printf 'Home Manager did not install Fish at %s\n' "$fish_path" >&2
+    exit 1
+fi
 if ! grep -Fqx "$fish_path" /etc/shells; then
     printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
 fi

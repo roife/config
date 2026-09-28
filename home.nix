@@ -26,6 +26,7 @@
     # Build and code intelligence
     cmake
     ninja
+    pkg-config
     tree-sitter
     universal-ctags
     tokei
@@ -44,6 +45,7 @@
     fd
     wget
     tealdeer
+    librime
 
     # Writing, documents, and diagrams
     aspell

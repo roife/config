@@ -3,9 +3,6 @@ brew "mas"
 brew "gnupg"
 brew "coreutils"
 
-brew "fish"
-brew "librime"
-
 cask "bettertouchtool"
 cask "font-sarasa-gothic"
 cask "ghostty"
