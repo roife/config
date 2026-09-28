@@ -12,7 +12,10 @@ in
   services.emacs = {
     enable = true;
     defaultEditor = true;
+    extraOptions = [ "--init-directory=${config.home.homeDirectory}/.config/emacs" ];
   };
+
+  programs.direnv.enable = true;
 
   programs.git = {
     enable = true;

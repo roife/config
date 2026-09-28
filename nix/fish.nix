@@ -1,7 +1,5 @@
 { pkgs, ... }:
 {
-  programs.direnv.enable = true;
-
   programs.fish = {
     enable = true;
     plugins = map (name: {
@@ -46,6 +44,9 @@
     };
 
     shellInit = ''
+      # User-installed executables.
+      fish_add_path --path "$HOME/.local/bin"
+
       # Nix's system and Home Manager profiles.
       for nix_bin in /nix/var/nix/profiles/default/bin $HOME/.nix-profile/bin
           if test -d $nix_bin
@@ -144,7 +145,7 @@
     };
 
     interactiveShellInit = ''
-      source "$HOME/.emacs.d/straight/repos/ezf/scripts/ezf.fish"
+      source "$HOME/.config/emacs/straight/repos/ezf/scripts/ezf.fish"
     '';
   };
 }

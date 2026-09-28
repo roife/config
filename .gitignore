@@ -2,6 +2,7 @@
 
 !.gitignore
 !init.sh
+!README.md
 
 !Brewfile
 
