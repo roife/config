@@ -18,5 +18,3 @@ bash ./init.sh
 ```
 
 中途失败后，修复报错原因，再运行同一条命令即可；已有安装和仓库会复用，配置会重新应用。
-
-在仓库根目录手动运行 Nix 命令时，使用 `nix/` 作为 flake 路径，例如 `nix develop path:./nix#rust-nightly`。

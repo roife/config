@@ -12,15 +12,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
+    rime.url = "path:./nix/rime";
   };
 
-  outputs = { nixpkgs, home-manager, fenix, flake-utils, ... }:
+  outputs = { nixpkgs, home-manager, fenix, flake-utils, rime, ... }:
     let
       systems = [ "aarch64-darwin" "x86_64-linux" ];
       mkHome = system: home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${system};
         extraSpecialArgs.fenixPackages = fenix.packages.${system};
-        modules = [ ./home.nix ];
+        modules = [ ./nix/home.nix rime.homeManagerModules.default ];
       };
     in {
       homeConfigurations = builtins.listToAttrs (map (system: {

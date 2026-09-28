@@ -3,12 +3,13 @@
 !.gitignore
 !init.sh
 !README.md
+!flake.nix
+!flake.lock
 
 !Brewfile
 
 !nix/
 !nix/*.nix
-!nix/flake.lock
 
 !rime/
 !rime/**

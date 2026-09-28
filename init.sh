@@ -85,20 +85,6 @@ configure_gpg_ssh() {
     fi
 }
 
-# Install Rime Frost, overlay local settings, and refresh its language model.
-configure_rime() {
-    local rime_file
-    if [[ ! -e "$rime_dir/.git" ]]; then
-        mkdir -p "${rime_dir%/*}"
-        git clone --depth 1 https://github.com/gaboolic/rime-frost "$rime_dir"
-    fi
-    for rime_file in "$config_dir"/rime/*; do
-        ln -sfn "$rime_file" "$rime_dir/"
-    done
-    curl -fL -o "$rime_dir/wanxiang-lts-zh-hans.gram" \
-        https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram
-}
-
 # Register Fish as a login shell and select it for the account.
 configure_fish() {
     local fish_path="$HOME/.nix-profile/bin/fish"
@@ -125,11 +111,9 @@ configure_fish() {
 case "$(uname -s):$(uname -m)" in
     Darwin:arm64)
         nix_system=aarch64-darwin
-        rime_dir="$HOME/Library/Rime"
         ;;
     Linux:x86_64)
         nix_system=x86_64-linux
-        rime_dir="$HOME/.local/share/fcitx5/rime"
         ;;
     *) printf '%s\n' 'Unsupported platform.' >&2; exit 1 ;;
 esac
@@ -156,8 +140,6 @@ if [[ ! -e "$config_dir/emacs/.git" ]]; then
     git clone git@github.com:roife/.emacs.d.git "$config_dir/emacs"
 fi
 
-configure_rime
-
 # Install Nix when absent and make it available to this running shell.
 if ! command -v nix >/dev/null; then
     nix_daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -176,12 +158,13 @@ fi
 
 # Build and activate the local Home Manager configuration.
 load_github_token
+
 home_activation="$(
     # Only the descriptor path is exported, not the token.
     NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3' \
     nix --extra-experimental-features 'nix-command flakes' \
         build --no-update-lock-file --no-link --print-out-paths \
-        "path:${config_dir}/nix#homeConfigurations.\"roifewu@${nix_system}\".activationPackage" \
+        "git+file://${config_dir}#homeConfigurations.\"roifewu@${nix_system}\".activationPackage" \
         3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
 )"
 unset github_token
@@ -189,6 +172,3 @@ unset github_token
 export PATH="$HOME/.nix-profile/bin:$PATH"
 
 configure_fish
-
-# Refresh tealdeer's local documentation cache.
-tldr -u

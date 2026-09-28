@@ -5,13 +5,11 @@ let
 in
 {
   # Link to working files without copying their contents into the Nix store.
-  home.file = {
-    ".agents".source =
-      config.lib.file.mkOutOfStoreSymlink
-        "${config.home.homeDirectory}/.config/.agents";
-    ".authinfo.gpg".source =
-      config.lib.file.mkOutOfStoreSymlink
-        "${config.home.homeDirectory}/.config/secrets/.authinfo.gpg";
+  home.file = lib.mapAttrs (_: path: {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/${path}";
+  }) {
+    ".agents" = ".agents";
+    ".authinfo.gpg" = "secrets/.authinfo.gpg";
   };
 
   nix.package = pkgs.nix;
@@ -31,6 +29,11 @@ in
 
   programs.pnpm.enable = true;
 
+  programs.tealdeer = {
+    enable = true;
+    settings.updates.auto_update = true;
+  };
+
   programs.emacs.enable = true;
   services.emacs = {
     enable = true;
@@ -39,6 +42,8 @@ in
   };
 
   programs.direnv.enable = true;
+
+  programs.rime.userConfigDirectory = ../rime;
 
   programs.git = {
     enable = true;

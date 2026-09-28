@@ -44,7 +44,6 @@
     ripgrep
     fd
     wget
-    tealdeer
     librime
 
     # Writing, documents, and diagrams
