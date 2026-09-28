@@ -1,8 +1,34 @@
 #!/usr/bin/env bash
 
+# Keep credentials out of tracing and exported variables.
+set +xva
 set -euo pipefail
+ulimit -c 0
 
 config_dir="$HOME/.config"
+
+unset authinfo_passphrase github_token
+trap 'unset authinfo_passphrase github_token' EXIT
+
+read_authinfo_passphrase() {
+    [[ -r "$config_dir/secrets/.authinfo.gpg" ]] || return 1
+    IFS= read -r -s -p '.authinfo.gpg passphrase (hidden): ' authinfo_passphrase </dev/tty
+    printf '\n' >/dev/tty
+    [[ -n "$authinfo_passphrase" ]]
+}
+
+load_github_token() {
+    if ! github_token="$(
+        gpg --batch --no-tty --pinentry-mode loopback --no-symkey-cache \
+            --passphrase-fd 3 --decrypt "$config_dir/secrets/.authinfo.gpg" \
+            3< <(printf '%s\n' "$authinfo_passphrase") 2>/dev/null |
+            awk '$2 == "api.github.com" { print $NF; exit }'
+    )"; then
+        printf '%s\n' 'Failed to read GitHub token from authinfo.' >&2
+        return 1
+    fi
+    unset authinfo_passphrase
+}
 
 configure_gpg_ssh() {
     local key_file="$HOME/private-key.asc"
@@ -103,6 +129,8 @@ case "$(uname -s):$(uname -m)" in
     *) printf '%s\n' 'Unsupported platform.' >&2; exit 1 ;;
 esac
 
+read_authinfo_passphrase
+
 ln -sfn "$config_dir/.agents" "$HOME/.agents"
 ln -sfn "$config_dir/secrets/.authinfo.gpg" "$HOME/.authinfo.gpg"
 
@@ -145,11 +173,16 @@ if ! command -v nix >/dev/null; then
 fi
 
 # Build and activate the local Home Manager configuration.
+load_github_token
 home_activation="$(
+    # Only the descriptor path is exported, not the token.
+    NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3' \
     nix --extra-experimental-features 'nix-command flakes' \
-        build --no-link --print-out-paths \
-        "path:${config_dir}/nix#homeConfigurations.\"roifewu@${nix_system}\".activationPackage"
+        build --no-update-lock-file --no-link --print-out-paths \
+        "path:${config_dir}/nix#homeConfigurations.\"roifewu@${nix_system}\".activationPackage" \
+        3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
 )"
+unset github_token
 "$home_activation/activate"
 export PATH="$HOME/.nix-profile/bin:$PATH"
 
