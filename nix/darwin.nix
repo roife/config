@@ -4,9 +4,6 @@
   system.primaryUser = "roifewu";
   users.users.roifewu.home = "/Users/roifewu";
 
-  # Keep the bootstrap-installed Nix daemon and existing Home Manager settings.
-  nix.enable = false;
-
   nix-homebrew = {
     enable = true;
     user = "roifewu";
