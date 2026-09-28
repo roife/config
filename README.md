@@ -10,6 +10,8 @@ Linux 上脚本会放置 Rime 方案，但不会安装 Fcitx5 输入法本身；
 bash ./init.sh
 ```
 
+在仓库根目录手动运行 Nix 命令时，使用 `nix/` 作为 flake 路径，例如 `nix develop path:./nix#rust-nightly`。
+
 ## 2. 恢复 GPG 私钥
 
 安装好 GPG 后，从可信备份导入私钥并确认能列出它：

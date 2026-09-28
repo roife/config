@@ -1,6 +1,6 @@
 { config, pkgs, fenixPackages, ... }:
 {
-  imports = [ ./nix/dotfiles.nix ./nix/fish.nix ];
+  imports = [ ./dotfiles.nix ./fish.nix ];
 
   home.username = "roifewu";
   home.homeDirectory =

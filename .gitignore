@@ -6,11 +6,9 @@
 
 !Brewfile
 
-!flake.nix
-!flake.lock
-!home.nix
 !nix/
 !nix/*.nix
+!nix/flake.lock
 
 !rime/
 !rime/**

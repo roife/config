@@ -88,7 +88,7 @@ fi
 # Apply Home Manager and use the binaries it installs in this process.
 nix --extra-experimental-features 'nix-command flakes' \
     run github:nix-community/home-manager/master -- \
-    switch --flake "${config_dir}#roifewu@${nix_system}"
+    switch --flake "path:${config_dir}/nix#roifewu@${nix_system}"
 export PATH="$HOME/.nix-profile/bin:$PATH"
 
 # Install macOS packages. Home Manager installs Fish on both platforms.
