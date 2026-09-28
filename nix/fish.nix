@@ -55,10 +55,6 @@
       end
 
       set -gx JAVA21_HOME "${pkgs.temurin-bin-21.home}"
-      set -gx JAVA26_HOME "${pkgs.temurin-bin-26.home}"
-      if not set -q JAVA_HOME
-          set -gx JAVA_HOME "$JAVA26_HOME"
-      end
       set -gx JDTLS_JAVA_HOME "$JAVA21_HOME"
     '';
 

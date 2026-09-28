@@ -44,19 +44,5 @@
         extraSpecialArgs.fenixPackages = fenix.packages.x86_64-linux;
         modules = homeModules;
       };
-    } // flake-utils.lib.eachSystem [ "aarch64-darwin" "x86_64-linux" ] (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        jdk = pkgs.temurin-bin-21;
-      in {
-        devShells = {
-          rust-nightly = pkgs.mkShell {
-            packages = [ fenix.packages.${system}.minimal.toolchain ];
-          };
-          java21 = pkgs.mkShell {
-            packages = [ jdk ];
-            JAVA_HOME = jdk.home;
-          };
-        };
-      });
+    };
 }
