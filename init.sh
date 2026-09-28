@@ -136,9 +136,6 @@ esac
 
 read_authinfo_passphrase
 
-ln -sfn "$config_dir/.agents" "$HOME/.agents"
-ln -sfn "$config_dir/secrets/.authinfo.gpg" "$HOME/.authinfo.gpg"
-
 # Install macOS packages, including GnuPG, before importing the key.
 if [[ "$nix_system" == aarch64-darwin ]]; then
     if ! command -v brew >/dev/null; then

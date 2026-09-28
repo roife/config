@@ -4,6 +4,16 @@ let
   email = "roifewu@gmail.com";
 in
 {
+  # Link to working files without copying their contents into the Nix store.
+  home.file = {
+    ".agents".source =
+      config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/.config/.agents";
+    ".authinfo.gpg".source =
+      config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/.config/secrets/.authinfo.gpg";
+  };
+
   nix.package = pkgs.nix;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.gc = {
