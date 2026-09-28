@@ -15,4 +15,3 @@ mas "Quantumult X", id: 1443988620
 mas "Telegram", id: 747648890
 mas "TencentMeeting", id: 1484048379
 mas "WeChat", id: 836500024
-mas "Xcode", id: 497799835

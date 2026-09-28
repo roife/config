@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
   name = "roife";
   email = "roifewu@gmail.com";
@@ -6,6 +6,12 @@ in
 {
   nix.package = pkgs.nix;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+
   programs.pnpm.enable = true;
 
   programs.emacs.enable = true;
@@ -132,6 +138,7 @@ in
     certificatesFile = null;
     maildirBasePath = "${config.home.homeDirectory}/.local/share/mail";
     accounts.gmail = {
+      primary = true;
       address = email;
       realName = name;
       userName = email;
