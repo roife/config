@@ -1,0 +1,36 @@
+{
+  nixpkgs.hostPlatform = "aarch64-darwin";
+  system.stateVersion = 6;
+  system.primaryUser = "roifewu";
+  users.users.roifewu.home = "/Users/roifewu";
+
+  # Keep the bootstrap-installed Nix daemon and existing Home Manager settings.
+  nix.enable = false;
+
+  nix-homebrew = {
+    enable = true;
+    user = "roifewu";
+    autoMigrate = true;
+  };
+
+  homebrew = {
+    enable = true;
+    brews = [ "mas" "gnupg" "coreutils" ];
+    casks = [
+      "bettertouchtool"
+      "font-sarasa-gothic"
+      "ghostty"
+      "squirrel-app"
+    ];
+    masApps = {
+      "AdGuard for Safari" = 1440147259;
+      "Bob" = 1630034110;
+      "QQ" = 451108668;
+      "Quantumult X" = 1443988620;
+      "Telegram" = 747648890;
+      "TencentMeeting" = 1484048379;
+      "WeChat" = 836500024;
+      "Xcode" = 497799835;
+    };
+  };
+}

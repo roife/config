@@ -7,6 +7,11 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,20 +20,31 @@
     rime.url = "path:./nix/rime";
   };
 
-  outputs = { nixpkgs, home-manager, fenix, flake-utils, rime, ... }:
+  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, fenix, flake-utils, rime, ... }:
     let
-      systems = [ "aarch64-darwin" "x86_64-linux" ];
-      mkHome = system: home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs.fenixPackages = fenix.packages.${system};
-        modules = [ ./nix/home.nix rime.homeManagerModules.default ];
-      };
+      homeModules = [ ./nix/home.nix rime.homeManagerModules.default ];
     in {
-      homeConfigurations = builtins.listToAttrs (map (system: {
-        name = "roifewu@${system}";
-        value = mkHome system;
-      }) systems);
-    } // flake-utils.lib.eachSystem systems (system:
+      darwinConfigurations.roifewu = nix-darwin.lib.darwinSystem {
+        modules = [
+          nix-homebrew.darwinModules.nix-homebrew
+          home-manager.darwinModules.home-manager
+          ./nix/darwin.nix
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              extraSpecialArgs.fenixPackages = fenix.packages.aarch64-darwin;
+              users.roifewu.imports = homeModules;
+            };
+          }
+        ];
+      };
+
+      homeConfigurations."roifewu@x86_64-linux" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        extraSpecialArgs.fenixPackages = fenix.packages.x86_64-linux;
+        modules = homeModules;
+      };
+    } // flake-utils.lib.eachSystem [ "aarch64-darwin" "x86_64-linux" ] (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         jdk = pkgs.temurin-bin-21;

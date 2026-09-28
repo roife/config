@@ -7,28 +7,11 @@ ulimit -c 0
 
 config_dir="$HOME/.config"
 
-unset authinfo_passphrase github_token
-trap 'unset authinfo_passphrase github_token' EXIT
-
-read_authinfo_passphrase() {
-    [[ -r "$config_dir/secrets/.authinfo.gpg" ]] || return 1
-    IFS= read -r -s -p '.authinfo.gpg passphrase (hidden): ' authinfo_passphrase </dev/tty
-    printf '\n' >/dev/tty
-    [[ -n "$authinfo_passphrase" ]]
-}
-
-load_github_token() {
-    if ! github_token="$(
-        gpg --batch --no-tty --pinentry-mode loopback --no-symkey-cache \
-            --passphrase-fd 3 --decrypt "$config_dir/secrets/.authinfo.gpg" \
-            3< <(printf '%s\n' "$authinfo_passphrase") 2>/dev/null |
-            awk '$2 == "api.github.com" { print $NF; exit }'
-    )"; then
-        printf '%s\n' 'Failed to read GitHub token from authinfo.' >&2
-        return 1
-    fi
-    unset authinfo_passphrase
-}
+# Retain an optional token only in this shell, not in child environments.
+unset github_token
+github_token="${GITHUB_TOKEN-}"
+unset GITHUB_TOKEN
+trap 'unset github_token' EXIT
 
 configure_gpg_ssh() {
     local key_file="$HOME/private-key.asc"
@@ -73,9 +56,8 @@ configure_gpg_ssh() {
     gpg --export-ssh-key "${gpg_fingerprint}!" >"$HOME/.ssh/gpg-auth.pub"
     chmod 644 "$HOME/.ssh/gpg-auth.pub"
 
-    # Bootstrap SSH support before Home Manager supplies the agent config.
-    gpgconf --kill gpg-agent
-    gpg-agent --daemon --enable-ssh-support >/dev/null
+    # Home Manager already manages the agent; do not replace it with a daemon.
+    gpgconf --reload gpg-agent
     SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
     export SSH_AUTH_SOCK
     if [[ -t 0 ]]; then
@@ -97,7 +79,7 @@ configure_fish() {
         printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
     fi
     # $SHELL is inherited from the old session even after chsh succeeds.
-    if [[ "$nix_system" == aarch64-darwin ]]; then
+    if [[ "$platform" == Darwin ]]; then
         login_shell="$(dscl . -read "/Users/$(id -un)" UserShell |
             awk '$1 == "UserShell:" { print $2 }')"
     else
@@ -108,37 +90,16 @@ configure_fish() {
     fi
 }
 
-case "$(uname -s):$(uname -m)" in
+platform="$(uname -s)"
+case "$platform:$(uname -m)" in
     Darwin:arm64)
-        nix_system=aarch64-darwin
+        nix_target=darwinConfigurations.roifewu.system
         ;;
     Linux:x86_64)
-        nix_system=x86_64-linux
+        nix_target='homeConfigurations."roifewu@x86_64-linux".activationPackage'
         ;;
     *) printf '%s\n' 'Unsupported platform.' >&2; exit 1 ;;
 esac
-
-read_authinfo_passphrase
-
-# Install macOS packages, including GnuPG, before importing the key.
-if [[ "$nix_system" == aarch64-darwin ]]; then
-    if ! command -v brew >/dev/null; then
-        brew_installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        /bin/bash -c "$brew_installer"
-
-        brew_environment="$(/opt/homebrew/bin/brew shellenv)"
-        eval "$brew_environment"
-    fi
-    brew bundle --file="$config_dir/Brewfile"
-fi
-
-# Load GPG keys and configure ssh
-configure_gpg_ssh
-
-# Clone Emacs configuration before Home Manager starts its service.
-if [[ ! -e "$config_dir/emacs/.git" ]]; then
-    git clone git@github.com:roife/.emacs.d.git "$config_dir/emacs"
-fi
 
 # Install Nix when absent and make it available to this running shell.
 if ! command -v nix >/dev/null; then
@@ -156,19 +117,38 @@ if ! command -v nix >/dev/null; then
     fi
 fi
 
-# Build and activate the local Home Manager configuration.
-load_github_token
+# Clone without SSH credentials, then use SSH for future fetches and pushes.
+if [[ ! -e "$config_dir/emacs/.git" ]]; then
+    git clone https://github.com/roife/.emacs.d.git "$config_dir/emacs"
+fi
+git -C "$config_dir/emacs" remote set-url origin git@github.com:roife/.emacs.d.git
 
-home_activation="$(
-    # Only the descriptor path is exported, not the token.
-    NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3' \
+activation="$(
+    if [[ -n "$github_token" ]]; then
+        # Only the descriptor path is exported, not the token.
+        export NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3'
+        exec 3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
+    fi
     nix --extra-experimental-features 'nix-command flakes' \
         build --no-update-lock-file --no-link --print-out-paths \
-        "git+file://${config_dir}#homeConfigurations.\"roifewu@${nix_system}\".activationPackage" \
-        3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
+        "git+file://${config_dir}#$nix_target"
 )"
 unset github_token
-"$home_activation/activate"
+
+# On macOS, nix-darwin activates Homebrew and Home Manager together.
+if [[ "$platform" == Darwin ]]; then
+    # Match darwin-rebuild switch: record a system generation, then activate it.
+    sudo "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
+    sudo "$activation/activate"
+
+    brew_environment="$(/opt/homebrew/bin/brew shellenv)"
+    eval "$brew_environment"
+else
+    "$activation/activate"
+fi
 export PATH="$HOME/.nix-profile/bin:$PATH"
+
+# Load GPG keys and configure SSH independently of GitHub API authentication.
+configure_gpg_ssh
 
 configure_fish

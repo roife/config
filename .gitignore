@@ -6,10 +6,10 @@
 !flake.nix
 !flake.lock
 
-!Brewfile
-
 !nix/
 !nix/*.nix
+!nix/rime/
+!nix/rime/*.nix
 
 !rime/
 !rime/**

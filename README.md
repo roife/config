@@ -1,11 +1,10 @@
 # 新系统初始化
 
 macOS:
-- 登录 Mac App Store（`Brewfile` 会通过 `mas` 安装应用）
+- 登录 Mac App Store（nix-darwin 会通过 `mas` 安装应用）
 - 配置 Xcode command line tools
 
 Linux:
-- 提前安装 GnuPG、pinentry、Git 和 SSH 客户端
 - 会放置 Rime 方案，但不会安装 Fcitx5 输入法本身
 
 首次运行前，将私钥备份临时放到 `~/private-key.asc`，并确认对应 SSH 公钥已添加到 GitHub。
@@ -17,4 +16,7 @@ Linux:
 bash ./init.sh
 ```
 
-中途失败后，修复报错原因，再运行同一条命令即可；已有安装和仓库会复用，配置会重新应用。
+## GitHub token（可选）
+
+如果调用脚本时存在非空的 `GITHUB_TOKEN` 环境变量，会将它临时传给 Nix，
+用于 macOS 系统配置和 Home Manager 的构建；未设置或为空时，不追加认证配置。
