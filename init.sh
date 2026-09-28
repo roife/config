@@ -45,17 +45,22 @@ configure_gpg_ssh() {
         return 1
     fi
 
-    # Find selected keys' keygrip
+    # Find the target keygrip only for local private material or a card reference.
     keygrip="$(
         gpg --with-colons --with-keygrip --with-subkey-fingerprint \
             --list-secret-keys |
             awk -F: -v fingerprint="$gpg_fingerprint" '
+                $1 == "sec" || $1 == "ssb" {
+                    available = ($15 == "+" || $15 ~ /^[0-9A-Fa-f]+$/)
+                    selected = 0
+                    next
+                }
                 $1 == "fpr" { selected = ($10 == fingerprint); next }
-                selected && $1 == "grp" { print $10; selected = 0 }
+                selected && available && $1 == "grp" { print $10; selected = 0 }
             '
     )"
     if [[ -z "$keygrip" ]]; then
-        printf '%s\n' 'GPG secret key missing; restore it or place a backup at ~/private-key.asc and rerun init.sh.' >&2
+        printf '%s\n' 'Target GPG private material or smart-card reference missing. Restore the target secret key and rerun init.sh.' >&2
         return 1
     fi
     # Only delete the supplied backup after import and secret-key verification.
