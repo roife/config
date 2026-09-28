@@ -11,6 +11,13 @@ in
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
+  # Home Manager passes gc.options as one argument on Darwin.
+  launchd.agents.nix-gc.config.ProgramArguments = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (
+    lib.mkForce (
+      [ "${config.nix.package}/bin/nix-collect-garbage" ]
+      ++ lib.splitString " " config.nix.gc.options
+    )
+  );
 
   programs.pnpm.enable = true;
 
