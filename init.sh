@@ -122,8 +122,7 @@ activation="$(
         export NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3'
         exec 3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
     fi
-    nix --extra-experimental-features 'nix-command flakes' \
-        build --no-update-lock-file --no-link --print-out-paths \
+    nix build --no-update-lock-file --no-link --print-out-paths \
         "git+file://${config_dir}#$nix_target"
 )"
 unset github_token
