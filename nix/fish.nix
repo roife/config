@@ -48,11 +48,7 @@
       fish_add_path --path "$HOME/.local/bin"
 
       # Nix's system and Home Manager profiles.
-      for nix_bin in /nix/var/nix/profiles/default/bin $HOME/.nix-profile/bin
-          if test -d $nix_bin
-              fish_add_path --path --move $nix_bin
-          end
-      end
+      fish_add_path --path --move $HOME/.nix-profile/bin /run/current-system/sw/bin /nix/var/nix/profiles/default/bin
 
       set -gx JAVA21_HOME "${pkgs.temurin-bin-21.home}"
       set -gx JDTLS_JAVA_HOME "$JAVA21_HOME"

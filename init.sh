@@ -51,35 +51,12 @@ configure_gpg_ssh() {
     gpg --export-ssh-key "${gpg_fingerprint}!" >"$HOME/.ssh/gpg-auth.pub"
     chmod 644 "$HOME/.ssh/gpg-auth.pub"
 
-    # Home Manager already manages the agent; do not replace it with a daemon.
+    # Reload the agent after enabling SSH access.
     gpgconf --reload gpg-agent
     if [[ -t 0 ]]; then
         GPG_TTY="$(tty)"
         export GPG_TTY
         gpg-connect-agent updatestartuptty /bye >/dev/null
-    fi
-}
-
-# Register Fish as a login shell and select it for the account.
-configure_fish() {
-    local fish_path="$HOME/.nix-profile/bin/fish"
-    local login_shell
-    if [[ ! -x "$fish_path" ]]; then
-        printf 'Home Manager did not install Fish at %s\n' "$fish_path" >&2
-        return 1
-    fi
-    if ! grep -Fqx "$fish_path" /etc/shells; then
-        printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
-    fi
-    # $SHELL is inherited from the old session even after chsh succeeds.
-    if [[ "$platform" == Darwin ]]; then
-        login_shell="$(dscl . -read "/Users/$(id -un)" UserShell |
-            awk '$1 == "UserShell:" { print $2 }')"
-    else
-        login_shell="$(getent passwd "$(id -u)" | awk -F: '{ print $7 }')"
-    fi
-    if [[ "$login_shell" != "$fish_path" ]]; then
-        chsh -s "$fish_path"
     fi
 }
 
@@ -132,9 +109,6 @@ if [[ "$platform" == Darwin ]]; then
     # Match darwin-rebuild switch: record a system generation, then activate it.
     sudo "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
     sudo "$activation/activate"
-
-    brew_environment="$(/opt/homebrew/bin/brew shellenv)"
-    eval "$brew_environment"
 else
     "$activation/activate"
 fi
@@ -143,4 +117,13 @@ export PATH="$HOME/.nix-profile/bin:$PATH"
 # Load GPG keys and configure SSH independently of GitHub API authentication.
 configure_gpg_ssh
 
-configure_fish
+# nix-darwin registers Fish on macOS; standalone Home Manager cannot do so.
+if [[ "$platform" == Darwin ]]; then
+    fish_path=/run/current-system/sw/bin/fish
+else
+    fish_path="$HOME/.nix-profile/bin/fish"
+    if ! grep -Fqx "$fish_path" /etc/shells; then
+        printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+fi
+chsh -s "$fish_path"

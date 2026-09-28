@@ -1,18 +1,26 @@
+{ pkgs, ... }:
 {
   nixpkgs.hostPlatform = "aarch64-darwin";
   system.stateVersion = 6;
   system.primaryUser = "roifewu";
   users.users.roifewu.home = "/Users/roifewu";
+  programs.fish.enable = true;
+  environment.shells = [ pkgs.fish ];
+
+  # System generations also retain the integrated Home Manager closure.
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 30d";
+  };
 
   nix-homebrew = {
     enable = true;
     user = "roifewu";
-    autoMigrate = true;
   };
 
   homebrew = {
     enable = true;
-    brews = [ "mas" "gnupg" "coreutils" ];
+    brews = [ "mas" "coreutils" ];
     casks = [
       "bettertouchtool"
       "font-sarasa-gothic"

@@ -44,7 +44,13 @@
     ripgrep
     fd
     wget
-    librime
+    # HACK: Frost's Lua filters use native bitwise operators (Lua >= 5.3).
+    (librime.override {
+      plugins = [
+        (librime-lua.override { lua = lua5_4; })
+        librime-octagram
+      ];
+    })
 
     # Writing, documents, and diagrams
     aspell

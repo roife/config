@@ -12,13 +12,13 @@ in
     ".authinfo.gpg" = "secrets/.authinfo.gpg";
   };
 
-  nix.package = pkgs.nix;
+  nix.package = lib.mkDefault pkgs.nix;
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
-  # Home Manager passes gc.options as one argument on Darwin.
+  # HACK: Home Manager passes gc.options as one argument on Darwin.
   launchd.agents.nix-gc.config.ProgramArguments = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (
     lib.mkForce (
       [ "${config.nix.package}/bin/nix-collect-garbage" ]
@@ -143,8 +143,12 @@ in
     };
   };
 
+  programs.gpg.enable = true;
   services.gpg-agent = {
     enable = true;
+    pinentry.package = if pkgs.stdenv.hostPlatform.isDarwin
+                       then pkgs.pinentry_mac
+                       else pkgs.pinentry-curses;
     enableSshSupport = true;
     grabKeyboardAndMouse = false;
     noAllowExternalCache = true;
@@ -153,6 +157,10 @@ in
     defaultCacheTtlSsh = 1800;
     maxCacheTtlSsh = 7200;
   };
+
+  # Keep HM's configuration and Fish integration; let GnuPG auto-start on macOS.
+  launchd.agents.gpg-agent.enable =
+    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (lib.mkForce false);
 
   programs.mbsync.enable = true;
   accounts.email = {
