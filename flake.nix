@@ -32,6 +32,7 @@
           {
             home-manager = {
               useGlobalPkgs = true;
+              backupFileExtension = "backup";
               extraSpecialArgs.fenixPackages = fenix.packages.aarch64-darwin;
               users.roifewu.imports = homeModules;
             };
