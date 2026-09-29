@@ -21,9 +21,6 @@ exec bash "$config_dir/init.sh"
 '
 ```
 
-同名文件覆盖（符号链接须先移除），无关文件保留。已有仓库跳过获取；重跑：`bash ~/.config/init.sh`。
-流程：Nix → 激活 → GPG/SSH → Emacs 配置 → 后台重启 → Fish。
+重跑：`bash ~/.config/init.sh`。
 
-Emacs 在后台下载依赖，重跑前保存文件。完成后重新登录。
-Home Manager 文件冲突需手动处理。
 可选 `GITHUB_TOKEN` 环境变量会自动用于 Nix 构建。
