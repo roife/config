@@ -110,7 +110,7 @@ fi
 
 # Login shell
 if [[ "$platform" == Darwin ]]; then
-    fish_path = "/run/current-system/sw/bin/fish"
+    fish_path="/run/current-system/sw/bin/fish"
 else
     fish_path="$HOME/.nix-profile/bin/fish"
     if ! grep -Fqx "$fish_path" /etc/shells; then
