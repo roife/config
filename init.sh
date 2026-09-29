@@ -42,8 +42,8 @@ activation="$(
     nix build --no-update-lock-file --no-link --print-out-paths "git+file://${config_dir}#$target"
 )"
 if [[ "$platform" == Darwin ]]; then
-    sudo "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
-    sudo "$activation/activate"
+    sudo -H "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
+    sudo -H "$activation/activate"
 else
     "$activation/activate"
 fi

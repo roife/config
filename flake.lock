@@ -166,7 +166,7 @@
     "rime-grammar": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-I9M1LWPYdZxNoHZNdM48OyOIhQGZYsdIq+IFZ/75FWo=",
+        "narHash": "sha256-Y3j4ZJWLuKtUAMNm+ZTixXYacV4qfw/DnH+LzFEvyWE=",
         "type": "file",
         "url": "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram"
       },

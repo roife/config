@@ -15,6 +15,7 @@
 
   nix-homebrew = {
     enable = true;
+    autoMigrate = true;
     user = "roifewu";
   };
 
