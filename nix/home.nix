@@ -10,7 +10,14 @@
 
   programs.home-manager.enable = true;
 
+  # Linux uses Fontconfig; Home Manager installs macOS fonts into ~/Library/Fonts.
+  fonts.fontconfig.enable = pkgs.stdenv.hostPlatform.isLinux;
+
   home.packages = with pkgs; [
+    # Fonts shared by macOS and Linux.
+    sarasa-gothic
+    noto-fonts-color-emoji
+
     # Default language toolchains. Project-specific versions belong in devShells.
     nodejs_24
     temurin-bin-26
@@ -53,7 +60,7 @@
     })
 
     # Writing, documents, and diagrams
-    aspell
+    (aspellWithDicts (dicts: [ dicts.en ]))
     mupdf
     gnuplot
     plantuml

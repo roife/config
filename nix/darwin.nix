@@ -23,7 +23,6 @@
     brews = [ "mas" "coreutils" ];
     casks = [
       "bettertouchtool"
-      "font-sarasa-gothic"
       "ghostty"
       "squirrel-app"
     ];
