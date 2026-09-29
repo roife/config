@@ -152,10 +152,11 @@ in
     enableSshSupport = true;
     grabKeyboardAndMouse = false;
     noAllowExternalCache = true;
-    defaultCacheTtl = 600;
-    maxCacheTtl = 7200;
-    defaultCacheTtlSsh = 1800;
-    maxCacheTtlSsh = 7200;
+    # Cache GPG passphrases for 2 hours and SSH passphrases for 12 hours.
+    defaultCacheTtl = 2 * 60 * 60;
+    maxCacheTtl = 2 * 60 * 60;
+    defaultCacheTtlSsh = 12 * 60 * 60;
+    maxCacheTtlSsh = 12 * 60 * 60;
   };
 
   # Keep HM's configuration and Fish integration; let GnuPG auto-start on macOS.
