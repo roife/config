@@ -1,22 +1,29 @@
-# 新系统初始化
+# 初始化
 
-macOS:
-- 登录 Mac App Store（nix-darwin 会通过 `mas` 安装应用）
-- 配置 Xcode command line tools
+- macOS 需要 Command Line Tools、App Store 登录；
+- Linux 需要 systemd 用户会话。
 
-Linux:
-- 会放置 Rime 方案，但不会安装 Fcitx5 输入法本身
-
-首次运行前，将私钥备份临时放到 `~/private-key.asc`，并确认对应 SSH 公钥已添加到 GitHub。
-脚本会导入密钥，确认指定私钥存在后删除这个临时文件；导入或检查失败时保留文件。
-如果密钥保存在智能卡上，先用 `gpg --card-status` 让 GPG 识别它，无需放置私钥文件。
-请保留另一份安全备份，不要把唯一备份放在这里。
+私钥副本放到 `~/private-key.asc`（验证后删除）；智能卡运行 `gpg --card-status`。
 
 ```sh
-bash ./init.sh
+bash -c '
+set -euo pipefail
+config_dir="$HOME/.config"
+if [[ ! -e "$config_dir/.git" ]]; then
+    checkout="$(mktemp -d)"
+    git clone https://github.com/roife/config.git "$checkout"
+    mkdir -p "$config_dir"
+    cp -a "$checkout/." "$config_dir/"
+    rm -rf -- "$checkout"
+fi
+git -C "$config_dir" remote set-url origin git@github.com:roife/config.git
+exec bash "$config_dir/init.sh"
+'
 ```
 
-## GitHub token（可选）
+同名文件覆盖（符号链接须先移除），无关文件保留。已有仓库跳过获取；重跑：`bash ~/.config/init.sh`。
+流程：Nix → 激活 → GPG/SSH → Emacs 配置 → 后台重启 → Fish。
 
-如果调用脚本时存在非空的 `GITHUB_TOKEN` 环境变量，会将它临时传给 Nix，
-用于 macOS 系统配置和 Home Manager 的构建；未设置或为空时，不追加认证配置。
+Emacs 在后台下载依赖，重跑前保存文件。完成后重新登录。
+Home Manager 文件冲突需手动处理。
+可选 `GITHUB_TOKEN` 环境变量会自动用于 Nix 构建。

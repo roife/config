@@ -1,129 +1,122 @@
 #!/usr/bin/env bash
-
-# Keep credentials out of tracing and exported variables.
 set +xva
 set -euo pipefail
-ulimit -c 0
+
+fingerprint=A63DE4903F5E1486A4FBB656E09D9EE312C4C223
+key_file="$HOME/private-key.asc"
+
+die() { printf '%s\n' "$*" >&2; exit 1; }
+if [[ "$EUID" == 0 ]]; then
+    die 'Run without sudo.'
+fi
 
 config_dir="$HOME/.config"
 
-# Retain an optional token only in this shell, not in child environments.
-unset github_token
-github_token="${GITHUB_TOKEN-}"
-unset GITHUB_TOKEN
-
-configure_gpg_ssh() {
-    local key_file="$HOME/private-key.asc"
-    local gpg_fingerprint="A63DE4903F5E1486A4FBB656E09D9EE312C4C223"
-    local keygrip
-
-    # Import GPG keys
-    mkdir -p "$HOME/.gnupg" && chmod 700 "$HOME/.gnupg"
-    if [[ -f "$key_file" ]]; then
-        gpg --import "$key_file"
-    fi
-
-    # Find the target keygrip only for local private material or a card reference.
-    keygrip="$(
-        gpg --with-colons --with-keygrip --with-subkey-fingerprint \
-            --list-secret-keys |
-            awk -F: -v fingerprint="$gpg_fingerprint" '
-                $1 == "sec" || $1 == "ssb" {
-                    available = ($15 == "+" || $15 ~ /^[0-9A-Fa-f]+$/)
-                    selected = 0
-                    next
-                }
-                $1 == "fpr" { selected = ($10 == fingerprint); next }
-                selected && available && $1 == "grp" { print $10; selected = 0 }
-            '
-    )"
-    if [[ -z "$keygrip" ]]; then
-        printf 'Target GPG private material or smart-card reference missing. Place a backup at %s or run gpg --card-status, then rerun init.sh.\n' "$key_file" >&2
-        return 1
-    fi
-    # Only delete the supplied backup after import and secret-key verification.
-    if [[ -f "$key_file" ]]; then
-        rm -- "$key_file"
-    fi
-
-    gpg-connect-agent "KEYATTR $keygrip Use-for-ssh: true" /bye >/dev/null
-    mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
-    gpg --export-ssh-key "${gpg_fingerprint}!" >"$HOME/.ssh/gpg-auth.pub"
-    chmod 644 "$HOME/.ssh/gpg-auth.pub"
-
-    # Reload the agent after enabling SSH access.
-    gpgconf --reload gpg-agent
-    if [[ -t 0 ]]; then
-        GPG_TTY="$(tty)"
-        export GPG_TTY
-        gpg-connect-agent updatestartuptty /bye >/dev/null
-    fi
-}
-
 platform="$(uname -s)"
-case "$platform:$(uname -m)" in
-    Darwin:arm64)
-        nix_target=darwinConfigurations.roifewu.system
-        ;;
-    Linux:x86_64)
-        nix_target='homeConfigurations."roifewu@x86_64-linux".activationPackage'
-        ;;
-    *) printf '%s\n' 'Unsupported platform.' >&2; exit 1 ;;
+case "$platform" in
+    Darwin) target=darwinConfigurations.roifewu.system ;;
+    Linux) target='homeConfigurations."roifewu@x86_64-linux".activationPackage' ;;
+    *) die 'Unsupported platform.' ;;
 esac
 
-# Install Nix when absent and make it available to this running shell.
+# Nix
 if ! command -v nix >/dev/null; then
-    nix_daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    nix_user_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
-    if [[ ! -f "$nix_daemon_profile" && ! -f "$nix_user_profile" ]]; then
-        nix_installer="$(curl -fsSL https://nixos.org/nix/install)"
-        sh -c "$nix_installer"
+    daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    user_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
+    if [[ ! -f "$daemon_profile" && ! -f "$user_profile" ]]; then
+        installer="$(curl -fsSL https://nixos.org/nix/install)"
+        sh -c "$installer"
     fi
-    # The installer configures future shells; load the profile here as well.
-    if [[ -f "$nix_daemon_profile" ]]; then
-        . "$nix_daemon_profile"
+    if [[ -f "$daemon_profile" ]]; then
+        . "$daemon_profile"
     else
-        . "$nix_user_profile"
+        . "$user_profile"
     fi
 fi
 
-# Clone without SSH credentials, then use SSH for future fetches and pushes.
-if [[ ! -e "$config_dir/emacs/.git" ]]; then
-    git clone https://github.com/roife/.emacs.d.git "$config_dir/emacs"
-fi
-git -C "$config_dir/emacs" remote set-url origin git@github.com:roife/.emacs.d.git
-
+# Activate
 activation="$(
-    if [[ -n "$github_token" ]]; then
-        # Only the descriptor path is exported, not the token.
-        export NIX_CONFIG="${NIX_CONFIG-}"$'\ninclude /dev/fd/3'
-        exec 3< <(printf 'extra-access-tokens = github.com=%s\n' "$github_token")
+    if [[ -n "${GITHUB_TOKEN-}" ]]; then
+        export NIX_CONFIG="${NIX_CONFIG-}"$'\n'"extra-access-tokens = github.com=$GITHUB_TOKEN"
     fi
-    nix build --no-update-lock-file --no-link --print-out-paths \
-        "git+file://${config_dir}#$nix_target"
+    nix build --no-update-lock-file --no-link --print-out-paths "git+file://${config_dir}#$target"
 )"
-unset github_token
-
-# On macOS, nix-darwin activates Homebrew and Home Manager together.
 if [[ "$platform" == Darwin ]]; then
-    # Match darwin-rebuild switch: record a system generation, then activate it.
     sudo "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
     sudo "$activation/activate"
 else
     "$activation/activate"
 fi
-export PATH="$HOME/.nix-profile/bin:$PATH"
+export PATH="$HOME/.nix-profile/bin:/run/current-system/sw/bin:$PATH"
 
-# Load GPG keys and configure SSH independently of GitHub API authentication.
-configure_gpg_ssh
+# GPG / SSH
+## Import key
+install -d -m 700 "$HOME/.gnupg" "$HOME/.ssh"
+export GPG_TTY
+if [[ -t 0 ]]; then
+    GPG_TTY="$(tty)"
+fi
+if [[ -f "$key_file" ]]; then
+    gpg --import "$key_file"
+fi
+## Add to SSH
+keygrip="$(gpg --with-colons --with-keygrip --with-subkey-fingerprint \
+    --list-secret-keys "$fingerprint" | awk -F: -v f="$fingerprint" '
+        $1 == "fpr" { selected = ($10 == f) }
+        selected && $1 == "grp" { print $10; selected = 0 }
+    ')"
+if [[ -z "$keygrip" ]]; then
+    die 'GPG key missing.'
+fi
+reply="$(gpg-connect-agent "KEYATTR $keygrip Use-for-ssh: true" /bye)"
+if [[ "$reply" == *"ERR "* ]]; then
+    die "$reply"
+fi
+gpgconf --reload gpg-agent
+export SSH_AUTH_SOCK
+SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+unset SSH_AGENT_PID
+if [[ -t 0 ]]; then
+    gpg-connect-agent updatestartuptty /bye >/dev/null
+fi
+## Export public key
+ssh_key="$(gpg --export-ssh-key "${fingerprint}!" | awk '{print $1, $2}')"
+if ! ssh-add -L | awk '{print $1, $2}' | grep -Fx "$ssh_key" >/dev/null; then
+    die 'SSH key unavailable.'
+fi
+printf '%s\n' "$ssh_key" >"$HOME/.ssh/gpg-auth.pub"
+chmod 644 "$HOME/.ssh/gpg-auth.pub"
+rm -f -- "$key_file"
 
-# nix-darwin registers Fish on macOS; standalone Home Manager cannot do so.
+# Emacs configuration
+if [[ ! -e "$config_dir/emacs/.git" ]]; then
+    checkout="$(mktemp -d)"
+    git clone https://github.com/roife/.emacs.d.git "$checkout"
+    mkdir -p "$config_dir/emacs"
+    cp -a "$checkout/." "$config_dir/emacs/"
+    rm -rf -- "$checkout"
+fi
+git -C "$config_dir/emacs" remote set-url origin git@github.com:roife/.emacs.d.git
+
+# Restart
 if [[ "$platform" == Darwin ]]; then
-    fish_path=/run/current-system/sw/bin/fish
+    launchctl setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+    launchctl setenv PATH "$PATH"
+    launchctl kickstart -k "gui/$(id -u)/org.nix-community.home.emacs"
+else
+    systemctl --user import-environment SSH_AUTH_SOCK PATH
+    systemctl --user --no-block restart emacs.service
+fi
+
+# Login shell
+if [[ "$platform" == Darwin ]]; then
+    fish_path = "/run/current-system/sw/bin/fish"
 else
     fish_path="$HOME/.nix-profile/bin/fish"
     if ! grep -Fqx "$fish_path" /etc/shells; then
         printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
     fi
+    sudo /usr/sbin/usermod --shell "$fish_path" "$(id -un)"
 fi
 chsh -s "$fish_path"
+printf '%s\n' 'Done. Log out and back in.'

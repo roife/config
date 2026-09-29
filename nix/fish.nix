@@ -137,7 +137,9 @@
     };
 
     interactiveShellInit = ''
-      source "$HOME/.config/emacs/straight/repos/ezf/scripts/ezf.fish"
+      if test -f "$HOME/.config/emacs/straight/repos/ezf/scripts/ezf.fish"
+        source "$HOME/.config/emacs/straight/repos/ezf/scripts/ezf.fish"
+      end
     '';
   };
 }
