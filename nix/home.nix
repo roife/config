@@ -1,4 +1,4 @@
-{ config, pkgs, fenixPackages, ... }:
+{ config, lib, pkgs, fenixPackages, ... }:
 {
   imports = [ ./dotfiles.nix ./fish.nix ];
 
