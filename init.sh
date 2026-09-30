@@ -2,7 +2,7 @@
 set +xva
 set -euo pipefail
 
-fingerprint=A63DE4903F5E1486A4FBB656E09D9EE312C4C223
+keygrip=295FEF9E1BEA886C9AAE2C92D49F4A90C4D60477
 key_file="$HOME/private-key.asc"
 
 die() { printf '%s\n' "$*" >&2; exit 1; }
@@ -60,14 +60,6 @@ if [[ -f "$key_file" ]]; then
     gpg --import "$key_file"
 fi
 ## Add to SSH
-keygrip="$(gpg --with-colons --with-keygrip --with-subkey-fingerprint \
-    --list-secret-keys "$fingerprint" | awk -F: -v f="$fingerprint" '
-        $1 == "fpr" { selected = ($10 == f) }
-        selected && $1 == "grp" { print $10; selected = 0 }
-    ')"
-if [[ -z "$keygrip" ]]; then
-    die 'GPG key missing.'
-fi
 reply="$(gpg-connect-agent "KEYATTR $keygrip Use-for-ssh: true" /bye)"
 if [[ "$reply" == *"ERR "* ]]; then
     die "$reply"
@@ -80,8 +72,13 @@ if [[ -t 0 ]]; then
     gpg-connect-agent updatestartuptty /bye >/dev/null
 fi
 ## Export public key
-ssh_key="$(gpg --export-ssh-key "${fingerprint}!" | awk '{print $1, $2}')"
-if ! ssh-add -L | awk '{print $1, $2}' | grep -Fx "$ssh_key" >/dev/null; then
+ssh_reply="$(gpg-connect-agent "READKEY --format=ssh $keygrip" /bye)"
+read -r tag key_type key_data _ <<< "$ssh_reply"
+if [[ "$tag" != D || "$key_type" != ssh-* || -z "$key_data" ]]; then
+    die 'SSH public key unavailable.'
+fi
+ssh_key="$key_type $key_data"
+if ! ssh-add -L | cut -d ' ' -f1,2 | grep -Fxq "$ssh_key"; then
     die 'SSH key unavailable.'
 fi
 printf '%s\n' "$ssh_key" >"$HOME/.ssh/gpg-auth.pub"
