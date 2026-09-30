@@ -47,8 +47,10 @@
       # User-installed executables.
       fish_add_path --path "$HOME/.local/bin"
 
-      # Nix's system and Home Manager profiles.
-      fish_add_path --path --move $HOME/.nix-profile/bin /run/current-system/sw/bin /nix/var/nix/profiles/default/bin
+      # The Nix profile also sets its certificate bundle and other environment.
+      if test -f "$HOME/.nix-profile/etc/profile.d/nix.fish"
+        source "$HOME/.nix-profile/etc/profile.d/nix.fish"
+      end
 
       set -gx JAVA21_HOME "${pkgs.temurin-bin-21.home}"
       set -gx JDTLS_JAVA_HOME "$JAVA21_HOME"
