@@ -33,8 +33,8 @@
     temurin-bin-26
     fenixPackages.stable.toolchain
     # GNU tools coexist with LLVM; prefer LLVM for shared command names.
-    (lib.lowPrio gcc)
-    (lib.lowPrio binutils)
+    (lib.setPrio 20 gcc)
+    (lib.setPrio 20 binutils)
     gdb
     # Keep all LLVM tools on Nixpkgs' default LLVM version.
     llvmPackages.llvm

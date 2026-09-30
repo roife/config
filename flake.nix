@@ -7,6 +7,11 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +25,7 @@
     rime.url = "path:./nix/rime";
   };
 
-  outputs = { nixpkgs, home-manager, nix-darwin, nix-homebrew, fenix, flake-utils, rime, ... }:
+  outputs = { nixpkgs, home-manager, plasma-manager, nix-darwin, nix-homebrew, fenix, flake-utils, rime, ... }:
     let
       homeModules = [ ./nix/home.nix rime.homeManagerModules.default ];
     in {
@@ -43,7 +48,10 @@
       homeConfigurations."roifewu@x86_64-linux" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs.fenixPackages = fenix.packages.x86_64-linux;
-        modules = homeModules;
+        modules = homeModules ++ [
+          plasma-manager.homeModules.plasma-manager
+          ./nix/kde.nix
+        ];
       };
     };
 }
