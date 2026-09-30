@@ -10,6 +10,41 @@
 
   programs.home-manager.enable = true;
 
+  programs.codex = {
+    enable = true;
+    settings = {
+      approval_policy = "never";
+      approvals_reviewer = "user";
+      sandbox_mode = "danger-full-access";
+
+      model_context_window = 1000000;
+      model_auto_compact_token_limit = 900000;
+
+      personality = "pragmatic";
+      model_verbosity = "low";
+      plan_mode_reasoning_effort = "xhigh";
+
+      tui = {
+        animations = false;
+        show_tooltips = false;
+        session_picker_view = "dense";
+        status_line = [
+          "model-with-reasoning"
+          "current-dir"
+          "thread-name"
+          "context-used"
+        ];
+        status_line_use_colors = true;
+      };
+
+      features = {
+        terminal_resize_reflow = true;
+        prevent_idle_sleep = true;
+        js_repl = true;
+      };
+    };
+  };
+
   # Linux uses Fontconfig; Home Manager installs macOS fonts into ~/Library/Fonts.
   fonts.fontconfig = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     enable = true;
@@ -98,7 +133,6 @@
     yt-dlp
 
     # AI and account tools
-    codex
     codex-acp
     bitwarden-cli
   ];
