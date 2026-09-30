@@ -64,12 +64,10 @@
     git-filter-repo
     difftastic
     gnupatch
-    openssh
     rsync
     ripgrep
     fd
     wget
-    gnutar
     unzip
     zip
     # HACK: Frost's Lua filters use native bitwise operators (Lua >= 5.3).
