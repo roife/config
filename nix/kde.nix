@@ -137,7 +137,10 @@ in
         };
         MouseBindings.CommandTitlebarWheel = "Change Opacity";
       };
-      "plasma-localerc".Formats.LANG = "en_US.UTF-8";
+      "plasma-localerc".Formats = {
+        LANG = "en_US.UTF-8";
+        LC_TIME = "en_GB.UTF-8";
+      };
       plasmakeyboardrc.General.diacriticsPopupEnabled = false;
 
       # Non-default digiKam preferences (checked against 9.1.0).
