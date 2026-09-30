@@ -5,8 +5,9 @@ let
     # Match the Linux default face in emacs/core/init-ui.el.
     font = {
       name = "Sarasa Mono SC";
-      size = 12;
+      size = 11;
     };
+    extraConfig.Scrolling.ScrollBarPosition = 2;
     extraConfig."Terminal Features" = {
       AnimatingCursorEnabled = true;
       # Preserve the existing Default profile's non-default preference.
@@ -170,7 +171,7 @@ in
         LightThemeProfile = "Light";
         DarkThemeProfile = "Dark";
       };
-      "".MenuBar = "Disabled";
+      MainWindow.MenuBar = "Disabled";
       "MainWindow/Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
       "Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
     };
