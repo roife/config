@@ -67,8 +67,8 @@
     nodejs_24
     temurin-bin-26
     fenixPackages.stable.toolchain
-    # GNU tools coexist with LLVM; prefer LLVM for shared command names.
-    (lib.setPrio 20 gcc)
+    # Prefer LLVM, then GNU binutils, then GCC's bundled binutils (lower wins).
+    (lib.setPrio 30 gcc)
     (lib.setPrio 20 binutils)
     gdb
     # Keep all LLVM tools on Nixpkgs' default LLVM version.
