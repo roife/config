@@ -60,9 +60,11 @@ if [[ -f "$key_file" ]]; then
     gpg --import "$key_file"
 fi
 ## Add to SSH
-reply="$(gpg-connect-agent "KEYATTR $keygrip Use-for-ssh: true" /bye)"
-if [[ "$reply" == *"ERR "* ]]; then
-    die "$reply"
+if ! gpg-connect-agent "KEYATTR $keygrip Use-for-ssh:" /bye | grep -Fxq 'D true'; then
+    reply="$(gpg-connect-agent "KEYATTR $keygrip Use-for-ssh: true" /bye)"
+    if [[ "$reply" == *"ERR "* ]]; then
+        die "$reply"
+    fi
 fi
 gpgconf --reload gpg-agent
 export SSH_AUTH_SOCK
@@ -106,14 +108,16 @@ else
 fi
 
 # Login shell
-if [[ "$platform" == Darwin ]]; then
-    fish_path="/run/current-system/sw/bin/fish"
-else
-    fish_path="$HOME/.nix-profile/bin/fish"
-    if ! grep -Fqx "$fish_path" /etc/shells; then
-        printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
+if [[ "${SHELL:-}" != */fish ]]; then
+    if [[ "$platform" == Darwin ]]; then
+        fish_path="/run/current-system/sw/bin/fish"
+    else
+        fish_path="$HOME/.nix-profile/bin/fish"
+        if ! grep -Fqx "$fish_path" /etc/shells; then
+            printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
+        fi
+        sudo /usr/sbin/usermod --shell "$fish_path" "$(id -un)"
     fi
-    sudo /usr/sbin/usermod --shell "$fish_path" "$(id -un)"
+    chsh -s "$fish_path"
 fi
-chsh -s "$fish_path"
 printf '%s\n' 'Done. Log out and back in.'
