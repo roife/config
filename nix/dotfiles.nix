@@ -4,7 +4,6 @@ let
   email = "roifewu@gmail.com";
   codexSettings = {
     approval_policy = "never";
-    approvals_reviewer = "user";
     sandbox_mode = "danger-full-access";
     model_context_window = 1000000;
     model_auto_compact_token_limit = 900000;
@@ -21,13 +20,8 @@ let
         "thread-name"
         "context-used"
       ];
-      status_line_use_colors = true;
     };
-    features = {
-      terminal_resize_reflow = true;
-      prevent_idle_sleep = true;
-      js_repl = true;
-    };
+    features.prevent_idle_sleep = true;
   };
   codexConfig = (pkgs.formats.toml { }).generate "codex-config.toml" codexSettings;
 in
@@ -40,30 +34,26 @@ in
     ".authinfo.gpg" = "secrets/.authinfo.gpg";
   };
 
-  # HACK: https://github.com/nix-community/home-manager/pull/10000
-  # Keep the user config writable so Codex can save GUI preferences.
-  # Each activation restores the configuration declared above.
-  home.activation.writeCodexConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    run mkdir -p "$HOME/.codex"
-    if [[ -L "$HOME/.codex/config.toml" ]]; then
-      run rm -f "$HOME/.codex/config.toml"
-    fi
-    run install -m 600 ${codexConfig} "$HOME/.codex/config.toml"
-  '';
+  # Linux uses Fontconfig; Home Manager installs macOS fonts into ~/Library/Fonts.
+  fonts.fontconfig = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+    enable = true;
+    configFile.preferences = {
+      enable = true;
+      source = ./fonts.conf;
+    };
+  };
 
-  nix.package = lib.mkDefault pkgs.nix;
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
+  nix = {
+    package = lib.mkDefault pkgs.nix;
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
   };
   # HACK: Home Manager passes gc.options as one argument on Darwin.
   # https://github.com/nix-community/home-manager/issues/7211
   launchd.agents.nix-gc.config.ProgramArguments = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (
-    lib.mkForce (
-      [ "${config.nix.package}/bin/nix-collect-garbage" ]
-      ++ lib.splitString " " config.nix.gc.options
-    )
+    lib.mkForce ([ "${config.nix.package}/bin/nix-collect-garbage" ] ++ lib.splitString " " config.nix.gc.options)
   );
 
   programs.pnpm.enable = true;
@@ -93,7 +83,6 @@ in
       };
       core = {
         quotepath = false;
-        preloadindex = true;
         untrackedCache = true;
       };
       fetch.prune = true;
@@ -135,8 +124,6 @@ in
       # Languages and build output
       "__pycache__/"
       "*.py[cod]"
-      "*.pyo"
-      "*.pyd"
       "*.pdb"
       "*.pytest_cache/"
       ".python-version"
@@ -160,7 +147,6 @@ in
       "target/"
       "Cargo.lock"
       ".bundle/"
-      "vendor/bundle/"
       "Gemfile.lock"
       "*.orig"
       "*.rej"
@@ -174,14 +160,23 @@ in
     enable = true;
     gitCredentialHelper.enable = false;
     settings = {
-      git_protocol = "https";
-      prompt = "enabled";
       prefer_editor_prompt = "enabled";
       aliases.co = "pr checkout";
       color_labels = "enabled";
       spinner = "disabled";
     };
   };
+
+  # HACK: https://github.com/nix-community/home-manager/pull/10000
+  # Keep the user config writable so Codex can save GUI preferences.
+  # Each activation restores the configuration declared above.
+  home.activation.writeCodexConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+  run mkdir -p "$HOME/.codex"
+  if [[ -L "$HOME/.codex/config.toml" ]]; then
+    run rm -f "$HOME/.codex/config.toml"
+  fi
+  run install -m 600 ${codexConfig} "$HOME/.codex/config.toml"
+  '';
 
   programs.gpg.enable = true;
   services.gpg-agent = {
@@ -219,10 +214,7 @@ in
             "${pkgs.gawk}/bin/awk" '$2 == "imap.gmail.com" { for (i = 3; i < NF; i += 2) if ($i == "password") { print $(i + 1); exit } }'
         ''))
       ];
-      imap = {
-        host = "imap.googlemail.com";
-        tls.useStartTls = false;
-      };
+      imap.host = "imap.googlemail.com";
       maildir.path = "gmail";
       folders.inbox = "INBOX";
       mbsync = {

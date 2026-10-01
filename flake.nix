@@ -21,11 +21,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-utils.url = "github:numtide/flake-utils";
     rime.url = "path:./nix/rime";
   };
 
-  outputs = { nixpkgs, home-manager, plasma-manager, nix-darwin, nix-homebrew, fenix, flake-utils, rime, ... }:
+  outputs = { nixpkgs, home-manager, plasma-manager, nix-darwin, nix-homebrew, fenix, rime, ... }:
     let
       homeModules = [ ./nix/home.nix rime.homeManagerModules.default ];
     in {

@@ -10,16 +10,6 @@
 
   programs.home-manager.enable = true;
 
-  # Linux uses Fontconfig; Home Manager installs macOS fonts into ~/Library/Fonts.
-  fonts.fontconfig = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-    enable = true;
-    configFile.preferences = {
-      enable = true;
-      priority = 60;
-      source = ./fonts.conf;
-    };
-  };
-
   home.packages = with pkgs; [
     # Fonts shared by macOS and Linux.
     sarasa-gothic
