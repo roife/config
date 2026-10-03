@@ -9,6 +9,7 @@
     ./gpg.nix
     ./mail.nix
     ./emacs.nix
+    ./vim.nix
     ./rime.nix
     ./agents.nix
   ];

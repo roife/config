@@ -10,6 +10,7 @@
     brews = [ "mas" "coreutils" ];
     casks = [
       "bettertouchtool"
+      "chatgpt" # Includes the Codex desktop workspace.
       "ghostty"
       "squirrel-app"
     ];
@@ -46,7 +47,6 @@
         "/Applications/Safari.app"
         "/Applications/WeChat.app"
         "/Applications/企业微信.app"
-        "/Applications/konsole.app"
         "/System/Applications/Reminders.app"
         "/Applications/ChatGPT.app"
       ];
