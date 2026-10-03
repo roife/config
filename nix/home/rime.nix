@@ -11,7 +11,6 @@ let
   # Only values that differ from upstream are listed; redeploy Rime after switching.
   patches = {
     default = {
-      __include = "rime_ice_suggestion:/";
       schema_list = [ { inherit schema; } ];
       "menu/page_size" = 9;
       "switcher/hotkeys" = [ ];
@@ -76,6 +75,9 @@ in
       source = "${pkgs.rime-ice}/share/rime-data";
       recursive = true;
     };
+    # nixpkgs renames this file; standalone librime still needs default.yaml
+    # before it can apply default.custom.yaml and deploy the schema list.
+    "${rimeDir}/default.yaml".source = "${pkgs.rime-ice}/share/rime-data/rime_ice_suggestion.yaml";
   } // lib.mapAttrs' (name: patch:
     lib.nameValuePair "${rimeDir}/${name}.custom.yaml" {
       source = yaml.generate "${name}.custom.yaml" { inherit patch; };
