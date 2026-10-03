@@ -35,7 +35,10 @@ let
   };
 in
 {
-  home.packages = [ pkgs.codex-acp ];
+  home.packages = with pkgs; [
+    codex-acp
+    codex
+  ];
 
   # Shared agent skills, linked from the working tree.
   home.file.".agents".source =
