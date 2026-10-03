@@ -35,8 +35,12 @@
     };
 
     shellInit = ''
-      # Nix daemon profile PATH, certificate bundle and other environment.
-      source_if_exists /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+      # Nix profile PATH, certificate bundle and other environment.
+      if test -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+      else
+        source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.fish"
+      end
     '';
 
     interactiveShellInit = ''

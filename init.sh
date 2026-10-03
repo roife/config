@@ -29,12 +29,17 @@ target="homeConfigurations.\"$(id -un)@$system\".activationPackage"
 
 # Nix
 daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+user_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
 if ! command -v nix >/dev/null; then
-    if [[ ! -f "$daemon_profile" ]]; then
+    if [[ ! -f "$daemon_profile" && ! -f "$user_profile" ]]; then
         installer="$(curl -fsSL https://nixos.org/nix/install)"
-        sh -c "$installer" -- --daemon
+        sh -c "$installer"
     fi
+fi
+if [[ -f "$daemon_profile" ]]; then
     . "$daemon_profile"
+elif [[ -f "$user_profile" ]]; then
+    . "$user_profile"
 fi
 
 # Activate
