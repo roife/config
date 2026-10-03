@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ inputs, lib, ... }:
 let
   konsoleProfile = colorScheme: {
     inherit colorScheme;
@@ -52,7 +52,9 @@ let
   ];
 in
 {
-  # Imported only by the Linux Home Manager configuration in flake.nix.
+  # Linux-only layer on top of ./default.nix; imported by flake.nix.
+  imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
+
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
   # and session state remain local; their original files were backed up.
   # Omit verified defaults. Removing a declaration leaves existing local values intact.

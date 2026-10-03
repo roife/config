@@ -3,6 +3,8 @@
 - macOS 需要 Command Line Tools、App Store 登录；
 - Linux 需要 systemd 用户会话。
 
+macOS 和 Linux 均使用 Nix 多用户 daemon 安装；初始化脚本会通过 `--daemon` 安装。已有单用户安装需先迁移。
+
 私钥副本放到 `~/private-key.asc`（验证后删除）；智能卡运行 `gpg --card-status`。
 
 ```sh

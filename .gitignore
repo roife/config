@@ -7,11 +7,7 @@
 !flake.lock
 
 !nix/
-!nix/*.nix
-!nix/fonts.conf
-!nix/nix.conf
-!nix/rime/
-!nix/rime/*.nix
+!nix/**
 
 !rime/
 !rime/**

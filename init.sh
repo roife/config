@@ -2,36 +2,39 @@
 set +xva
 set -euo pipefail
 
+config_dir="$HOME/.config"
 keygrip=295FEF9E1BEA886C9AAE2C92D49F4A90C4D60477
-key_file="$HOME/private-key.asc"
+key_file="$HOME/secret-keys.asc"
 
 die() { printf '%s\n' "$*" >&2; exit 1; }
 if [[ "$EUID" == 0 ]]; then
     die 'Run without sudo.'
 fi
 
-config_dir="$HOME/.config"
+# Ask for the administrator password once and keep the sudo timestamp fresh
+# until this script exits (the Nix installer, Homebrew setup, casks and the
+# login shell change all need it).
+sudo -v
+while sleep 60; do sudo -n -v || exit; done 2>/dev/null &
+sudo_keepalive=$!
+trap 'kill "$sudo_keepalive" 2>/dev/null' EXIT
 
 platform="$(uname -s)"
 case "$platform" in
-    Darwin) target=darwinConfigurations.roifewu.system ;;
-    Linux) target='homeConfigurations."roifewu@x86_64-linux".activationPackage' ;;
+    Darwin) system=aarch64-darwin ;;
+    Linux) system=x86_64-linux ;;
     *) die 'Unsupported platform.' ;;
 esac
+target="homeConfigurations.\"$(id -un)@$system\".activationPackage"
 
 # Nix
+daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 if ! command -v nix >/dev/null; then
-    daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    user_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
-    if [[ ! -f "$daemon_profile" && ! -f "$user_profile" ]]; then
+    if [[ ! -f "$daemon_profile" ]]; then
         installer="$(curl -fsSL https://nixos.org/nix/install)"
-        sh -c "$installer"
+        sh -c "$installer" -- --daemon
     fi
-    if [[ -f "$daemon_profile" ]]; then
-        . "$daemon_profile"
-    else
-        . "$user_profile"
-    fi
+    . "$daemon_profile"
 fi
 
 # Activate
@@ -41,13 +44,8 @@ activation="$(
     fi
     nix build --no-update-lock-file --no-link --print-out-paths "git+file://${config_dir}#$target"
 )"
-if [[ "$platform" == Darwin ]]; then
-    sudo -H "$(command -v nix-env)" --profile /nix/var/nix/profiles/system --set "$activation"
-    sudo -H "$activation/activate"
-else
-    "$activation/activate"
-fi
-export PATH="$HOME/.nix-profile/bin:/run/current-system/sw/bin:$PATH"
+"$activation/activate"
+export PATH="$HOME/.nix-profile/bin:$PATH"
 
 # GPG / SSH
 ## Import key
@@ -108,16 +106,15 @@ else
 fi
 
 # Login shell
-if [[ "${SHELL:-}" != */fish ]]; then
-    if [[ "$platform" == Darwin ]]; then
-        fish_path="/run/current-system/sw/bin/fish"
-    else
-        fish_path="$HOME/.nix-profile/bin/fish"
-        if ! grep -Fqx "$fish_path" /etc/shells; then
-            printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
-        fi
-        sudo /usr/sbin/usermod --shell "$fish_path" "$(id -un)"
-    fi
-    chsh -s "$fish_path"
+fish_path="$HOME/.nix-profile/bin/fish"
+if [[ ! -f /etc/shells ]] || ! grep -Fqx "$fish_path" /etc/shells; then
+    printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
 fi
+if [[ "${SHELL:-}" != "$fish_path" ]]; then
+    if [[ "$platform" == Linux ]]; then
+        sudo usermod --shell "$fish_path" "$(id -un)" || true
+    fi
+    sudo chsh -s "$fish_path" "$(id -un)"
+fi
+
 printf '%s\n' 'Done. Log out and back in.'
