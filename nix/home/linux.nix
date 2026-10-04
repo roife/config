@@ -3,5 +3,7 @@
 {
   imports = [ ./kde.nix ];
 
+  targets.genericLinux.enable = true;
+
   home.packages = [ pkgs.chromium ];
 }
