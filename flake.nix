@@ -36,7 +36,7 @@
     in {
       homeConfigurations = {
         "${user.fullName}@aarch64-darwin" = mkHome "aarch64-darwin" ./nix/home/darwin.nix;
-        "${user.fullName}@x86_64-linux" = mkHome "x86_64-linux" ./nix/home/kde.nix;
+        "${user.fullName}@x86_64-linux" = mkHome "x86_64-linux" ./nix/home/linux.nix;
       };
     };
 }

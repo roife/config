@@ -2,7 +2,7 @@
 # Only non-default preferences are declared; undeclared ones stay writable in
 # System Settings. Removing a declaration leaves the current value in place.
 # Some settings take effect after logging out and back in.
-{ lib, ... }:
+{ config, lib, ... }:
 {
   imports = [ ../modules/homebrew.nix ];
 
@@ -12,16 +12,15 @@
       "bettertouchtool"
       "chatgpt" # Includes the Codex desktop workspace.
       "ghostty"
+      "google-chrome"
       "squirrel-app"
     ];
     masApps = {
       "AdGuard for Safari" = 1440147259;
       "Bob" = 1630034110;
-      "QQ" = 451108668;
       "Quantumult X" = 1443988620;
       "Telegram" = 747648890;
       "TencentMeeting" = 1484048379;
-      "WeChat" = 836500024;
       "Xcode" = 497799835;
     };
   };
@@ -45,10 +44,7 @@
       enterMissionControlByTopWindowDrag = false;
       persistent-apps = [
         "/Applications/Safari.app"
-        "/Applications/WeChat.app"
-        "/Applications/企业微信.app"
-        "/System/Applications/Reminders.app"
-        "/Applications/ChatGPT.app"
+        "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/WeChat.app"
       ];
     };
 

@@ -7,7 +7,14 @@
     ../lang/python.nix
   ];
 
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [ "qq" "wechat" ];
+
   home.packages = with pkgs; [
+    # Desktop messaging
+    qq
+    wechat
+
     # Prefer LLVM, then GNU binutils, then GCC's bundled binutils (lower wins).
     (lib.setPrio 30 gcc)
     (lib.setPrio 20 binutils)

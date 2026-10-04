@@ -52,7 +52,7 @@ let
   ];
 in
 {
-  # Linux-only layer on top of ./default.nix; imported by flake.nix.
+  # KDE desktop settings; imported by linux.nix.
   imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
