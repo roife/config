@@ -46,13 +46,26 @@ in
     programs.fish.interactiveShellInit = nixHomebrew.programs.fish.interactiveShellInit;
 
     # Runs as root like under nix-darwin; init.sh keeps the sudo timestamp fresh.
+    # Skipped when neither the setup script nor the Brewfile changed since the last run.
     home.activation.homebrew = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       (
+        stamp="${config.xdg.stateHome}/home-manager/homebrew-stamp"
+        want="${setupHomebrew} ${brewfile}"
+        if [[ -x /opt/homebrew/bin/brew && -f "$stamp" && "$(< "$stamp")" == "$want" ]]; then
+          verboseEcho "Homebrew is up to date, skipping"
+          exit 0
+        fi
+
         # Home Manager resets PATH; Bundle finds mas in the caller's PATH.
         export PATH="$PATH:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
         export HOMEBREW_NO_AUTO_UPDATE=1
         run /usr/bin/sudo ${setupHomebrew}
         run /opt/homebrew/bin/brew bundle install --no-upgrade --file=${brewfile}
+
+        if [[ ! -v DRY_RUN ]]; then
+          mkdir -p "''${stamp%/*}"
+          printf '%s' "$want" > "$stamp"
+        fi
       )
     '';
   };

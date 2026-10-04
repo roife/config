@@ -4,9 +4,12 @@ let
   inherit (pkgs.stdenv.hostPlatform) isDarwin;
 in
 {
-  # Encrypted credentials, linked from the working tree (also read by Emacs auth-source).
-  home.file.${authinfo}.source =
-    config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/secrets/${authinfo}";
+  # Encrypted credentials, linked from the working tree (also read by Emacs auth-source
+  # and mail.nix via home.file.authinfo.target).
+  home.file.authinfo = {
+    target = authinfo;
+    source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/secrets/${authinfo}";
+  };
 
   programs.gpg.enable = true;
 

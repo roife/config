@@ -12,7 +12,12 @@
         quotepath = false;
         untrackedCache = true;
       };
+      init.defaultBranch = "main";
       fetch.prune = true;
+      push.autoSetupRemote = true;
+      rerere.enabled = true;
+      merge.conflictStyle = "zdiff3";
+      diff.algorithm = "histogram";
       github.user = user.name;
     };
     ignores = [
@@ -131,6 +136,11 @@
       ".env.*.local"
       "**/.claude/settings.local.json"
     ];
+  };
+
+  programs.difftastic = {
+    enable = true;
+    git.enable = true;
   };
 
   programs.gh = {

@@ -38,5 +38,8 @@
         "${user.fullName}@aarch64-darwin" = mkHome "aarch64-darwin" ./nix/home/darwin.nix;
         "${user.fullName}@x86_64-linux" = mkHome "x86_64-linux" ./nix/home/linux.nix;
       };
+
+      formatter = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ]
+        (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };
 }

@@ -37,7 +37,6 @@
 
     # Version control and shell utilities
     git-filter-repo
-    difftastic
     gnupatch
     rsync
     ripgrep
@@ -69,7 +68,10 @@
     bitwarden-cli
   ];
 
-  programs.direnv.enable = true;
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
   programs.tealdeer = {
     enable = true;
     settings.updates.auto_update = true;
