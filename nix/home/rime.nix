@@ -66,7 +66,6 @@ let
   };
 
   yaml = pkgs.formats.yaml { };
-  gramFile = "${rimeDir}/${grammarModel}.gram";
 in
 {
   # Link files individually so Rime can still write build/, user dbs and sync/.
@@ -75,24 +74,15 @@ in
       source = "${pkgs.rime-ice}/share/rime-data";
       recursive = true;
     };
-    # nixpkgs renames this file; standalone librime still needs default.yaml
-    # before it can apply default.custom.yaml and deploy the schema list.
     "${rimeDir}/default.yaml".source = "${pkgs.rime-ice}/share/rime-data/rime_ice_suggestion.yaml";
+    "${rimeDir}/${grammarModel}.gram".source = pkgs.fetchurl {
+      url = "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/${grammarModel}.gram";
+      hash = "sha256-4/lY0lV6LAJ1Q+h0yALczpAiubb+FnPZfAvR7zBZImQ=";
+    };
   } // lib.mapAttrs' (name: patch:
     lib.nameValuePair "${rimeDir}/${name}.custom.yaml" {
       source = yaml.generate "${name}.custom.yaml" { inherit patch; };
     }) patches;
-
-  # Grammar model is runtime data: download once, outside the store.
-  home.activation.downloadRimeGrammar = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    if [ ! -f ${lib.escapeShellArg gramFile} ]; then
-      run mkdir -p ${lib.escapeShellArg rimeDir}
-      run ${lib.getExe pkgs.curl} --fail --location --retry 3 \
-        --output ${lib.escapeShellArg "${gramFile}.tmp"} \
-        https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/${grammarModel}.gram
-      run mv -f ${lib.escapeShellArg "${gramFile}.tmp"} ${lib.escapeShellArg gramFile}
-    fi
-  '';
 
   home.packages = [ pkgs.librime ];
 }
