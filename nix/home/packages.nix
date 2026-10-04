@@ -52,6 +52,7 @@
     tinymist
 
     # Media
+    (darktable.override { withAi = true; })
     exiftool
     ffmpeg
     imagemagick
