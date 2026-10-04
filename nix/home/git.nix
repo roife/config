@@ -1,5 +1,17 @@
 { user, ... }:
 {
+  # Use GitHub's SSH endpoint on port 443 for networks that block port 22.
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    settings."github.com" = {
+      HostName = "ssh.github.com";
+      Port = 443;
+      User = "git";
+      HostKeyAlias = "github.com";
+    };
+  };
+
   programs.git = {
     enable = true;
     lfs.enable = true;
