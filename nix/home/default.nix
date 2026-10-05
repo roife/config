@@ -1,8 +1,9 @@
 # Home Manager configuration shared by macOS and Linux.
-{ config, lib, user, pkgs, ... }:
+{ config, lib, inputs, user, pkgs, ... }:
 {
   imports = [
     ./packages.nix
+    ./photography.nix
     ./fonts.nix
     ./fish.nix
     ./git.nix
@@ -12,6 +13,11 @@
     ./vim.nix
     ./rime.nix
     ./agents.nix
+    ../lang/java.nix
+    ../lang/nix.nix
+    ../lang/node.nix
+    ../lang/python.nix
+    ../lang/rust.nix
   ];
 
   home.username = user.fullName;
@@ -19,8 +25,16 @@
     (if pkgs.stdenv.hostPlatform.isDarwin then "/Users/" else "/home/") + user.fullName;
   home.stateVersion = "26.05";
 
+  # Export XDG_* so tools stay out of ~/Library/Application Support on macOS.
+  xdg.enable = true;
+  home.preferXdgDirectories = true;
+
   nix = {
     package = lib.mkDefault pkgs.nix;
+    # Settings live in ../nix.conf, read directly from the working tree.
+    # Resolve `nixpkgs#…` and `<nixpkgs>` to the locked input.
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     gc = {
       automatic = true;
       options = "--delete-older-than 30d";

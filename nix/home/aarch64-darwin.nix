@@ -36,6 +36,7 @@
       KeyRepeat = 2;
       "com.apple.keyboard.fnState" = true; # F1-F12 as standard function keys.
       NSAutomaticPeriodSubstitutionEnabled = false;
+      AppleShowAllExtensions = true;
     };
 
     "com.apple.dock" = {

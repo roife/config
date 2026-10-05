@@ -1,12 +1,5 @@
 { lib, pkgs, ... }:
 {
-  imports = [
-    ../lang/java.nix
-    ../lang/node.nix
-    ../lang/rust.nix
-    ../lang/python.nix
-  ];
-
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "qq" "wechat" ];
 
@@ -34,13 +27,13 @@
     pkg-config
     tree-sitter
     universal-ctags
+    ast-grep
+    hyperfine
 
     # Version control and shell utilities
     git-filter-repo
     gnupatch
     rsync
-    ripgrep
-    fd
     wget
     unzip
     zip
@@ -62,11 +55,28 @@
     exiftool
     ffmpeg
     imagemagick
-    yt-dlp
 
     # Accounts
     bitwarden-cli
   ];
+
+  programs.ripgrep = {
+    enable = true;
+    arguments = [ "--smart-case" ];
+  };
+  programs.fd = {
+    enable = true;
+    hidden = true;
+    ignores = [ ".git/" ];
+  };
+  programs.yt-dlp = {
+    enable = true;
+    settings = {
+      embed-metadata = true;
+      embed-thumbnail = true;
+      no-playlist = true;
+    };
+  };
 
   programs.direnv = {
     enable = true;

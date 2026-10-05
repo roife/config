@@ -8,6 +8,7 @@
 
 !nix/
 !nix/**
+/nix/registry.json
 
 !rime/
 !rime/**

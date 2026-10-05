@@ -52,7 +52,7 @@ let
   ];
 in
 {
-  # KDE desktop settings; imported by linux.nix.
+  # KDE desktop settings; imported by x86_64-linux.nix.
   imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts

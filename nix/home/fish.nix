@@ -16,22 +16,10 @@
     };
 
     binds = {
-      ctrl-t = {
-        name = "\\ct";
-        command = "ezf-file-widget";
-      };
-      ctrl-r = {
-        name = "\\cr";
-        command = "ezf-history-widget";
-      };
-      alt-c = {
-        name = "\\ec";
-        command = "ezf-cd-widget";
-      };
-      alt-x = {
-        name = "\\ex";
-        command = "ezf-dispatch-widget";
-      };
+      ctrl-t.command = "ezf-file-widget";
+      ctrl-r.command = "ezf-history-widget";
+      alt-c.command = "ezf-cd-widget";
+      alt-x.command = "ezf-dispatch-widget";
     };
 
     shellInit = ''

@@ -75,9 +75,12 @@ in
       recursive = true;
     };
     "${rimeDir}/default.yaml".source = "${pkgs.rime-ice}/share/rime-data/rime_ice_suggestion.yaml";
-    "${rimeDir}/${grammarModel}.gram".source = pkgs.fetchurl {
-      url = "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/${grammarModel}.gram";
-      hash = "sha256-4/lY0lV6LAJ1Q+h0yALczpAiubb+FnPZfAvR7zBZImQ=";
+    "${rimeDir}/${grammarModel}.gram" = {
+      force = true;
+      source = pkgs.fetchurl {
+        url = "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/${grammarModel}.gram";
+        hash = "sha256-4/lY0lV6LAJ1Q+h0yALczpAiubb+FnPZfAvR7zBZImQ=";
+      };
     };
   } // lib.mapAttrs' (name: patch:
     lib.nameValuePair "${rimeDir}/${name}.custom.yaml" {

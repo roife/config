@@ -42,6 +42,15 @@ elif [[ -f "$user_profile" ]]; then
     . "$user_profile"
 fi
 
+## Trust this user so the daemon accepts the binary caches in nix/nix.conf.
+if [[ -f "$daemon_profile" && " $(nix config show trusted-users) " != *" $(id -un) "* ]]; then
+    printf '\nextra-trusted-users = %s\n' "$(id -un)" | sudo tee -a /etc/nix/nix.conf >/dev/null
+    case "$platform" in
+        Darwin) sudo launchctl kickstart -k system/org.nixos.nix-daemon ;;
+        Linux) sudo systemctl restart nix-daemon ;;
+    esac
+fi
+
 # Activate
 activation="$(
     if [[ -n "${GITHUB_TOKEN-}" ]]; then

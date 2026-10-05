@@ -27,19 +27,19 @@
         email = "roifewu@gmail.com";
       };
 
-      # Shared Home Manager configuration plus one platform layer.
-      mkHome = system: layer: home-manager.lib.homeManagerConfiguration {
+      inherit (nixpkgs) lib;
+      systems = [ "aarch64-darwin" "x86_64-linux" ];
+
+      # Shared Home Manager configuration plus the platform layer ./nix/home/<system>.nix.
+      mkHome = system: home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${system};
         extraSpecialArgs = { inherit inputs user; };
-        modules = [ ./nix/home layer ];
+        modules = [ ./nix/home ./nix/home/${system}.nix ];
       };
     in {
-      homeConfigurations = {
-        "${user.fullName}@aarch64-darwin" = mkHome "aarch64-darwin" ./nix/home/darwin.nix;
-        "${user.fullName}@x86_64-linux" = mkHome "x86_64-linux" ./nix/home/linux.nix;
-      };
+      homeConfigurations = lib.listToAttrs (map (system:
+        lib.nameValuePair "${user.fullName}@${system}" (mkHome system)) systems);
 
-      formatter = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ]
-        (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+      formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };
 }
