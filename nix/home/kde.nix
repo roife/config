@@ -43,7 +43,10 @@ let
       name = "org.kde.plasma.digitalclock";
       settings.Appearance = {
         dateDisplayFormat = "BesideTime";
-        enabledCalendarPlugins = [ "holidaysevents" "pimevents" ];
+        enabledCalendarPlugins = [
+          "holidaysevents"
+          "pimevents"
+        ];
         showDate = false;
         use24hFormat = 2;
       };
@@ -62,7 +65,10 @@ in
     enable = true;
 
     input.keyboard = {
-      options = [ "altwin:meta_alt" "ctrl:nocaps" ];
+      options = [
+        "altwin:meta_alt"
+        "ctrl:nocaps"
+      ];
       repeatDelay = 250;
     };
 
@@ -145,6 +151,19 @@ in
       };
       plasmakeyboardrc.General.diacriticsPopupEnabled = false;
 
+      # Konsole 26.08 can switch profiles with the system's light/dark theme.
+      konsolerc = {
+        TabBar.CloseTabOnMiddleMouseButton = true;
+        LightDarkTheme = {
+          SyncProfileWithSystemTheme = true;
+          LightThemeProfile = "Light";
+          DarkThemeProfile = "Dark";
+        };
+        MainWindow.MenuBar = "Disabled";
+        "MainWindow/Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
+        "Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
+      };
+
       # Non-default digiKam preferences (checked against 9.1.0).
       # Fonts, application style and date format otherwise depend on the environment.
       digikamrc = {
@@ -161,24 +180,22 @@ in
     };
   };
 
-  # Konsole 26.08 can switch profiles with the system's light/dark theme.
-  # Solarized is built in; Gruvbox is not shipped by this version.
   programs.konsole = {
     enable = true;
     profiles = {
       Light = konsoleProfile "SolarizedLight";
       Dark = konsoleProfile "Solarized";
     };
-    extraConfig = {
-      TabBar.CloseTabOnMiddleMouseButton = true;
-      LightDarkTheme = {
-        SyncProfileWithSystemTheme = true;
-        LightThemeProfile = "Light";
-        DarkThemeProfile = "Dark";
-      };
-      MainWindow.MenuBar = "Disabled";
-      "MainWindow/Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
-      "Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
-    };
+  };
+
+  # Non-default darktable preferences (checked against 5.6.1).
+  xdg.configFile."darktable/darktablerc-common" = {
+    force = true;
+    text = ''
+      themes/usercss=TRUE
+      ui/show_welcome_screen=FALSE
+      ui_last/gui_language=zh_CN
+      ui_last/theme=darktable
+    '';
   };
 }

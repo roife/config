@@ -3,7 +3,6 @@
 {
   imports = [
     ./packages.nix
-    ./photography.nix
     ./fonts.nix
     ./fish.nix
     ./git.nix
