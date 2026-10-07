@@ -94,7 +94,7 @@ in
           panel.screen = 0;
           panel.location = "bottom";
         }
-        panel.height = 38;
+        panel.height = 34;
         panel.floating = false;
 
         const views = ConfigFile("plasmashellrc", "PlasmaViews");
