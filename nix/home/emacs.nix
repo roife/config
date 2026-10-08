@@ -1,9 +1,11 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, graphical, ... }:
 {
   programs.emacs = {
     enable = true;
-    # Native Wayland build for Plasma; macOS keeps the default Cocoa build.
-    package = lib.mkIf pkgs.stdenv.hostPlatform.isLinux pkgs.emacs-pgtk;
+    # Wayland for desktops, terminal-only for headless Linux; Cocoa on macOS.
+    package = lib.mkIf pkgs.stdenv.hostPlatform.isLinux (
+      if graphical then pkgs.emacs-pgtk else pkgs.emacs-nox
+    );
   };
 
   services.emacs = {

@@ -31,14 +31,17 @@
       systems = [ "aarch64-darwin" "x86_64-linux" ];
 
       # Shared Home Manager configuration plus the platform layer ./nix/home/<system>.nix.
-      mkHome = system: home-manager.lib.homeManagerConfiguration {
+      mkHome = system: graphical: home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs = { inherit inputs user; };
+        extraSpecialArgs = { inherit inputs user graphical; };
         modules = [ ./nix/home ./nix/home/${system}.nix ];
       };
     in {
-      homeConfigurations = lib.listToAttrs (map (system:
-        lib.nameValuePair "${user.fullName}@${system}" (mkHome system)) systems);
+      homeConfigurations = {
+        "${user.fullName}@aarch64-darwin" = mkHome "aarch64-darwin" true;
+        "${user.fullName}@x86_64-linux" = mkHome "x86_64-linux" true;
+        "${user.fullName}@x86_64-linux-headless" = mkHome "x86_64-linux" false;
+      };
 
       formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };

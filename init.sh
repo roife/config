@@ -7,9 +7,22 @@ keygrip=295FEF9E1BEA886C9AAE2C92D49F4A90C4D60477
 key_file="$HOME/secret-keys.asc"
 
 die() { printf '%s\n' "$*" >&2; exit 1; }
+[[ "$*" == '' || "$*" == --no-gui ]] || die 'Usage: init.sh [--no-gui]'
 if [[ "$EUID" == 0 ]]; then
     die 'Run without sudo.'
 fi
+
+platform="$(uname -s)"
+case "$platform" in
+    Darwin) system=aarch64-darwin ;;
+    Linux) system=x86_64-linux ;;
+    *) die 'Unsupported platform.' ;;
+esac
+if [[ "$*" == --no-gui ]]; then
+    [[ "$platform" == Linux ]] || die '--no-gui is only supported on Linux.'
+    system+=-headless
+fi
+target="homeConfigurations.\"$(id -un)@$system\".activationPackage"
 
 # Ask for the administrator password once and keep the sudo timestamp fresh
 # until this script exits (the Nix installer, Homebrew setup, casks and the
@@ -18,14 +31,6 @@ sudo -v
 while sleep 60; do sudo -n -v || exit; done 2>/dev/null &
 sudo_keepalive=$!
 trap 'kill "$sudo_keepalive" 2>/dev/null' EXIT
-
-platform="$(uname -s)"
-case "$platform" in
-    Darwin) system=aarch64-darwin ;;
-    Linux) system=x86_64-linux ;;
-    *) die 'Unsupported platform.' ;;
-esac
-target="homeConfigurations.\"$(id -un)@$system\".activationPackage"
 
 # Nix
 daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh

@@ -25,4 +25,6 @@ exec bash "$config_dir/init.sh"
 
 重跑：`bash ~/.config/init.sh`。
 
+Linux 无桌面环境使用 `bash ~/.config/init.sh --no-gui`，跳过桌面应用、KDE 和 Rime，并使用终端版 Emacs；不传参数时保持桌面配置。
+
 可选 `GITHUB_TOKEN` 环境变量会自动用于 Nix 构建。
