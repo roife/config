@@ -15,7 +15,7 @@ if [[ ! -e "$config_dir/.git" ]]; then
     checkout="$(mktemp -d)"
     git clone https://github.com/roife/config.git "$checkout"
     mkdir -p "$config_dir"
-    cp -a "$checkout/." "$config_dir/"
+    cp -af "$checkout/." "$config_dir/"
     rm -rf -- "$checkout"
 fi
 git -C "$config_dir" remote set-url origin git@github.com:roife/config.git
