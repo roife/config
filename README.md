@@ -19,7 +19,6 @@ if [[ ! -e "$config_dir/.git" ]]; then
     rm -rf -- "$checkout"
 fi
 git -C "$config_dir" remote set-url origin git@github.com:roife/config.git
-exec bash "$config_dir/init.sh"
 '
 ```
 
