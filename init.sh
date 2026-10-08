@@ -16,8 +16,8 @@ while (( $# )); do
         *) die 'Usage: init.sh [--username USERNAME] [--no-gui]' ;;
     esac
 done
-if [[ "$EUID" == 0 ]]; then
-    die 'Run without sudo.'
+if [[ "$EUID" == 0 && "$username" != root ]]; then
+    die 'Run without sudo unless --username is root.'
 fi
 
 platform="$(uname -s)"
