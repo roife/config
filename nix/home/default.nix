@@ -21,7 +21,9 @@
 
   home.username = user.username;
   home.homeDirectory =
-    (if pkgs.stdenv.hostPlatform.isDarwin then "/Users/" else "/home/") + user.username;
+    if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${user.username}"
+    else if user.username == "root" then "/root"
+    else "/home/${user.username}";
   home.stateVersion = "26.05";
 
   # Export XDG_* so tools stay out of ~/Library/Application Support on macOS.
