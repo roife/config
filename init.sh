@@ -35,12 +35,21 @@ target="homeConfigurations.\"$username@$system\".activationPackage"
 # Ask for the administrator password once and keep the sudo timestamp fresh
 # until this script exits (the Nix installer, Homebrew setup, casks and the
 # login shell change all need it).
-sudo -v
-while sleep 60; do sudo -n -v || exit; done 2>/dev/null &
-sudo_keepalive=$!
-trap 'kill "$sudo_keepalive" 2>/dev/null' EXIT
+if [[ "$EUID" == 0 ]]; then
+    sudo() { "$@"; }
+else
+    sudo -v
+    while sleep 60; do sudo -n -v || exit; done 2>/dev/null &
+    sudo_keepalive=$!
+    trap 'kill "$sudo_keepalive" 2>/dev/null' EXIT
+fi
 
 # Nix
+if [[ "$username" == root ]]; then
+    sudo mkdir -p /nix /etc/nix
+    printf '%s\n' 'build-users-group =' | sudo tee /etc/nix/nix.conf >/dev/null
+    export USER=root
+fi
 daemon_profile=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 user_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
 if ! command -v nix >/dev/null; then
