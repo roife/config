@@ -5,15 +5,16 @@
   ];
 
   # Shared agent skills, linked from the working tree.
-  home.file.".agents".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/.agents";
+  home.file.".agents".source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/.agents";
 
   programs.codex = {
     enable = true;
     mutableSettings = true;
     settings = {
-      approval_policy = "never";
-      sandbox_mode = "danger-full-access";
+      approval_policy = "on-request";
+      sandbox_mode = "workspace-write";
+      approvals_reviewer = "auto_review";
+
       model_context_window = 1000000;
       model_auto_compact_token_limit = 900000;
       personality = "pragmatic";
@@ -40,6 +41,8 @@
         codeFontSize = 14;
         pagesFontSize = 16;
         sansFontSize = 16;
+        appearanceLightCodeThemeId = "solarized";
+        appearanceTheme = "system";
       };
 
       features.prevent_idle_sleep = true;
