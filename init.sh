@@ -7,7 +7,15 @@ keygrip=295FEF9E1BEA886C9AAE2C92D49F4A90C4D60477
 key_file="$HOME/secret-keys.asc"
 
 die() { printf '%s\n' "$*" >&2; exit 1; }
-[[ "$*" == '' || "$*" == --no-gui ]] || die 'Usage: init.sh [--no-gui]'
+username="$(id -un)"
+graphical=true
+while (( $# )); do
+    case "$1" in
+        --username) username="${2:?--username requires a value}"; shift 2 ;;
+        --no-gui) graphical=false; shift ;;
+        *) die 'Usage: init.sh [--username USERNAME] [--no-gui]' ;;
+    esac
+done
 if [[ "$EUID" == 0 ]]; then
     die 'Run without sudo.'
 fi
@@ -18,11 +26,11 @@ case "$platform" in
     Linux) system=x86_64-linux ;;
     *) die 'Unsupported platform.' ;;
 esac
-if [[ "$*" == --no-gui ]]; then
+if [[ "$graphical" == false ]]; then
     [[ "$platform" == Linux ]] || die '--no-gui is only supported on Linux.'
     system+=-headless
 fi
-target="homeConfigurations.\"$(id -un)@$system\".activationPackage"
+target="homeConfigurations.\"$username@$system\".activationPackage"
 
 # Ask for the administrator password once and keep the sudo timestamp fresh
 # until this script exits (the Nix installer, Homebrew setup, casks and the
@@ -58,10 +66,11 @@ fi
 
 # Activate
 activation="$(
+    export HOME_MANAGER_USERNAME="$username"
     if [[ -n "${GITHUB_TOKEN-}" ]]; then
         export NIX_CONFIG="${NIX_CONFIG-}"$'\n'"extra-access-tokens = github.com=$GITHUB_TOKEN"
     fi
-    nix build --no-update-lock-file --no-link --print-out-paths "git+file://${config_dir}#$target"
+    nix build --impure --no-update-lock-file --no-link --print-out-paths "git+file://${config_dir}#$target"
 )"
 "$activation/activate"
 export PATH="$HOME/.nix-profile/bin:$PATH"

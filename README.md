@@ -25,6 +25,10 @@ exec bash "$config_dir/init.sh"
 
 重跑：`bash ~/.config/init.sh`。
 
-Linux 无桌面环境使用 `bash ~/.config/init.sh --no-gui`，跳过桌面应用、KDE 和 Rime，并使用终端版 Emacs；不传参数时保持桌面配置。
+`--username alice` 指定 Home Manager 用户名及家目录（默认当前用户）。
+
+`--no-gui`（仅 Linux）跳过桌面应用、KDE 和 Rime，并使用终端版 Emacs。
+
+直接用 Nix 构建时，通过 `HOME_MANAGER_USERNAME` 指定用户名（需 `--impure`，默认 `roifewu`）。
 
 可选 `GITHUB_TOKEN` 环境变量会自动用于 Nix 构建。
