@@ -15,8 +15,6 @@
       sandbox_mode = "workspace-write";
       approvals_reviewer = "auto_review";
 
-      model_context_window = 1000000;
-      model_auto_compact_token_limit = 900000;
       personality = "pragmatic";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "xhigh";
