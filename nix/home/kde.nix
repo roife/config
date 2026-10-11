@@ -192,6 +192,7 @@ in
   xdg.configFile."darktable/darktablerc-common" = {
     force = true;
     text = ''
+      font_size=10.0
       themes/usercss=TRUE
       ui/show_welcome_screen=FALSE
       ui_last/gui_language=zh_CN
