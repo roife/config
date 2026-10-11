@@ -50,6 +50,7 @@
     # Media
     exiftool
     ffmpeg
+    icloudpd
     imagemagick
 
     # Accounts
