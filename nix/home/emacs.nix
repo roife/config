@@ -28,4 +28,9 @@
   home.packages = [
     pkgs.mupdf.dev # Headers and pkg-config metadata for emacs-reader.
   ];
+
+  # Resolve MuPDF independently of the user's profile location.
+  home.sessionSearchVariables.PKG_CONFIG_PATH = [
+    "${lib.getDev pkgs.mupdf}/lib/pkgconfig"
+  ];
 }
