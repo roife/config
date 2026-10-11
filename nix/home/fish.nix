@@ -29,6 +29,7 @@
       else
         source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.fish"
       end
+      fish_add_path --path "$HOME/.local/bin"
     '';
 
     interactiveShellInit = ''

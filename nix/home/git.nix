@@ -1,17 +1,5 @@
 { user, ... }:
 {
-  # Use GitHub's SSH endpoint on port 443 for networks that block port 22.
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-    settings."github.com" = {
-      HostName = "ssh.github.com";
-      Port = 443;
-      User = "git";
-      HostKeyAlias = "github.com";
-    };
-  };
-
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -31,6 +19,11 @@
       merge.conflictStyle = "zdiff3";
       diff.algorithm = "histogram";
       github.user = user.name;
+      # Use GitHub's SSH endpoint on port 443 without managing ~/.ssh/config.
+      url."ssh://git@ssh.github.com:443/".insteadOf = [
+        "git@github.com:"
+        "ssh://git@github.com/"
+      ];
     };
     ignores = [
       # macOS and Windows
