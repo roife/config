@@ -75,19 +75,17 @@ in
       recursive = true;
     };
     "${rimeDir}/default.yaml".source = "${pkgs.rime-ice}/share/rime-data/rime_ice_suggestion.yaml";
+    "${rimeDir}/${grammarModel}.gram" = {
+      source = pkgs.fetchurl {
+        url = "https://github.com/jetcookies/RIME-LMDG-tracker/releases/download/0-unstable-2026-10-09/${grammarModel}.gram";
+        hash = "sha256-YWnzXUiqEBjm7/0Wy2rgfzB5ZM/+XYx5uX+vIWRpO+w=";
+      };
+      force = true; # Replace the file written by the former activation hook.
+    };
   } // lib.mapAttrs' (name: patch:
     lib.nameValuePair "${rimeDir}/${name}.custom.yaml" {
       source = yaml.generate "${name}.custom.yaml" { inherit patch; };
     }) patches;
-
-  # The LTS asset is updated in place upstream; refresh it outside the Nix store.
-  home.activation.updateRimeGrammar = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    model=${lib.escapeShellArg "${rimeDir}/${grammarModel}.gram"}
-    run mkdir -p ${lib.escapeShellArg rimeDir}
-    run ${lib.getExe pkgs.curl} -fL --remove-on-error -o "$model.tmp" \
-      "https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/${grammarModel}.gram"
-    run mv -f "$model.tmp" "$model"
-  '';
 
   home.packages = [ pkgs.librime ];
 }
