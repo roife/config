@@ -15,6 +15,7 @@
 
 !.agents/
 !.agents/**
+/.agents/**/__pycache__/
 
 !secrets/
 !secrets/.authinfo.gpg
