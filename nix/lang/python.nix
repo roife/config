@@ -1,4 +1,9 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ uv ruff pyrefly ];
+  home.packages = with pkgs; [ ruff pyrefly ];
+
+  programs.uv = {
+    enable = true;
+    tool.packages = [ "twitter-cli" ];
+  };
 }
