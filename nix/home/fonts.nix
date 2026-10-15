@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, graphical, ... }:
 let
   families = [ "Sans" "Serif" ];
   regions = { "zh-HK" = "HK"; "zh-TW" = "TC"; ja = "JP"; ko = "KR"; };
@@ -18,8 +18,7 @@ let
       };
     };
 
-in
-{
+in lib.mkIf graphical {
   # Home Manager installs these into ~/Library/Fonts on macOS.
   home.packages = with pkgs; [
     sarasa-gothic

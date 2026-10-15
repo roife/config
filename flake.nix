@@ -31,20 +31,30 @@
       };
 
       inherit (nixpkgs) lib;
-      systems = [ "aarch64-darwin" "x86_64-linux" ];
 
       # Shared Home Manager configuration plus the platform layer ./nix/home/<system>.nix.
-      mkHome = system: graphical: home-manager.lib.homeManagerConfiguration {
+      # Add new homes here; outputs below are derived from this set.
+      homes = {
+        aarch64-darwin = { system = "aarch64-darwin"; };
+        x86_64-linux = { system = "x86_64-linux"; };
+        x86_64-linux-headless = { system = "x86_64-linux"; graphical = false; };
+      };
+
+      mkHome = { system, graphical ? true }: home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${system};
         extraSpecialArgs = { inherit inputs user graphical; };
         modules = [ ./nix/home ./nix/home/${system}.nix ];
       };
+
+      configs = lib.mapAttrs (_: mkHome) homes;
+      systems = lib.unique (lib.catAttrs "system" (lib.attrValues homes));
     in {
-      homeConfigurations = {
-        "${user.username}@aarch64-darwin" = mkHome "aarch64-darwin" true;
-        "${user.username}@x86_64-linux" = mkHome "x86_64-linux" true;
-        "${user.username}@x86_64-linux-headless" = mkHome "x86_64-linux" false;
-      };
+      homeConfigurations =
+        lib.mapAttrs' (name: lib.nameValuePair "${user.username}@${name}") configs;
+
+      checks = lib.genAttrs systems (system:
+        lib.mapAttrs (name: _: configs.${name}.activationPackage)
+          (lib.filterAttrs (_: home: home.system == system) homes));
 
       formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };
