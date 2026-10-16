@@ -1,5 +1,12 @@
-{ inputs, lib, ... }:
+{ inputs, lib, pkgs, ... }:
 let
+  gruvboxContrib = pkgs.fetchFromGitHub {
+    owner = "morhetz";
+    repo = "gruvbox-contrib";
+    rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
+    hash = "sha256-hhoDMMoIbf2QXtgCirJeRos7jiFjG0YbxnFoJUvPMaA=";
+  };
+
   konsoleProfile = colorScheme: {
     inherit colorScheme;
     # Match the Linux default face in emacs/core/init-ui.el.
@@ -56,7 +63,14 @@ let
 in
 {
   # KDE desktop settings; imported by x86_64-linux.nix.
-  imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
+  imports = [
+    inputs.plasma-manager.homeModules.plasma-manager
+  ];
+
+  xdg.dataFile.konsole = {
+    source = "${gruvboxContrib}/konsole";
+    recursive = true;
+  };
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
   # and session state remain local; their original files were backed up.
@@ -183,20 +197,8 @@ in
   programs.konsole = {
     enable = true;
     profiles = {
-      Light = konsoleProfile "SolarizedLight";
-      Dark = konsoleProfile "Solarized";
+      Light = konsoleProfile "Gruvbox_light";
+      Dark = konsoleProfile "Gruvbox_dark";
     };
-  };
-
-  # Non-default darktable preferences (checked against 5.6.1).
-  xdg.configFile."darktable/darktablerc-common" = {
-    force = true;
-    text = ''
-      font_size=10.0
-      themes/usercss=TRUE
-      ui/show_welcome_screen=FALSE
-      ui_last/gui_language=zh_CN
-      ui_last/theme=darktable
-    '';
   };
 }
