@@ -40,7 +40,9 @@
         codeFontSize = 14;
         pagesFontSize = 16;
         sansFontSize = 16;
-        appearanceLightCodeThemeId = "solarized";
+        # Use the built-in preset; app chrome customization stays in Appearance.
+        appearanceLightCodeThemeId = "gruvbox";
+        appearanceDarkCodeThemeId = "gruvbox";
         appearanceTheme = "system";
       };
 
