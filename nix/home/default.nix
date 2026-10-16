@@ -4,6 +4,7 @@
   imports = [
     ./packages.nix
     ./fonts.nix
+    ./darktable.nix
     ./fish.nix
     ./git.nix
     ./gpg.nix
