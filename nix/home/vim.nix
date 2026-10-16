@@ -9,6 +9,8 @@
     extraConfig = ''
       set nocompatible
       syntax enable
+      " Bundled Gruvbox-derived theme; keep terminal background detection.
+      colorscheme retrobox
       filetype plugin indent on
 
       let mapleader = " "

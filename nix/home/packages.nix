@@ -1,7 +1,7 @@
 { lib, pkgs, graphical, ... }:
 {
   nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [ "qq" "wechat" ];
+    builtins.elem (lib.getName pkg) [ "chatgpt" "qq" "wechat" ];
 
   home.packages = with pkgs; [
     # Prefer LLVM, then GNU binutils, then GCC's bundled binutils (lower wins).

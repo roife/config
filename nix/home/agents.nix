@@ -1,8 +1,8 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, graphical, ... }:
 {
   home.packages = with pkgs; [
     codex-acp
-  ];
+  ] ++ lib.optionals graphical [ chatgpt ];
 
   # Shared agent skills, linked from the working tree.
   home.file.".agents".source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/.agents";
@@ -18,6 +18,7 @@
       personality = "pragmatic";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "xhigh";
+      agents.max_concurrent_threads_per_session = 8;
 
       tui = {
         animations = false;

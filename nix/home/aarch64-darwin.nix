@@ -10,7 +10,6 @@
     brews = [ "mas" "coreutils" ];
     casks = [
       "bettertouchtool"
-      "chatgpt" # Includes the Codex desktop workspace.
       "ghostty"
       "google-chrome"
       "squirrel-app"
