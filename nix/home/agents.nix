@@ -21,6 +21,7 @@
       agents.max_concurrent_threads_per_session = 8;
 
       tui = {
+        theme = "gruvbox-dark";
         animations = false;
         show_tooltips = false;
         session_picker_view = "dense";
