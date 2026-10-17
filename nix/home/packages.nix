@@ -91,7 +91,7 @@ in
   programs.firefox = lib.mkIf graphical {
     enable = true;
     profiles = firefoxProfiles;
-    package = pkgs.firefox;
+    package = lib.mkDefault pkgs.firefox;
   };
   # Not derived from programs.firefox.profiles, which the module itself extends.
   colorscheme.firefox.profiles = lib.attrNames firefoxProfiles;

@@ -10,7 +10,6 @@ in
   colorscheme = {
     darktable.enable = graphical;
     firefox.enable = graphical;
-    chromium.enable = linuxDesktop;
     plasma.enable = linuxDesktop;
     konsole.enable = linuxDesktop;
     digikam.enable = linuxDesktop;
