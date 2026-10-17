@@ -19,17 +19,14 @@
     },
     "colorscheme": {
       "locked": {
-        "lastModified": 1792251608,
-        "narHash": "sha256-JBfjpdq5hsvx9fNz66T62gQzEqi/FQLpRWMumgOI3qA=",
-        "owner": "roife",
-        "repo": "nix-colorscheme",
-        "rev": "a13f0750c3f4423e31ce72e7c1b3dcce31ab8656",
-        "type": "github"
+        "lastModified": 1792262450,
+        "narHash": "sha256-klxbixM8RKWgWdvkTnqG7SGOZNY8rFTt/PQ9MbCB0Z8=",
+        "path": "/home/roifewu/code/nixcolorscheme",
+        "type": "path"
       },
       "original": {
-        "owner": "roife",
-        "repo": "nix-colorscheme",
-        "type": "github"
+        "path": "/home/roifewu/code/nixcolorscheme",
+        "type": "path"
       }
     },
     "fenix": {
