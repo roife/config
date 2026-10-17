@@ -7,17 +7,17 @@ keygrip=295FEF9E1BEA886C9AAE2C92D49F4A90C4D60477
 key_file="$HOME/secret-keys.asc"
 
 die() { printf '%s\n' "$*" >&2; exit 1; }
+user_uid="$(id -u)"
 username="$(id -un)"
 graphical=true
 while (( $# )); do
     case "$1" in
-        --username) username="${2:?--username requires a value}"; shift 2 ;;
         --no-gui) graphical=false; shift ;;
-        *) die 'Usage: init.sh [--username USERNAME] [--no-gui]' ;;
+        *) die 'Usage: init.sh [--no-gui]' ;;
     esac
 done
-if [[ "$EUID" == 0 && "$username" != root ]]; then
-    die 'Run without sudo unless --username is root.'
+if [[ "$user_uid" == 0 && "${SUDO_UID:-0}" != 0 ]]; then
+    die 'Run init.sh without sudo. Use a root login session to configure root.'
 fi
 
 platform="$(uname -s)"
@@ -35,7 +35,7 @@ target="homeConfigurations.\"$username@$system\".activationPackage"
 # Ask for the administrator password once and keep the sudo timestamp fresh
 # until this script exits (the Nix installer, Homebrew setup, casks and the
 # login shell change all need it).
-if [[ "$EUID" == 0 ]]; then
+if [[ "$user_uid" == 0 ]]; then
     sudo() { "$@"; }
 else
     sudo -v
@@ -45,7 +45,7 @@ else
 fi
 
 # Nix
-if [[ "$username" == root ]]; then
+if [[ "$user_uid" == 0 ]]; then
     sudo mkdir -p /nix /etc/nix
     printf '%s\n' 'build-users-group =' | sudo tee /etc/nix/nix.conf >/dev/null
     export USER=root
@@ -65,8 +65,8 @@ elif [[ -f "$user_profile" ]]; then
 fi
 
 ## Trust this user so the daemon accepts the binary caches in nix/nix.conf.
-if [[ -f "$daemon_profile" && " $(nix config show trusted-users) " != *" $(id -un) "* ]]; then
-    printf '\nextra-trusted-users = %s\n' "$(id -un)" | sudo tee -a /etc/nix/nix.conf >/dev/null
+if [[ -f "$daemon_profile" && " $(nix config show trusted-users) " != *" $username "* ]]; then
+    printf '\nextra-trusted-users = %s\n' "$username" | sudo tee -a /etc/nix/nix.conf >/dev/null
     case "$platform" in
         Darwin) sudo launchctl kickstart -k system/org.nixos.nix-daemon ;;
         Linux) sudo systemctl restart nix-daemon ;;
@@ -136,7 +136,7 @@ git -C "$config_dir/emacs" remote set-url origin git@github.com:roife/.emacs.d.g
 if [[ "$platform" == Darwin ]]; then
     launchctl setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
     launchctl setenv PATH "$PATH"
-    launchctl kickstart -k "gui/$(id -u)/org.nix-community.home.emacs"
+    launchctl kickstart -k "gui/$user_uid/org.nix-community.home.emacs"
 else
     systemctl --user import-environment SSH_AUTH_SOCK PATH
     systemctl --user --no-block restart emacs.service
@@ -149,9 +149,9 @@ if [[ ! -f /etc/shells ]] || ! grep -Fqx "$fish_path" /etc/shells; then
 fi
 if [[ "${SHELL:-}" != "$fish_path" ]]; then
     if [[ "$platform" == Linux ]]; then
-        sudo usermod --shell "$fish_path" "$(id -un)" || true
+        sudo usermod --shell "$fish_path" "$username" || true
     fi
-    sudo chsh -s "$fish_path" "$(id -un)"
+    sudo chsh -s "$fish_path" "$username"
 fi
 
 printf '%s\n' 'Done. Log out and back in.'
