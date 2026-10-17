@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -50,7 +51,7 @@ PLACEHOLDER_RE = re.compile(
     re.IGNORECASE,
 )
 URL_OR_PROMO_RE = re.compile(
-    r"(?:https?://|www\.|QQ音乐|网易云|酷狗|虾米|VIP|付费|试听|下载|关注我们|公众号|歌词来源|仅供娱乐)",
+    r"(?:https?://|www\.|QQ音乐|网易云|酷狗|虾米|(?<![a-z])VIP(?![a-z])|付费|试听|下载|关注我们|公众号|歌词来源|仅供娱乐)",
     re.IGNORECASE,
 )
 CREDIT_RE = re.compile(
@@ -861,7 +862,9 @@ def align_lines(
 
 
 def format_lrc_time(seconds: float) -> str:
-    milliseconds = max(0, round(seconds * 1000))
+    if not math.isfinite(seconds) or seconds < 0:
+        raise ValueError("timestamp seconds must be finite and nonnegative")
+    milliseconds = round(seconds * 1000)
     minute, remainder = divmod(milliseconds, 60_000)
     second, millisecond = divmod(remainder, 1000)
     return f"[{minute:02d}:{second:02d}.{millisecond:03d}]"
@@ -995,12 +998,17 @@ def search_source(
         item for item in (local.get("title", ""), local.get("artist", "")) if item
     )
     if provider == "lrclib":
-        payload, requested_url = _request_json(
-            endpoint,
-            {
+        params = (
+            {"q": query}
+            if query
+            else {
                 "track_name": local.get("title", ""),
                 "artist_name": local.get("artist", ""),
-            },
+            }
+        )
+        payload, requested_url = _request_json(
+            endpoint,
+            params,
             timeout,
             user_agent,
         )
@@ -1284,6 +1292,8 @@ def align_track_lyrics(
     applied_overrides = []
     for raw_index, raw_seconds in overrides.items():
         index = int(raw_index)
+        if not 0 <= index < len(alignment.times):
+            raise ValueError(f"override line index is out of range: {raw_index!r}")
         old_seconds = alignment.times[index]
         alignment.times[index] = float(raw_seconds)
         alignment.kinds[index] = "explicit_override"
@@ -1398,17 +1408,48 @@ def approve_change(
     lyrics = proposal_lyrics(proposal)
     if decision == "accept":
         validate_lyric_exceptions(lyrics, proposal.get("lyric_exceptions"))
+        if manual_match_override and not reason.strip():
+            raise ValueError("manual match override requires an evidence reason")
+    current_audio = load_audio(audio_path)
     if match_record:
         require_record_audio(match_record, audio_path)
-        if (
-            decision == "accept"
-            and not match_record.get("accepted")
-            and not manual_match_override
-        ):
-            raise ValueError(
-                "the source match is not accepted; explicit override is required"
-            )
-    current_lyrics = embedded_lyrics(load_audio(audio_path))
+        if decision == "accept":
+            current_metadata = {
+                **metadata(current_audio),
+                "duration": float(getattr(current_audio.info, "length", 0.0)),
+            }
+            matched_metadata = match_record.get("local_metadata") or {}
+            if any(
+                matched_metadata.get(key) != current_metadata[key]
+                for key in ("title", "artist", "duration")
+            ):
+                raise ValueError("source match is stale; match again before approval")
+        if decision == "accept" and not match_record.get("accepted"):
+            if not manual_match_override:
+                raise ValueError(
+                    "the source match is not accepted; explicit override is required"
+                )
+            local = match_record.get("local_metadata") or {}
+            source = match_record.get("source_metadata") or {}
+            checks = match_record.get("checks") or {}
+            known_evidence = {
+                "title": bool(normalize(local.get("title", "")))
+                and bool(normalize(source.get("title") or "")),
+                "artist": bool(normalize(local.get("artist", "")))
+                and any(normalize(item) for item in source.get("artists") or []),
+                "duration": match_record.get("duration_difference") is not None,
+                "not_instrumental": source.get("instrumental") is True,
+            }
+            mismatches = [
+                key for key, known in known_evidence.items()
+                if known and checks.get(key) is False
+            ]
+            if mismatches:
+                raise ValueError(
+                    "manual override cannot waive a known recording mismatch: "
+                    + ", ".join(mismatches)
+                )
+    current_lyrics = embedded_lyrics(current_audio)
     return {
         "schema": "music-lyrics/change-approval/v1",
         "audio_path": str(audio_path),

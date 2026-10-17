@@ -13,7 +13,6 @@ import argparse
 import json
 import os
 import re
-import shlex
 import shutil
 import subprocess
 import sys
@@ -25,7 +24,6 @@ from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, T
 
 
 MEDIA_ID_RE = re.compile(r"/(?:amplify_video|ext_tw_video)/(\d+)/")
-REEXEC_GUARD = "TWITTER_HQ_REEXECUTED"
 
 
 @dataclass(frozen=True)
@@ -85,22 +83,6 @@ def atomic_write_json(path: Path, value: Any) -> None:
             temporary.unlink()
         except FileNotFoundError:
             pass
-
-
-def executable_python(executable: str) -> Optional[str]:
-    launcher = shutil.which(executable)
-    if not launcher:
-        return None
-    try:
-        first_line = Path(launcher).read_text(encoding="utf-8").splitlines()[0]
-        command = shlex.split(first_line[2:].strip()) if first_line.startswith("#!") else []
-    except (OSError, UnicodeError, IndexError, ValueError):
-        return None
-    if not command:
-        return None
-    if Path(command[0]).name == "env" and len(command) >= 2:
-        return shutil.which(command[1])
-    return command[0] if Path(command[0]).exists() else None
 
 
 def ensure_runtime() -> Tuple[str, str]:

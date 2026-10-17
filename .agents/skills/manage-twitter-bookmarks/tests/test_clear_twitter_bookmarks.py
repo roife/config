@@ -48,6 +48,27 @@ class ArchiveTests(unittest.TestCase):
         self.write_json("bookmarks.json", self.records)
         self.write_json("manifest.json", self.manifest)
 
+    def write_video_archive(self):
+        (self.media / "image.jpg").rename(self.media / "video.mp4")
+        self.records[0]["media"] = [{"type": "video", "localPath": "video.mp4"}]
+        self.write_archive()
+        return {
+            "schemaVersion": 1,
+            "mode": "highest-resolution-available-from-x",
+            "complete": True,
+            "ytDlpExitCode": 0,
+            "videoReferences": 1,
+            "uniqueMedia": 1,
+            "replacedReferences": 1,
+            "failedReferences": 0,
+            "items": [{
+                "mediaId": "123", "targets": ["video.mp4"], "status": "replaced",
+                "width": 1280, "height": 720, "duration": 5,
+                "size": (self.media / "video.mp4").stat().st_size,
+                "bitrate": 1_000_000, "codec": "h264",
+            }],
+        }
+
     def run_clear(self, live=None, final=None, removal_error=None, extra=()):
         client = MagicMock()
         client.fetch_bookmarks.side_effect = [
@@ -117,12 +138,9 @@ class ArchiveTests(unittest.TestCase):
             clear.validate_archive(self.metadata)
 
     def test_video_requires_complete_matching_quality_report(self):
-        (self.media / "image.jpg").rename(self.media / "video.mp4")
-        self.records[0]["media"] = [{"type": "video", "localPath": "video.mp4"}]
-        self.write_archive()
+        quality = self.write_video_archive()
         with self.assertRaises(ValueError):
             clear.validate_archive(self.metadata)
-        quality = {"complete": True, "ytDlpExitCode": 0, "videoReferences": 1, "replacedReferences": 1, "failedReferences": 0}
         self.write_json("highest-resolution-report.json", quality)
         self.assertEqual(clear.validate_archive(self.metadata)[1], {"1"})
         for key, value in [("complete", False), ("videoReferences", 2), ("replacedReferences", 0), ("failedReferences", 1)]:
@@ -130,6 +148,31 @@ class ArchiveTests(unittest.TestCase):
                 self.write_json("highest-resolution-report.json", {**quality, key: value})
                 with self.assertRaises(ValueError):
                     clear.validate_archive(self.metadata)
+
+    def test_invalid_quality_items_are_rejected_before_authentication(self):
+        quality = self.write_video_archive()
+        item = quality["items"][0]
+        cases = [
+            ("missing", None),
+            ("empty", []),
+            ("malformed collection", {}),
+            ("malformed item", [None]),
+            ("different archive", [{**item, "targets": ["old.mp4"]}]),
+            ("missing targets", [{**item, "targets": []}]),
+            ("malformed targets", [{**item, "targets": "video.mp4"}]),
+            ("duplicate targets", [{**item, "targets": ["video.mp4", "video.mp4"]}]),
+            ("duplicate items", [item, item]),
+            ("failed item", [{**item, "status": "failed"}]),
+            ("changed size", [{**item, "size": item["size"] + 1}]),
+        ]
+        for name, items in cases:
+            with self.subTest(name=name):
+                report = {**quality, "items": items}
+                if items is None:
+                    report.pop("items")
+                self.write_json("highest-resolution-report.json", report)
+                self.assertEqual(clear.main(["--metadata", str(self.metadata)]), 1)
+                self.loader.assert_not_called()
 
     def test_success_snapshots_before_removal_and_preserves_media(self):
         status, report, client = self.run_clear()

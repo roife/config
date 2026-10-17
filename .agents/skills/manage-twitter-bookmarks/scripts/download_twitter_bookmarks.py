@@ -3,9 +3,9 @@
 
 The script uses twitter-cli's authenticated client so that pagination continues
 until X stops returning a cursor.  It writes a JSON snapshot, one Markdown/JSON
-pair per bookmark, and downloads attached images/videos. All generated files
-share one flat output directory. Existing media files are reused, so an
-interrupted run can simply be started again.
+pair per bookmark, and downloads attached images/videos. Media use one flat
+output directory, with metadata in a separate sibling directory by default.
+Existing media files are reused, so an interrupted run can be started again.
 
 Authentication is the same as twitter-cli itself:
 
@@ -22,6 +22,8 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import filecmp
+import http.client
 import json
 import logging
 import mimetypes
@@ -87,7 +89,12 @@ def _load_twitter_cli() -> Tuple[Any, Any, Any, str]:
     except ImportError as exc:
         interpreter = _twitter_cli_python()
         already_reexecuted = os.environ.get(REEXEC_GUARD) == "1"
-        if interpreter and not already_reexecuted and Path(interpreter).resolve() != Path(sys.executable).resolve():
+        # A virtualenv can share the base Python binary but load different packages.
+        if (
+            interpreter
+            and not already_reexecuted
+            and os.path.abspath(interpreter) != os.path.abspath(sys.executable)
+        ):
             env = os.environ.copy()
             env[REEXEC_GUARD] = "1"
             os.execve(interpreter, [interpreter, str(Path(__file__).resolve()), *sys.argv[1:]], env)
@@ -328,15 +335,45 @@ def download_one(job: MediaJob, refresh: bool, timeout: float, retries: int) -> 
             request = urllib.request.Request(job.url, headers=headers)
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 append = existing > 0 and getattr(response, "status", None) == 206
+                content_length = response.getheader("Content-Length")
+                expected = None
+                if content_length is not None:
+                    content_length = content_length.strip()
+                    if not content_length.isdigit():
+                        raise OSError("服务器返回了无效的 Content-Length")
+                    expected = int(content_length)
+                total = None
+                if getattr(response, "status", None) == 206:
+                    content_range = (response.getheader("Content-Range") or "").strip()
+                    match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", content_range)
+                    if not match:
+                        raise OSError("服务器返回了无效的 Content-Range")
+                    start, end, total = map(int, match.groups())
+                    if start != existing or end < start or end >= total:
+                        raise OSError("服务器返回的媒体范围与续传位置不一致")
+                    range_length = end - start + 1
+                    if expected is not None and expected != range_length:
+                        raise OSError("Content-Length 与 Content-Range 不一致")
+                    expected = range_length
                 with partial.open("ab" if append else "wb") as output:
                     shutil.copyfileobj(response, output, length=1024 * 1024)
+                size = partial.stat().st_size
+                received = size - (existing if append else 0)
+                if expected is not None and received != expected:
+                    raise OSError(f"媒体响应不完整：预期 {expected} 字节，收到 {received} 字节")
+                if total is not None and size != total:
+                    raise OSError(f"媒体续传未完成：预期 {total} 字节，已有 {size} 字节")
             if not partial.exists() or partial.stat().st_size == 0:
                 raise OSError("服务器返回了空文件")
             os.replace(partial, target)
             return job, "downloaded"
-        except (OSError, urllib.error.URLError, urllib.error.HTTPError) as exc:
+        except (OSError, urllib.error.URLError, http.client.HTTPException) as exc:
             if attempt >= retries:
                 return job, "error: %s" % exc
+            if isinstance(exc, urllib.error.HTTPError) and exc.code == 416:
+                # A stale partial can be larger than the current resource.
+                # Retry a full response; a 416 alone does not verify its bytes.
+                partial.unlink(missing_ok=True)
             time.sleep(min(2**attempt, 8))
     return job, "error: unknown"
 
@@ -383,8 +420,8 @@ def _flatten_record_media(
 
         if old_path != target and old_path.exists():
             if target.exists():
-                if old_path.stat().st_size != target.stat().st_size:
-                    raise RuntimeError("目标文件冲突且大小不同：%s" % target)
+                if not filecmp.cmp(old_path, target, shallow=False):
+                    raise RuntimeError(f"目标文件冲突且内容不同：{target}")
                 old_path.unlink()
             else:
                 os.replace(old_path, target)
@@ -441,6 +478,7 @@ def flatten_existing_archive(archive_root: Path, metadata_root: Path) -> int:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             if isinstance(manifest, dict):
                 manifest["layout"] = "flat"
+                manifest["mediaRoot"] = os.path.relpath(archive_root, metadata_root)
                 atomic_write_text(metadata_root / "manifest.json", json_text(manifest))
 
         # Remove only files generated by the legacy archive layout.  Do this

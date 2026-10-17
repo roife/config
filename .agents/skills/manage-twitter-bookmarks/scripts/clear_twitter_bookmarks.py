@@ -47,7 +47,12 @@ def load_twitter_cli() -> Tuple[Any, Any, Any, Any, str]:
     except ImportError as exc:
         interpreter = twitter_cli_python()
         already_reexecuted = os.environ.get(REEXEC_GUARD) == "1"
-        if interpreter and not already_reexecuted and Path(interpreter).resolve() != Path(sys.executable).resolve():
+        # A virtualenv can share the base Python binary but load different packages.
+        if (
+            interpreter
+            and not already_reexecuted
+            and os.path.abspath(interpreter) != os.path.abspath(sys.executable)
+        ):
             env = os.environ.copy()
             env[REEXEC_GUARD] = "1"
             os.execve(interpreter, [interpreter, str(Path(__file__).resolve()), *sys.argv[1:]], env)
@@ -195,6 +200,35 @@ def validate_archive(metadata: Path) -> Tuple[List[Any], set[str]]:
             or quality.get("failedReferences") != 0
         ):
             raise ValueError("最高分辨率视频校验未完成或计数不一致")
+
+        items = quality.get("items")
+        if not isinstance(items, list) or quality.get("uniqueMedia") != len(items):
+            raise ValueError("最高分辨率报告缺少匹配的媒体明细")
+        expected_paths = set(video_paths)
+        verified_paths: set[str] = set()
+        media_ids: set[str] = set()
+        for item in items:
+            if not isinstance(item, dict) or item.get("status") != "replaced":
+                raise ValueError("最高分辨率报告含无效或失败的媒体明细")
+            targets = item.get("targets")
+            size = item.get("size")
+            media_id = item.get("mediaId")
+            if (
+                not isinstance(targets, list) or not targets
+                or type(size) is not int or size <= 0
+                or not isinstance(media_id, str) or not media_id.isdigit()
+                or media_id in media_ids
+            ):
+                raise ValueError("最高分辨率报告媒体明细结构无效")
+            media_ids.add(media_id)
+            for target in targets:
+                if not isinstance(target, str) or target not in expected_paths or target in verified_paths:
+                    raise ValueError("最高分辨率报告的媒体文件与归档不一致或重复")
+                if (media_root / target).stat().st_size != size:
+                    raise ValueError(f"媒体文件已在最高分辨率校验后改变：{target}")
+                verified_paths.add(target)
+        if verified_paths != expected_paths:
+            raise ValueError("最高分辨率报告未覆盖全部视频文件")
 
     return archived, archived_ids
 
