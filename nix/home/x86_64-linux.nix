@@ -5,5 +5,8 @@
 
   targets.genericLinux.enable = true;
 
-  home.packages = lib.optionals graphical [ pkgs.chromium ];
+  home.packages = lib.optionals graphical [
+    pkgs.chromium
+    pkgs.kdePackages.kimageformats
+  ];
 }
