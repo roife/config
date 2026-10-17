@@ -1,4 +1,9 @@
 { lib, pkgs, graphical, ... }:
+let
+  firefoxProfiles = {
+    default = { };
+  };
+in
 {
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "chatgpt" "qq" "wechat" ];
@@ -83,6 +88,13 @@
     enable = true;
     nix-direnv.enable = true;
   };
+  programs.firefox = lib.mkIf graphical {
+    enable = true;
+    profiles = firefoxProfiles;
+    package = pkgs.firefox;
+  };
+  # Not derived from programs.firefox.profiles, which the module itself extends.
+  colorscheme.firefox.profiles = lib.attrNames firefoxProfiles;
   programs.tealdeer = {
     enable = true;
     settings.updates.auto_update = true;

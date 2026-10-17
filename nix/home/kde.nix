@@ -1,27 +1,5 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, lib, ... }:
 let
-  gruvboxContrib = pkgs.fetchFromGitHub {
-    owner = "morhetz";
-    repo = "gruvbox-contrib";
-    rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
-    hash = "sha256-hhoDMMoIbf2QXtgCirJeRos7jiFjG0YbxnFoJUvPMaA=";
-  };
-
-  konsoleProfile = colorScheme: {
-    inherit colorScheme;
-    # Match the Linux default face in emacs/core/init-ui.el.
-    font = {
-      name = "Sarasa Mono SC";
-      size = 11;
-    };
-    extraConfig.Scrolling.ScrollBarPosition = 2;
-    extraConfig."Terminal Features" = {
-      AnimatingCursorEnabled = true;
-      # Preserve the existing Default profile's non-default preference.
-      BidiRenderingEnabled = false;
-    };
-  };
-
   # Current panel order; widget settings omit Plasma 6.7.5 defaults and UI state.
   panelWidgets = [
     {
@@ -66,11 +44,6 @@ in
   imports = [
     inputs.plasma-manager.homeModules.plasma-manager
   ];
-
-  xdg.dataFile.konsole = {
-    source = "${gruvboxContrib}/konsole";
-    recursive = true;
-  };
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
   # and session state remain local; their original files were backed up.
@@ -139,7 +112,6 @@ in
       kdeglobals = {
         KDE = {
           AnimationDurationFactor = 0.5;
-          AutomaticLookAndFeel = true;
           contrast = 4;
         };
         # The places sidebar width otherwise depends on the widget's size hint.
@@ -165,14 +137,8 @@ in
       };
       plasmakeyboardrc.General.diacriticsPopupEnabled = false;
 
-      # Konsole 26.08 can switch profiles with the system's light/dark theme.
       konsolerc = {
         TabBar.CloseTabOnMiddleMouseButton = true;
-        LightDarkTheme = {
-          SyncProfileWithSystemTheme = true;
-          LightThemeProfile = "Light";
-          DarkThemeProfile = "Dark";
-        };
         MainWindow.MenuBar = "Disabled";
         "MainWindow/Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
         "Toolbar sessionToolbar".ToolButtonStyle = "TextOnly";
@@ -196,9 +162,19 @@ in
 
   programs.konsole = {
     enable = true;
-    profiles = {
-      Light = konsoleProfile "Gruvbox_light";
-      Dark = konsoleProfile "Gruvbox_dark";
-    };
+    defaultProfile = "NixGruvboxLight";
+    profiles = lib.genAttrs [ "NixGruvboxLight" "NixGruvboxDark" ] (_: {
+      font = {
+        name = "Sarasa Mono SC";
+        size = 11;
+      };
+      extraConfig = {
+        Scrolling.ScrollBarPosition = 2;
+        "Terminal Features" = {
+          AnimatingCursorEnabled = true;
+          BidiRenderingEnabled = false;
+        };
+      };
+    });
   };
 }

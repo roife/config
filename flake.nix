@@ -13,6 +13,7 @@
       inputs.home-manager.follows = "home-manager";
     };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    colorscheme.url = "github:roife/nix-colorscheme";
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";

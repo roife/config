@@ -5,6 +5,7 @@
     ./packages.nix
     ./fonts.nix
     ./darktable.nix
+    ./colorscheme.nix
     ./fish.nix
     ./git.nix
     ./gpg.nix
