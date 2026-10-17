@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, lib, pkgs, ... }:
 let
   # Current panel order; widget settings omit Plasma 6.7.5 defaults and UI state.
   panelWidgets = [
@@ -44,6 +44,8 @@ in
   imports = [
     inputs.plasma-manager.homeModules.plasma-manager
   ];
+
+  home.packages = [ pkgs.kdePackages.kimageformats ];
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
   # and session state remain local; their original files were backed up.
