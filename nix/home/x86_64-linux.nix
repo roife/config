@@ -5,5 +5,8 @@
 
   targets.genericLinux.enable = true;
 
-  home.packages = lib.optionals graphical [ pkgs.chromium ];
+  home.packages = [
+    pkgs.clashtui
+    pkgs.mihomo
+  ] ++ lib.optionals graphical [ pkgs.chromium ];
 }
