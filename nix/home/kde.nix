@@ -1,11 +1,5 @@
 { inputs, lib, pkgs, ... }:
 let
-  gwenviewWithHeif = pkgs.kdePackages.gwenview.overrideAttrs (old: {
-    qtWrapperArgs = (old.qtWrapperArgs or [ ]) ++ [
-      "--prefix QT_PLUGIN_PATH : ${pkgs.kdePackages.kimageformats}/lib/qt-6/plugins"
-    ];
-  });
-
   # Current panel order; widget settings omit Plasma 6.7.5 defaults and UI state.
   panelWidgets = [
     {
@@ -52,28 +46,9 @@ in
   ];
 
   home.packages = [
-    # Use Nix's media libraries for HEIF images and H.264/HEVC videos.
-    gwenviewWithHeif
-    pkgs.kdePackages.dragon
     # Install both theme variants together; KDE manages GTK appearance settings.
     pkgs.kdePackages.breeze-gtk
   ];
-
-  # Provide KDE's integration modules built against Nix's GTK libraries.
-  programs.firefox.package = pkgs.firefox.overrideAttrs (old: {
-    gtk_modules = old.gtk_modules ++ [
-      "${pkgs.kdePackages.kde-gtk-config}/lib/gtk-3.0"
-    ];
-  });
-
-  # Prefer the Nix viewer even when Plasma's session still has Fedora's PATH.
-  xdg.dataFile."applications/org.kde.gwenview.desktop".text = builtins.replaceStrings
-    [ "Exec=gwenview" ] [ "Exec=${gwenviewWithHeif}/bin/gwenview" ]
-    (builtins.readFile "${pkgs.kdePackages.gwenview}/share/applications/org.kde.gwenview.desktop");
-
-  xdg.dataFile."applications/org.kde.dragonplayer.desktop".text = builtins.replaceStrings
-    [ "Exec=dragon" ] [ "Exec=${pkgs.kdePackages.dragon}/bin/dragon" ]
-    (builtins.readFile "${pkgs.kdePackages.dragon}/share/applications/org.kde.dragonplayer.desktop");
 
   # Keep undeclared settings writable in KDE's GUI. Activities, monitor layouts
   # and session state remain local; their original files were backed up.
