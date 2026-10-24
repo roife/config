@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Worklog"
+  short_description: "Build evidence-backed work summaries from past sessions"
+  default_prompt: "Use $session-worklog to summarize my work across recent sessions, grouping outcomes by goal and separating completed work from plans."

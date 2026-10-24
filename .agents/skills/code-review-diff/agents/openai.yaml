@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review Diff"
+  short_description: "Walk through diffs at your pace with review progress"
+  default_prompt: "Use $code-review-diff to walk me through this diff one coherent section at a time."

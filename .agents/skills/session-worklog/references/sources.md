@@ -1,0 +1,15 @@
+# Sources and design choices
+
+Reviewed on 2026-10-23 (Asia/Taipei). This skill is an original synthesis, not an installation or verbatim copy of these packages. Popularity figures are observations on this date, not claims of quality or future availability. Repository stars describe the whole repository; skills.sh installs are that registry's displayed skill metric, not a verified count of unique users.
+
+| Source inspected | Popularity evidence | Adopted idea and deliberate boundary |
+| --- | --- | --- |
+| Anthropic [internal-comms](https://raw.githubusercontent.com/anthropics/skills/main/skills/internal-comms/SKILL.md) and its [3P guide](https://raw.githubusercontent.com/anthropics/skills/main/skills/internal-comms/examples/3p-updates.md) | [skills.sh](https://www.skills.sh/anthropics/skills/internal-comms) displayed **79.6K installs** | Separate results, future plans, and problems; adapt detail to audience. Do not impose its strict emoji/three-paragraph template or require redundant clarification when context already supplies scope. |
+| Composio [changelog-generator](https://raw.githubusercontent.com/ComposioHQ/awesome-claude-skills/master/changelog-generator/SKILL.md) | [skills.sh](https://www.skills.sh/composiohq/awesome-claude-skills/changelog-generator) displayed **7.3K installs**; [GitHub API](https://api.github.com/repos/ComposioHQ/awesome-claude-skills) returned **77,710 repository stars** | Group technical changes into understandable outcomes within a period. Do not automatically discard internal refactoring/testing from personal work reports or write CHANGELOG.md by default. |
+| OpenClaw [session-logs, historical revision f3ac874fd2](https://raw.githubusercontent.com/openclaw/openclaw/f3ac874fd2/skills/session-logs/SKILL.md) | [GitHub API](https://api.github.com/repos/openclaw/openclaw) returned **392,800 repository stars**. No skill-specific install count was verified. | Search text selectively and account for archived transcripts. Do not transplant OpenClaw paths/schema, select activity only by a transcript's first timestamp, or treat missing usage as zero. The main-branch raw path returned 404 during this research; the inspected maintainer revision is a historical reference, not a verified current install target. |
+
+## Local practices incorporated
+
+The user's local agent-usage review dated 2026-10-23 identified recurring cross-session weekly reports, retrieval of prior experiments, duplicate fork/subagent narratives, and missing transcript bodies. It also documented differences between planned work, reported implementation, real interaction failures, measured benchmarks, and estimated performance figures. These motivated the explicit reporting boundary, coverage note, outcome deduplication, status distinctions, and measurement rules.
+
+Keep these transferable decisions in the skill; do not embed the review's private session IDs, project paths, historical counts, or one machine's database schema. Prefer an available session interface. No collector script is bundled because the current task provides no stable cross-host schema to justify one.
