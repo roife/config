@@ -8,5 +8,5 @@
   home.packages = [
     pkgs.clashtui
     pkgs.mihomo
-  ] ++ lib.optionals graphical [ pkgs.chromium ];
+  ] ++ lib.optionals graphical [ pkgs.google-chrome ];
 }
