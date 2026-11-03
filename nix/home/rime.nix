@@ -65,6 +65,7 @@ let
         collocation_penalty = -14;
       };
       "translator/contextual_suggestions" = true;
+      "translator/enable_user_dict" = false;
       "translator/max_homophones" = 6;
       "translator/max_homographs" = 2;
     };
