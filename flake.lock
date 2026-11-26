@@ -32,6 +32,29 @@
         "type": "github"
       }
     },
+    "emacs-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-stable": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793895070,
+        "narHash": "sha256-SQINXJz5vim/r7vIRWXybmfbdKj1I7aWhIoJe4QYbOU=",
+        "owner": "nix-community",
+        "repo": "emacs-overlay",
+        "rev": "074406a40e4ee4630c681fdf170b20cd0f49509d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "emacs-overlay",
+        "type": "github"
+      }
+    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -134,6 +157,7 @@
     "root": {
       "inputs": {
         "colorscheme": "colorscheme",
+        "emacs-overlay": "emacs-overlay",
         "fenix": "fenix",
         "home-manager": "home-manager",
         "nix-homebrew": "nix-homebrew",

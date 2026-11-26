@@ -5,9 +5,15 @@ description: "Inspect, find, clean, synchronize, or embed lyrics for one local M
 
 # Music Track Lyrics
 
-Operate on exactly one audio file and compose only the operations needed for the request. Never scan a directory, infer a media root, call a library-local pipeline, or aggregate multiple tracks. Supply task-specific paths, source endpoints, candidate choices, thresholds, backup destinations, and approval records as command arguments. Choose routine values within the authorized scope. Results may be returned through stdout.
+Work on the single M4A or MP3 the user identified. Keep paths, endpoints, candidate choices, thresholds and backup destinations explicit in command arguments. Avoid scanning sibling files or invoking a library-wide pipeline.
 
 Resolve `SKILL_DIR` to this skill directory. All implementation lives in `scripts/music_track_lyrics.py`. Each capability is an independent top-level function and an independent CLI subcommand. Run it with `uv run`; every subcommand requires `--audio` and emits one JSON object unless it is the final report writer.
+
+## Choose the stopping point
+
+- For inspection or lookup, return the requested tag information, recording match or unresolved candidates. For a proposed cleanup or alignment, return the reviewed proposal and identify any estimated timing.
+- For an authorized embed, take a supported proposal through approval, backup and verified write. Resolve routine choices using track metadata and the source evidence. If two versions remain plausible, present the distinguishing details before changing the file.
+- In the result, identify the track and say whether its tag was changed. After a write, give the verified result and the retained backup path. If verification fails, report the observed file and rollback status.
 
 ## Entrypoints
 
@@ -37,4 +43,4 @@ Consult [references/interfaces.md](references/interfaces.md) when input/output c
 - An approval record may document authorization already provided by the user; do not request the same authorization again. Review candidates within the authorized scope. If a material unresolved choice remains, prepare the concrete proposal before asking about that choice.
 - Plain lyrics are the default. Use synchronized LRC only when requested.
 - Leave already-empty unresolved or confirmed-instrumental tracks empty. Preserve existing lyrics unless the requested change includes replacing or removing them. Remove verified placeholder-only text when cleanup is authorized.
-- A successful `write` result includes full post-write verification and satisfies routine verification. Use `verify` for an independent or later check, or when explicitly requested. Read-only and proposal-only operations do not require a post-write verification step. Use `report` when an audit artifact is requested.
+- A successful `write` result includes full post-write verification and satisfies routine verification. Use `verify` for an independent, later or explicitly requested check. Use `report` when an audit artifact is requested.

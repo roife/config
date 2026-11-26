@@ -1,11 +1,12 @@
-{ config, lib, pkgs, graphical, ... }:
+{ config, inputs, lib, pkgs, graphical, ... }:
 {
+  nixpkgs.overlays = [ inputs.emacs-overlay.overlays.emacs ];
+
   programs.emacs = {
     enable = true;
-    # Wayland for desktops, terminal-only for headless Linux; Cocoa on macOS.
-    package = lib.mkIf pkgs.stdenv.hostPlatform.isLinux (
-      if graphical then pkgs.emacs-pgtk else pkgs.emacs-nox
-    );
+    # Track upstream master: Wayland/terminal on Linux, Cocoa on macOS.
+    package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs-git
+      else if graphical then pkgs.emacs-git-pgtk else pkgs.emacs-git-nox;
 
     # Launch through the app bundle so Rime can identify Emacs on macOS.
     overrides = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (_self: super: {

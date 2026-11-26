@@ -117,7 +117,7 @@ in
     };
     "${rimeDir}/default.yaml".source = "${pkgs.rime-ice}/share/rime-data/rime_ice_suggestion.yaml";
     "${rimeDir}/lua/liberime_regexp_segment.lua".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/code/liberime-regexp/rime/liberime_regexp_segment.lua";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/emacs/straight/repos/liberime-regexp/rime/liberime_regexp_segment.lua";
     "${rimeDir}/${grammarModel}.gram" = {
       source = pkgs.fetchurl {
         url = "https://github.com/jetcookies/RIME-LMDG-tracker/releases/download/0-unstable-2026-10-09/${grammarModel}.gram";

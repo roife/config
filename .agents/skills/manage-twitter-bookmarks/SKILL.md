@@ -9,8 +9,8 @@ Resolve `SKILL_DIR` to the directory containing this file. Use the bundled scrip
 
 ## Choose the operation
 
-- **Archive/refresh:** run download, then quality upgrade.
-- **Resume:** reuse files and run the unfinished stage; quality recovery alone needs no new bookmark fetch.
+- **Archive or refresh** the requested collection through download, video quality upgrade where applicable, and local validation.
+- **Resume** from the existing media directory, manifest and quality report. Run the first incomplete stage and the remaining checks for the requested outcome. A quality-only repair can reuse the bookmark snapshot.
 - **Verify:** use local validation below. Fetch/download only for requested repair or refresh.
 - **Metadata export:** add `--metadata-only` to download. `bookmarkFetchComplete: true` finishes this request even if skipped media cause exit code 2 and `complete: false`. This does not qualify the archive for clearing.
 
@@ -60,10 +60,10 @@ Require an explicit request to clear online bookmarks; it also authorizes recove
 
 The script validates the archive, snapshots live bookmarks, checks ID coverage, paces removals, and verifies the remaining count.
 
-For exit code 3, follow the diagnostic: archive missing IDs, or increase the fetch's `--max-bookmarks` cap and retry. Never bypass an incomplete fetch. Retry while making progress; report persistent blockers. Use `--allow-unarchived` only with explicit authorization to delete unarchived content.
+When clear exits with code 3, follow the current diagnostic. For missing IDs, refresh and validate the archive before retrying. For a capped live snapshot, raise `--max-bookmarks` on the clear command so its own preflight can establish coverage. Use `--allow-unarchived` only with explicit authorization to delete unarchived content. After a partial clear, use the current run’s report and retry through the same preflight while progress is possible. An earlier report can survive a failed preflight and cannot establish the outcome of this run.
 
 Report from `$METADATA/clear-bookmarks-report.json`. Require `complete: true`, `failed` length 0, and `remaining: 0`.
 
 ## Report
 
-Report applicable downloaded, reused, upgraded, failed, and removed counts from the manifest and reports. Online remaining counts require a successful live fetch; otherwise say unverified. Resume after interruption instead of deleting the archive.
+Identify the operation and the media and metadata paths so the user can reopen or resume the archive. Report applicable downloaded, reused, upgraded, failed, and removed counts from the manifest and reports. Online remaining counts require a successful live fetch; otherwise say unverified. Resume after interruption instead of deleting the archive.
