@@ -16,6 +16,7 @@
 !.agents/
 !.agents/**
 /.agents/**/__pycache__/
+/.agents/skills/migrate-yaql-rust/
 
 !secrets/
 !secrets/.authinfo.gpg
