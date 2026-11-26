@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
   home.sessionPath = [ "$HOME/.local/bin" ];
+  programs.fzf = {
+    enable = true;
+    enableFishIntegration = true;
+  };
   programs.fish = {
     enable = true;
     plugins = map (name: {
@@ -15,13 +19,6 @@
       codex = "codex --disable apps --disable plugins";
     };
 
-    binds = {
-      ctrl-t.command = "ezf-file-widget";
-      ctrl-r.command = "ezf-history-widget";
-      alt-c.command = "ezf-cd-widget";
-      alt-x.command = "ezf-dispatch-widget";
-    };
-
     shellInit = ''
       # Nix profile PATH, certificate bundle and other environment.
       if test -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
@@ -30,10 +27,6 @@
         source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.fish"
       end
       fish_add_path --path "$HOME/.local/bin"
-    '';
-
-    interactiveShellInit = ''
-      source_if_exists "$HOME/.config/emacs/straight/repos/ezf/scripts/ezf.fish"
     '';
 
     functions = {
