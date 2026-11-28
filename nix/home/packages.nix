@@ -25,7 +25,7 @@
     universal-ctags
     ast-grep
     hyperfine
-    lean4
+    elan
 
     # Version control and shell utilities
     git-filter-repo
